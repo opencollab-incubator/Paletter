@@ -45,12 +45,12 @@ class ExperimentGatingTest {
     /** 26.40 has the cushions behind y_2026_drop_3, 26.50 has them as regular content (see data/bds/1.26.45.1). */
     @Test
     void aFlatFallbackAppliesWhereTheItemIsGatedOnly() {
-        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
+        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK.variant())).build();
         Paletter paletter = Paletter.builder().fallbacks(flat).build();
 
         Palette gated = paletter.palette(OLDEST);
-        assertTrue(gated.resolve(BedrockItems.BLACK_CUSHION).fallback());
-        assertEquals(BedrockItems.STICK.variant(), gated.resolve(BedrockItems.BLACK_CUSHION).variant());
+        assertTrue(gated.resolve(BedrockItems.BLACK_CUSHION.variant()).fallback());
+        assertEquals(BedrockItems.STICK.variant(), gated.resolve(BedrockItems.BLACK_CUSHION.variant()).variant());
         assertNull(gated.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(), gated.experiments());
         // Still registered, as BDS registers it in a world without the toggle (data/bds/1.26.45.1/vanilla/capture.json: 1976 items)
@@ -62,12 +62,12 @@ class ExperimentGatingTest {
             .noneMatch(item -> item.getItem().getDefinition().getIdentifier().equals(BedrockItems.BLACK_CUSHION.identifier())));
 
         Palette regular = paletter.palette(MIDDLE);
-        assertFalse(regular.resolve(BedrockItems.BLACK_CUSHION).fallback());
+        assertFalse(regular.resolve(BedrockItems.BLACK_CUSHION.variant()).fallback());
         assertNotNull(regular.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(), regular.experiments());
 
         // Without a fallback of its own the gated item is the default fallback, like content the version lacks
-        assertEquals(BedrockItems.UNKNOWN.variant(), PALETTER.palette(OLDEST).resolve(BedrockItems.BLACK_CUSHION).variant());
+        assertEquals(BedrockItems.UNKNOWN.variant(), PALETTER.palette(OLDEST).resolve(BedrockItems.BLACK_CUSHION.variant()).variant());
     }
 
     private static final Paletter PALETTER = Paletter.bundled();
@@ -154,11 +154,11 @@ class ExperimentGatingTest {
 
     @Test
     void enablingTheToggleMakesTheContentPresentAndIsSent() {
-        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK)).build();
+        Fallbacks flat = Fallbacks.builder().item(BedrockItems.BLACK_CUSHION, ItemFallback.of(BedrockItems.STICK.variant())).build();
         Paletter paletter = Paletter.builder().fallbacks(flat).experiments(TOGGLE).build();
 
         Palette enabled = paletter.palette(OLDEST);
-        assertFalse(enabled.resolve(BedrockItems.BLACK_CUSHION).fallback());
+        assertFalse(enabled.resolve(BedrockItems.BLACK_CUSHION.variant()).fallback());
         assertNotNull(enabled.itemDefinition(BedrockItems.BLACK_CUSHION.identifier()));
         assertEquals(List.of(TOGGLE), enabled.experiments());
         assertEquals(TOGGLE, enabled.experimentOf(BedrockItems.BLACK_CUSHION));

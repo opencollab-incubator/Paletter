@@ -15,7 +15,7 @@ import dev.opencollab.paletter.recipes.RecipeStations;
 import dev.opencollab.paletter.recipes.Result;
 import dev.opencollab.paletter.recipes.VanillaRecipes;
 import dev.opencollab.paletter.tools.client.RecipeCapture;
-import dev.opencollab.paletter.vanilla.ItemKey;
+import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -156,12 +156,12 @@ class RecipeBundleLoadTest {
         for (DataVersion version : VERSIONS) {
             Palette palette = Paletter.builder().allExperiments().previews(version.isPreview()).build().palette(version.protocolVersion());
             VanillaRecipes loaded = VanillaRecipes.of(version);
-            List<ItemKey> keys = new ArrayList<>();
+            List<BedrockItemVariant> keys = new ArrayList<>();
             ingredients(version).forEach(ingredient -> {
                 if (ingredient instanceof Ingredient.Item item) {
                     keys.add(item.item());
                 } else if (ingredient instanceof Ingredient.AnyVariant any) {
-                    keys.add(any.type());
+                    keys.add(any.type().variant());
                 }
             });
             for (Recipe recipe : loaded.recipes()) {
@@ -174,9 +174,9 @@ class RecipeBundleLoadTest {
                 results.forEach(result -> keys.add(result.item()));
             }
             loaded.potionMixes().forEach(mix -> keys.addAll(List.of(mix.input(), mix.reagent(), mix.output())));
-            loaded.containerMixes().forEach(mix -> keys.addAll(List.of(mix.input(), mix.reagent(), mix.output())));
+            loaded.containerMixes().forEach(mix -> keys.addAll(List.of(mix.input().variant(), mix.reagent().variant(), mix.output().variant())));
             assertFalse(keys.isEmpty());
-            for (ItemKey key : keys) {
+            for (BedrockItemVariant key : keys) {
                 String identifier = key.type().identifier();
                 assertFalse(key.type().isCustom() || palette.itemType(identifier, Lookup.EXACT) == null, identifier + " in " + version);
             }

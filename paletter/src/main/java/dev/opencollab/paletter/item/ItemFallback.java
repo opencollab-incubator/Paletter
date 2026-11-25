@@ -3,14 +3,13 @@ package dev.opencollab.paletter.item;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 import dev.opencollab.paletter.vanilla.BedrockItems;
 
 import java.util.Objects;
 
 /**
  * A replacement for an item in a version: an exact variant. The target is a key: it needs no existence in any version,
- * custom keys are made with {@link dev.opencollab.paletter.Palette#itemType}. Made with {@link #of(ItemKey)} and
+ * custom keys are made with {@link dev.opencollab.paletter.Palette#itemType}. Made with {@link #of(BedrockItemVariant)} and
  * {@link #forced()}; a value with {@code equals}, {@code hashCode} and {@code toString}.
  *
  * @since 1.0.0
@@ -22,7 +21,7 @@ public final class ItemFallback {
      *
      * @since 1.0.0
      */
-    public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN);
+    public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN.variant());
 
     private final BedrockItemVariant variant;
     private final boolean force;
@@ -35,13 +34,13 @@ public final class ItemFallback {
     /**
      * Creates a fallback that is not forced.
      *
-     * @param target the replacement: a variant, or a type for its base variant
-     * @return a fallback to exactly this variant (a type is its base variant)
+     * @param target the replacement: a variant
+     * @return a fallback to exactly this variant
      * @throws NullPointerException if the target is null
      * @since 1.0.0
      */
-    public static @NonNull ItemFallback of(@NonNull ItemKey target) {
-        return new ItemFallback(target.variant(), false);
+    public static @NonNull ItemFallback of(@NonNull BedrockItemVariant target) {
+        return new ItemFallback(Objects.requireNonNull(target, "target"), false);
     }
 
     /**

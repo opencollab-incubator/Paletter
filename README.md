@@ -72,7 +72,7 @@ and an anticheat.
 ## Concepts
 
 **Keys, registered entries and stacks.** A key names content and does not depend on a version: `BedrockBlockType`,
-`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value; both are an `ItemKey`, a type standing for its base variant). Vanilla keys are generated
+`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value; methods that take an item take a variant, `type.variant()` for the base variant). Vanilla keys are generated
 constants (`BedrockBlocks.STONE`, `BedrockItems.APPLE`); custom content gets its keys from `CustomBlock#type()` and
 `CustomItem#type()`. A registered entry (`RegisteredItem`, `RegisteredBlockState`) is a key inside one palette, with its
 runtime id and components; these implement Cloudburst's `ItemDefinition` and `BlockDefinition`. A stack

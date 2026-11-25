@@ -8,7 +8,7 @@ import dev.opencollab.paletter.block.VoxelShape;
 import dev.opencollab.paletter.creative.CreativeEditor;
 import dev.opencollab.paletter.data.DataVersion;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
-import dev.opencollab.paletter.vanilla.ItemKey;
+import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 import dev.opencollab.paletter.item.CustomItem;
 import dev.opencollab.paletter.annotation.Experimental;
 import dev.opencollab.paletter.internal.access.Access;
@@ -345,8 +345,8 @@ public final class PaletteLayer {
          * @return this builder
          * @since 1.0.0
          */
-        public @NonNull Builder variant(@NonNull ItemKey key) {
-            return variant(Access.vanilla().toItemVariant(key.variant()));
+        public @NonNull Builder variant(@NonNull BedrockItemVariant key) {
+            return variant(Access.vanilla().toItemVariant(key));
         }
 
         /**

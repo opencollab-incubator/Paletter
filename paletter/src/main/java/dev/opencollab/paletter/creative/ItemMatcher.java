@@ -7,7 +7,6 @@ import dev.opencollab.paletter.item.BedrockItemStack;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 
 import java.util.function.Predicate;
 
@@ -75,12 +74,12 @@ public sealed interface ItemMatcher permits ItemMatchers.Id, ItemMatchers.Aux, I
      * Matches the stacks of exactly that variant (a type is its base variant; see {@link #anyVariantOf} for any
      * variant).
      *
-     * @param key a variant, or a type for its base variant
+     * @param key a variant
      * @return the matcher
      * @since 1.0.0
      */
-    static @NonNull ItemMatcher of(@NonNull ItemKey key) {
-        BedrockItemVariant variant = key.variant();
+    static @NonNull ItemMatcher of(@NonNull BedrockItemVariant key) {
+        BedrockItemVariant variant = key;
         return new ItemMatchers.Id(variant.type().identifier()).and(new ItemMatchers.Aux(variant.aux()));
     }
 

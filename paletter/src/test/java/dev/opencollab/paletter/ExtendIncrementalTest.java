@@ -133,8 +133,8 @@ class ExtendIncrementalTest {
             CustomItem multiItem = CustomItem.builder("inc:multi").build();
             Palette root = PALETTER.vanilla(version).extend(PaletteLayer.builder("inc:parent").item(multiItem)
                 .creative(editor -> {
-                    editor.insert(BedrockItemStack.of(multiItem.type()).withBlockState(BedrockBlocks.STONE.defaultState())).loose(CreativeCategory.ITEMS);
-                    editor.insert(BedrockItemStack.of(multiItem.type()).withBlockState(BedrockBlocks.DIRT.defaultState())).loose(CreativeCategory.ITEMS);
+                    editor.insert(BedrockItemStack.of(multiItem.type().variant()).withBlockState(BedrockBlocks.STONE.defaultState())).loose(CreativeCategory.ITEMS);
+                    editor.insert(BedrockItemStack.of(multiItem.type().variant()).withBlockState(BedrockBlocks.DIRT.defaultState())).loose(CreativeCategory.ITEMS);
                 }).build());
             RegisteredItem multi = root.items().getDefinition("inc:multi");
             assertTrue(root.items().isMultiStateBlockItem("inc:multi"), version.toString());

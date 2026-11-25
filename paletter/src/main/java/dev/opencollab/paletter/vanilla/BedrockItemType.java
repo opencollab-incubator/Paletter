@@ -17,7 +17,7 @@ import java.util.Objects;
  * ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
  * ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
  * }</pre>
- * A type is an {@link ItemKey} for its base variant, so it can be passed to the methods that take a variant. Items whose
+ * Methods that take an item take a {@link BedrockItemVariant}: {@link #variant()} is the base variant. Items whose
  * variants differ by aux value (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
  * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
  * <p>
@@ -38,7 +38,7 @@ import java.util.Objects;
  *
  * @since 1.0.0
  */
-public final class BedrockItemType implements ItemKey {
+public final class BedrockItemType {
     private final @Nullable String constantName;
     private final String identifier;
     private final @Nullable String fallback;
@@ -285,15 +285,10 @@ public final class BedrockItemType implements ItemKey {
      * The base variant of the type.
      *
      * @return the base variant: aux 0, no block state. Loads no data
+     * @since 1.0.0
      */
-    @Override
     public @NonNull BedrockItemVariant variant() {
         return base;
-    }
-
-    @Override
-    public @NonNull BedrockItemType type() {
-        return this;
     }
 
     /**
@@ -303,7 +298,7 @@ public final class BedrockItemType implements ItemKey {
      * made. Any other aux gives a new variant until the bundled data is loaded; after that, the other variants the data
      * lists are its instances. Compare those with {@code equals}, which always works. An aux nobody named gives a new
      * variant without a canonical id (a layer can give it one with
-     * {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(ItemKey)}); those are not kept, so arbitrary auxes cannot
+     * {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)}); those are not kept, so arbitrary auxes cannot
      * grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
      *
      * @param aux the aux value

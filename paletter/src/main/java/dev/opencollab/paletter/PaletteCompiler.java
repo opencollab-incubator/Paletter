@@ -69,6 +69,7 @@ final class PaletteCompiler {
             .withDefaultFallback(fallbacks.defaultBlock());
         ItemRegistry.Builder builder = ItemRegistry.vanilla(data, applied.gatedItems(), blocks, canonicalItems);
         fallbacks.items(data.version()).forEach(builder::fallback);
+        fallbacks.variants(data.version()).forEach(builder::fallback);
         builder.defaultFallback(fallbacks.defaultItem());
         CreativeLayout layout = RawConverter.convert(data.creative(), blocks, report);
         ItemRegistry items = builder.build(layout, report);
@@ -217,7 +218,7 @@ final class PaletteCompiler {
             items.addCustom(custom, report, source);
             Menu menu = menu(custom.menuCategory());
             if (menu != null) {
-                placed.add(new Placed(null, BedrockItemStack.of(custom.type()), custom.creativePlacement(), menu));
+                placed.add(new Placed(null, BedrockItemStack.of(custom.type().variant()), custom.creativePlacement(), menu));
             }
         }
         // BDS registers block items in the order of the block files, identifier descending without files, whatever
@@ -230,7 +231,7 @@ final class PaletteCompiler {
                 // BDS adds the replacing item in the block pass, in the item's own category, as a plain stack
                 Menu menu = menu(replacement.menuCategory());
                 if (menu != null) {
-                    placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type()), replacement.creativePlacement(), menu));
+                    placed.add(new Placed(block.identifier(), BedrockItemStack.of(replacement.type().variant()), replacement.creativePlacement(), menu));
                 }
                 continue;
             }
@@ -293,7 +294,7 @@ final class PaletteCompiler {
 
     private static BedrockItemStack blockItemStack(CustomBlock block, BlockRegistry blocks) {
         BedrockBlockState state = blocks.canonical().handle(Canonicals.block(blocks.canonical(), block.defaultState()));
-        return BedrockItemStack.of(block.itemType()).withBlockState(state);
+        return BedrockItemStack.of(block.itemType().variant()).withBlockState(state);
     }
 
     /** A creative placement to apply; {@code block} is the custom block if the stack is a block item. */

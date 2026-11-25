@@ -68,10 +68,10 @@ class BlockOwnedItemTest {
     @Test
     void aPlacementOnlyAdjustsThePositionWithinTheMenuCategory() {
         CustomItem ruby = CustomItem.builder("own:after_hopper").menuCategory(CreativeCategory.ITEMS)
-            .creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
+            .creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART.variant())).build();
         CustomItem missing = CustomItem.builder("own:missing_anchor").menuCategory(CreativeCategory.ITEMS)
             .creativePlacement(CreativePlacement.after(ItemMatcher.id("own:nowhere"))).build();
-        CustomItem hidden = CustomItem.builder("own:hidden_anchor").creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART)).build();
+        CustomItem hidden = CustomItem.builder("own:hidden_anchor").creativePlacement(CreativePlacement.after(BedrockItems.HOPPER_MINECART.variant())).build();
         Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("anchors").item(ruby).item(missing).item(hidden).build());
         List<String> ids = palette.creativeLayout().stacks().map(stack -> stack.type().identifier()).toList();
         assertEquals(ids.indexOf("minecraft:hopper_minecart") + 1, ids.indexOf("own:after_hopper"));
@@ -85,7 +85,7 @@ class BlockOwnedItemTest {
     @Test
     void placementsGoBeforeAnAnchorOrFirst() {
         CustomItem before = CustomItem.builder("own:before_hopper").menuCategory(CreativeCategory.ITEMS)
-            .creativePlacement(CreativePlacement.before(BedrockItems.HOPPER_MINECART)).build();
+            .creativePlacement(CreativePlacement.before(BedrockItems.HOPPER_MINECART.variant())).build();
         CustomItem first = CustomItem.builder("own:first").menuCategory(CreativeCategory.ITEMS)
             .creativePlacement(CreativePlacement.FIRST).build();
         CustomItem last = CustomItem.builder("own:last").menuCategory(CreativeCategory.ITEMS).build();
@@ -121,7 +121,7 @@ class BlockOwnedItemTest {
         assertEquals(1, stacksOf(palette, "own:driven").size());
         assertSame(item.type(), palette.itemOf(block.type()));
         assertSame(item.type(), palette.itemDefinition(item.type().identifier()).type());
-        assertSame(block.type().defaultState(), palette.blockOf(item.type()));
+        assertSame(block.type().defaultState(), palette.blockOf(item.type().variant()));
         assertTrue(palette.itemDefinition(item.type().identifier()).getRuntimeId() > 0, "a data driven item, numbered with the items");
     }
 

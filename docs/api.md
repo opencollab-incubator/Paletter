@@ -98,7 +98,7 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   `Recipe`, `Ingredient` and `CreativeNode` each permit a class that is not public and has no instances
   (`FutureItemComponent`, ...). No `case` can name it, so `javac` rejects a `switch` over one of them without a `default`;
   a new variant in a minor release then lands in that `default` instead of failing the build or throwing
-  `MatchException`. Pattern matching and `instanceof` work as before. The types Paletter defines (`ItemKey`,
+  `MatchException`. Pattern matching and `instanceof` work as before. The types Paletter defines (
   `BedrockState`, `ItemMatcher`, `CreativePlacement`, ...) stay plainly sealed: they are closed by definition.
 - **Generated names are locked.** `data/model/api-history.json` records every Java name of the component API by a stable
   identity (component id, JSON path, value). A recorded name is reused, never recomputed: a restructure of the creator
@@ -225,7 +225,7 @@ Methods named `blockState`, `itemVariant`, `itemType`, `blockType` or `...Of` re
 return definitions (what is sent); `resolve` returns a resolution (`ResolvedBlock`, `ResolvedItem`). One rule per kind of
 argument:
 
-- **A key** (`resolve(BedrockBlockState | ItemKey)`, `blockDefinition(BedrockBlockState)`, `runtimeId(BedrockBlockState)`):
+- **A key** (`resolve(BedrockBlockState | BedrockItemVariant)`, `blockDefinition(BedrockBlockState)`, `runtimeId(BedrockBlockState)`):
   what this palette sends for it, with fallbacks applied. Never null: throws `IllegalArgumentException` where nothing can
   be sent (a custom block of a layer the palette lacks, an item the version lacks with `Fallbacks.NONE`), and the
   `orElse` overload returns its default there instead. `blockDefinition(state)` and `runtimeId(state)` are
@@ -250,8 +250,8 @@ argument:
 | `Palette#blockState(int)` | The key of the block with a runtime id (the hash), or null if this palette has no such block. For ids a server stores itself, e.g. chunk palettes; ids decoded from packets already come as definitions. |
 | `Palette#blockDefinition(int)` | The `RegisteredBlockState` with a runtime id, or null. |
 | `Palette#itemDefinition(int)` | The `RegisteredItem` with an item runtime id (negative for the plain item of a custom block), or null. |
-| `Palette#resolve(ItemKey)` | What `encode` would send, without building an `ItemData`. `kind()` is `EXACT`, `FALLBACK` or `DEFAULT`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. Throws only where nothing is sent (`Fallbacks.NONE`); `resolve(key, orElse)` returns `orElse` there. |
-| `Palette#blockOf(ItemKey)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
+| `Palette#resolve(BedrockItemVariant)` | What `encode` would send, without building an `ItemData`. `kind()` is `EXACT`, `FALLBACK` or `DEFAULT`. `behaviour()` gives the `ItemValues` of the item sent. `variant()` is the variant this palette sends for the requested one: the requested variant itself unless `fallback()`. Throws only where nothing is sent (`Fallbacks.NONE`); `resolve(key, orElse)` returns `orElse` there. |
+| `Palette#blockOf(BedrockItemVariant)` | The key of the block an item is sent with, or null. `blockDefinition(blockOf(v))` is what is sent. |
 | `Palette#itemOf(BedrockBlockType)` | The item the Script API gives for the block's default permutation: the block's own item for a custom block, else the bundled block to item relation. Null if there is none here. Whether the client's pick block gives this item is unverified. |
 | `Palette#encode(BedrockItemStack)` | The `ItemData` for the client, with fallbacks applied. |
 | `Palette#decode(ItemData)` | The stack a client sent, or null if unknown. Its variant is always one the palette knows: an aux that names no variant gives the base variant, and the stack keeps the client's value in `BedrockItemStack#aux()`, so client input never makes keys of its own. |
@@ -320,18 +320,16 @@ it, the others resolve it through the fallbacks (`minecraft:unknown` by default)
 it last had. A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
 added it; the line `First in Bedrock` names the first bundled Bedrock release that has the content without an experiment (none for content older than the oldest bundled release). `@Education` marks Education Edition content.
 
-An `ItemKey` is a `BedrockItemType` or a `BedrockItemVariant`, and the methods that take a variant (`Palette#resolve`,
-`blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`) take one: a type stands for its base variant, so
-`palette.resolve(BedrockItems.APPLE)` works. `type.variant()` is the base variant and `type.variant(aux)` the variant of
-an aux, never null (an aux the data does not name gives a plain variant without a canonical id). A key is a type and an
-aux, so creating or using one loads no bundled data, and a key made before any palette resolves exactly like one made
-after. The base variant and the named constants of `BedrockItemVariants` are the same object whenever they are asked for,
-so `==` holds for them; other auxes are new variants until the data is loaded (then the data's own for the auxes it
-lists), so compare those with `equals`. An `ItemKey` always means exactly that
-variant, and a type means aux 0, in every method that takes one (`ItemFallback.of`, `ItemMatcher.of`,
-`CreativePlacement.after` too); where a type means every aux, the name says so (`ItemMatcher.anyVariantOf`,
-`CreativePlacement.afterAnyVariantOf`). Keys for an identifier are made with `Palette#itemType` and
-`Palette#itemVariant`, or are the type of a `CustomItem`.
+The methods that take an item (`Palette#resolve`, `blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`,
+`ItemFallback.of`, `ItemMatcher.of`, `CreativePlacement.after`) take a `BedrockItemVariant`, and mean exactly that
+variant: `palette.resolve(BedrockItems.APPLE.variant())`. `type.variant()` is the base variant (aux 0) and
+`type.variant(aux)` the variant of an aux, never null (an aux the data does not name gives a plain variant without a
+canonical id). A variant is a type and an aux, so creating or using one loads no bundled data, and a variant made before
+any palette resolves exactly like one made after. The base variant and the named constants of `BedrockItemVariants` are
+the same object whenever they are asked for, so `==` holds for them; other auxes are new variants until the data is
+loaded (then the data's own for the auxes it lists), so compare those with `equals`. Where a type means every aux, the
+name says so (`ItemMatcher.anyVariantOf`, `CreativePlacement.afterAnyVariantOf`). Variants for an identifier are made
+with `Palette#itemType` and `Palette#itemVariant`, or are of the type of a `CustomItem`.
 
 `BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
 The names are BDS's own spellings (`POTION_LONG_NIGHTVISION`, `BED_SILVER`), taken from the Script API when the data is
@@ -435,7 +433,7 @@ creative inventory and in which category and group, under every ordering: absent
 `menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the
 item that replaces its item each have a menu category of their own. A `CreativePlacement` adjusts only the position within
 that category and group: `CreativePlacement.DEFAULT` (the default), `FIRST` (the start of its group or category),
-`CreativePlacement.after(ItemMatcher | ItemKey)` / `afterAnyVariantOf(type)` or `before(...)` / `beforeAnyVariantOf(type)`,
+`CreativePlacement.after(ItemMatcher | BedrockItemVariant)` / `afterAnyVariantOf(type)` or `before(...)` / `beforeAnyVariantOf(type)`,
 set with `creativePlacement(placement)`. An anchor that matches nothing falls back to the default position
 and adds a warning to the palette report. `CreativeOrdering` (set on `Paletter.Builder`) only decides the order, never presence. The default, `BDS`, puts
 content exactly where BDS puts add-on content; [wire-notes.md](wire-notes.md#creative-inventory-order) has the rule.
@@ -458,6 +456,7 @@ Fallbacks fallbacks = Fallbacks.builder()
 
 An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)` sends the base variant of that type, and
 `ItemFallback.of(BedrockItems.POTION.variant(5))` that variant, whichever variant it replaces.
+`item(BedrockItemVariant, ItemFallback)` gives one variant a fallback of its own, checked before its type's.
 
 `.forced()` replaces content even in versions that have it. Paletter ships no fallbacks: which replacement is right is
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.
@@ -491,7 +490,7 @@ goes away when the release has it. A block or item constant a newer preview drop
 
 Behaviour belongs to a palette, not to a definition: `RegisteredBlockState` and `RegisteredItem` are the same in every
 version, so they have no `behaviour()`. It is reached through what a palette resolved: `Palette#resolve(BedrockBlockState)`
-gives a `ResolvedBlock` and `Palette#resolve(ItemKey)` a `ResolvedItem`, each with `behaviour()`. It returns
+gives a `ResolvedBlock` and `Palette#resolve(BedrockItemVariant)` a `ResolvedItem`, each with `behaviour()`. It returns
 values BDS uses but never sends to clients: friction, destroy time, collision and outline shapes, light, max stack size,
 attack damage and more.
 
@@ -515,7 +514,7 @@ block.behaviour();    // the values of the block that is sent
 - `resolve(BedrockBlockState)` throws `IllegalArgumentException` where `blockDefinition(state)` throws.
   `resolve(state, orElse)` returns `orElse` (may be null) there, as `blockDefinition(state, orElse)` does.
   `resolveBlock(int runtimeId)` takes the runtime id of a block this palette sends (from a packet or a chunk palette) and
-  returns null if there is none; it is never a fallback. `resolve(ItemKey)` throws only for an item that is not
+  returns null if there is none; it is never a fallback. `resolve(BedrockItemVariant)` throws only for an item that is not
   sent at all (`Fallbacks.NONE`), and `resolve(key, orElse)` returns `orElse` there.
 - `get` throws `IllegalStateException` when no value is known; `getOrElse(key, fallback)` returns the fallback instead,
   and `has(key)` tells beforehand. A key is typed by whose values it reads (`FloatKey<BlockValues>`), so a block key does

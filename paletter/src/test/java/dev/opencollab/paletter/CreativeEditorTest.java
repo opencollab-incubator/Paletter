@@ -35,7 +35,7 @@ class CreativeEditorTest {
     private static final BedrockItemStack NEW = stack("test:new");
 
     private static BedrockItemStack stack(String identifier) {
-        return BedrockItemStack.of(Access.vanilla().itemType(identifier));
+        return BedrockItemStack.of(Access.vanilla().itemType(identifier).variant());
     }
 
     /**

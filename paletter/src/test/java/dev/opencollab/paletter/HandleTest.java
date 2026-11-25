@@ -87,7 +87,7 @@ class HandleTest {
     @Test
     void decodeReturnsTheStack() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        var apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
+        var apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.variant(), 3));
         BedrockItemStack decoded = palette.decode(apple);
         assertNotNull(decoded);
         assertSame(BedrockItems.APPLE.variant(), decoded.variant());

@@ -7,7 +7,6 @@ import dev.opencollab.paletter.Lookup;
 import dev.opencollab.paletter.internal.access.Access;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,10 +37,10 @@ public final class Ingredients {
      * Finds the item tag of a palette that stands for exactly these items, e.g. to send a Java ingredient as a Bedrock tag
      * instead of one entry per item. Tags are the palette's {@link Palette#itemTags()}, layers included.
      * <p>
-     * A tag lists item types, and a listed type stands for every variant (aux value) of it. So a {@link BedrockItemType} in
-     * {@code items} means all its variants, and a {@link BedrockItemVariant} only that variant. A type is covered if
-     * {@code items} holds the type itself or every variant the type has in this palette; a type with only some of its variants
-     * is not covered, and then no tag matches, as a tag would accept the other variants too.
+     * A tag lists item types, and a listed type stands for every variant (aux value) of it. A type is covered if
+     * {@code items} holds every variant the type has in this palette (for most types just the base variant,
+     * {@link BedrockItemType#variant()}); a type with only some of its variants is not covered, and then no tag matches, as
+     * a tag would accept the other variants too.
      * <p>
      * A tag matches if its members and the covered types are the same set, after leaving out the items the palette does not have
      * (an older version lacks newer items, and none of its tags can have them) and the types {@code unobtainable} accepts (items
@@ -52,39 +51,27 @@ public final class Ingredients {
      * have one of the items.
      *
      * @param palette the palette whose tags to search
-     * @param items the items the ingredient accepts: types for all their variants, variants for just those
+     * @param items the item variants the ingredient accepts
      * @param unobtainable whether an item type is left out of the comparison, on both sides
      * @return the tag as an ingredient with a count of 1, or null if no tag matches
      */
-    public static Ingredient.@Nullable Tag tagOf(@NonNull Palette palette, @NonNull Set<? extends ItemKey> items, @NonNull Predicate<BedrockItemType> unobtainable) {
-        Set<BedrockItemType> wanted = new HashSet<>();
-        Map<BedrockItemType, Set<Integer>> partial = null;
-        for (ItemKey item : items) {
+    public static Ingredient.@Nullable Tag tagOf(@NonNull Palette palette, @NonNull Set<BedrockItemVariant> items, @NonNull Predicate<BedrockItemType> unobtainable) {
+        Map<BedrockItemType, Set<Integer>> auxes = new HashMap<>();
+        for (BedrockItemVariant item : items) {
             BedrockItemType type = item.type();
             if (palette.itemDefinition(type.identifier()) == null || unobtainable.test(type)) {
                 continue;
             }
-            if (item instanceof BedrockItemVariant variant) {
-                if (partial == null) {
-                    partial = new HashMap<>();
-                }
-                partial.computeIfAbsent(type, key -> new HashSet<>()).add(variant.aux());
-            } else {
-                wanted.add(type);
-            }
+            auxes.computeIfAbsent(type, key -> new HashSet<>()).add(item.aux());
         }
         TagTable table = TABLES.computeIfAbsent(palette, TagTable::of);
-        if (partial != null) {
-            for (Map.Entry<BedrockItemType, Set<Integer>> entry : partial.entrySet()) {
-                if (wanted.contains(entry.getKey())) {
-                    continue;
-                }
-                // Only covered if every variant the type has in this palette is there
-                if (!entry.getValue().containsAll(table.variants.getOrDefault(entry.getKey(), Set.of()))) {
-                    return null;
-                }
-                wanted.add(entry.getKey());
+        Set<BedrockItemType> wanted = new HashSet<>();
+        for (Map.Entry<BedrockItemType, Set<Integer>> entry : auxes.entrySet()) {
+            // Only covered if every variant the type has in this palette is there
+            if (!entry.getValue().containsAll(table.variants.getOrDefault(entry.getKey(), Set.of()))) {
+                return null;
             }
+            wanted.add(entry.getKey());
         }
         if (wanted.isEmpty()) {
             return null;

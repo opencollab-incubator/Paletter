@@ -258,7 +258,7 @@ class LayerTest {
         assertEquals(ResolutionKind.DEFAULT, oldest.explain(poplar).kind());
         Palette flat = Paletter.builder().fallbacks(Fallbacks.builder()
             .block(BedrockBlocks.POPLAR_PLANKS, BlockFallback.of(BedrockBlocks.PALE_OAK_PLANKS))
-            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT)).build())
+            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT.variant())).build())
             .build().palette(PALETTER.version(OLDEST).protocolVersion());
         assertEquals("minecraft:pale_oak_planks", flat.blocks().resolve(poplar).block().identifier());
 
@@ -279,7 +279,7 @@ class LayerTest {
     void fallbacksNeverShadowAnItemsOwnCanonicalId() {
         // A layer sends poplar boats as pale oak boats in 26.40; pale oak boats must still match themselves there
         Paletter forcing = Paletter.builder().fallbacks(Fallbacks.builder()
-            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT).forced()).build()).build();
+            .item(BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.PALE_OAK_BOAT.variant()).forced()).build()).build();
         int poplar = Ids.item(PALETTER, ItemVariant.of("minecraft:poplar_boat"));
         int paleOak = Ids.item(PALETTER, ItemVariant.of("minecraft:pale_oak_boat"));
         for (DataVersion version : PALETTER.versions()) {
@@ -296,7 +296,7 @@ class LayerTest {
     void creativeEditsRunPerVersionAndDropMissingItems() {
         PaletteLayer layer = PaletteLayer.builder("creative")
             .creative(editor -> editor.remove(ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.aux(2))))
-            .creative(editor -> editor.insert(BedrockItemStack.of(Access.vanilla().itemType("minecraft:poplar_boat"))).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(Access.vanilla().itemType("minecraft:poplar_boat").variant())).loose(CreativeCategory.ITEMS))
             .build();
         Palette latest = Palettes.palette(LATEST, layer);
         Palette oldest = Palettes.palette(OLDEST, layer);
@@ -304,7 +304,7 @@ class LayerTest {
         assertEquals("minecraft:poplar_boat", latest.creative().items().getLast().getItem().getDefinition().getIdentifier());
         // Poplar boats exist in 26.40's item list (experimental), so they are kept; unknown items would be dropped
         PaletteLayer unknown = PaletteLayer.builder("unknown")
-            .creative(editor -> editor.insert(BedrockItemStack.of(Access.vanilla().itemType("test:does_not_exist"))).loose(CreativeCategory.ITEMS))
+            .creative(editor -> editor.insert(BedrockItemStack.of(Access.vanilla().itemType("test:does_not_exist").variant())).loose(CreativeCategory.ITEMS))
             .build();
         Palette withUnknown = Palettes.palette(OLDEST, unknown);
         assertEquals(PALETTER.vanilla(PALETTER.version(OLDEST)).creative().size(), withUnknown.creative().size());

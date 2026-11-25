@@ -37,14 +37,14 @@ class EncodeDecodeTest {
     void vanillaStacksRoundTrip() {
         Palette palette = latest();
         NbtMap tag = NbtMap.builder().putString("custom", "value").build();
-        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_SWORD).nbt(tag).build();
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_SWORD.variant()).nbt(tag).build();
         ItemData data = palette.encode(stack);
         assertEquals("minecraft:diamond_sword", data.getDefinition().getIdentifier());
         assertEquals(tag, data.getTag());
         BedrockItemStack decoded = palette.decode(data);
         assertEquals(stack, decoded);
 
-        BedrockItemStack apples = BedrockItemStack.of(BedrockItems.APPLE, 12);
+        BedrockItemStack apples = BedrockItemStack.of(BedrockItems.APPLE.variant(), 12);
         assertEquals(12, palette.encode(apples).getCount());
         assertEquals(apples, palette.decode(palette.encode(apples)));
     }
@@ -64,7 +64,7 @@ class EncodeDecodeTest {
     @Test
     void adventureFieldsAndAuxRoundTrip() {
         Palette palette = latest();
-        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_PICKAXE).aux(3).count(2)
+        BedrockItemStack stack = BedrockItemStack.builder(BedrockItems.DIAMOND_PICKAXE.variant()).aux(3).count(2)
             .canPlace("minecraft:stone").canBreak("minecraft:dirt", "minecraft:grass_block").blockingTicks(40).build();
         ItemData data = palette.encode(stack);
         assertEquals(3, data.getDamage());
@@ -81,7 +81,7 @@ class EncodeDecodeTest {
     void customStacksRoundTrip() {
         CustomItem ruby = CustomItem.builder("example:ruby").menuCategory(CreativeCategory.ITEMS).build();
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), PaletteLayer.builder("content").item(ruby).build());
-        BedrockItemStack stack = BedrockItemStack.of(ruby.type(), 7);
+        BedrockItemStack stack = BedrockItemStack.of(ruby.type().variant(), 7);
         ItemData data = palette.encode(stack);
         assertEquals("example:ruby", data.getDefinition().getIdentifier());
         assertEquals(stack, palette.decode(data));
@@ -113,7 +113,7 @@ class EncodeDecodeTest {
     void fallbacksApplyWhenEncodingForAnOlderVersion() {
         DataVersion oldest = PALETTER.version(OLDEST);
         Fallbacks fallbacks = Fallbacks.builder()
-            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK).forced())
+            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK.variant()).forced())
             .build();
         Paletter paletter = Paletter.builder().fallbacks(fallbacks).build();
         Palette palette = paletter.palette(OLDEST);
@@ -128,7 +128,7 @@ class EncodeDecodeTest {
     @Test
     void nothingAtAllEncodesToAirAndDecodesToNull() {
         Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE).build();
-        assertEquals(ItemData.AIR, none.palette(OLDEST).encode(BedrockItemStack.of(BedrockItems.APPLE)));
+        assertEquals(ItemData.AIR, none.palette(OLDEST).encode(BedrockItemStack.of(BedrockItems.APPLE.variant())));
         assertNull(latest().decode(ItemData.AIR));
     }
 }

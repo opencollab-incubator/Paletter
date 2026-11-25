@@ -30,8 +30,10 @@ public static final class dev.opencollab.paletter.Fallbacks$Builder {
     public dev.opencollab.paletter.Fallbacks$Builder defaultBlock(dev.opencollab.paletter.block.BlockFallback)
     public dev.opencollab.paletter.Fallbacks$Builder defaultItem(dev.opencollab.paletter.item.ItemFallback)
     public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.data.DataVersion, dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
+    public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.data.DataVersion, dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ItemFallback)
     public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
     public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType)
+    public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ItemFallback)
     public dev.opencollab.paletter.Fallbacks$Builder item(java.lang.String, dev.opencollab.paletter.item.ItemFallback)
 }
 
@@ -93,7 +95,7 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(int)
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState, dev.opencollab.paletter.block.RegisteredBlockState)
-    public dev.opencollab.paletter.vanilla.BedrockBlockState blockOf(dev.opencollab.paletter.vanilla.ItemKey)
+    public dev.opencollab.paletter.vanilla.BedrockBlockState blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState(int)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState(java.lang.String, java.util.Map<java.lang.String, ?>, dev.opencollab.paletter.Lookup)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState(org.cloudburstmc.nbt.NbtMap, dev.opencollab.paletter.Lookup)
@@ -125,8 +127,8 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.PaletteReport report()
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState, dev.opencollab.paletter.block.ResolvedBlock)
-    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.ItemKey)
-    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.ItemKey, dev.opencollab.paletter.item.ResolvedItem)
+    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)
+    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ResolvedItem)
     public dev.opencollab.paletter.block.ResolvedBlock resolveBlock(int)
     public int runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public int runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState, int)
@@ -168,7 +170,7 @@ public static final class dev.opencollab.paletter.PaletteLayer$Builder {
     @Experimental public dev.opencollab.paletter.PaletteLayer$Builder overrideItem(dev.opencollab.paletter.vanilla.BedrockItemType, java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride>)
     @Experimental public dev.opencollab.paletter.PaletteLayer$Builder overrideItem(java.lang.String, java.util.function.Consumer<dev.opencollab.paletter.item.ItemOverride>)
     public dev.opencollab.paletter.PaletteLayer$Builder tag(java.lang.String, java.lang.String...)
-    public dev.opencollab.paletter.PaletteLayer$Builder variant(dev.opencollab.paletter.vanilla.ItemKey)
+    public dev.opencollab.paletter.PaletteLayer$Builder variant(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.PaletteLayer$Builder voxelShape(java.lang.String, dev.opencollab.paletter.block.VoxelShape)
 }
 
@@ -2475,10 +2477,10 @@ public sealed interface dev.opencollab.paletter.creative.CreativePlacement permi
     public static final dev.opencollab.paletter.creative.CreativePlacement DEFAULT
     public static final dev.opencollab.paletter.creative.CreativePlacement FIRST
     public static dev.opencollab.paletter.creative.CreativePlacement after(dev.opencollab.paletter.creative.ItemMatcher)
-    public static dev.opencollab.paletter.creative.CreativePlacement after(dev.opencollab.paletter.vanilla.ItemKey)
+    public static dev.opencollab.paletter.creative.CreativePlacement after(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public static dev.opencollab.paletter.creative.CreativePlacement afterAnyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)
     public static dev.opencollab.paletter.creative.CreativePlacement before(dev.opencollab.paletter.creative.ItemMatcher)
-    public static dev.opencollab.paletter.creative.CreativePlacement before(dev.opencollab.paletter.vanilla.ItemKey)
+    public static dev.opencollab.paletter.creative.CreativePlacement before(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public static dev.opencollab.paletter.creative.CreativePlacement beforeAnyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)
 }
 
@@ -2509,7 +2511,7 @@ public sealed interface dev.opencollab.paletter.creative.ItemMatcher permits dev
     public abstract boolean matches(dev.opencollab.paletter.item.BedrockItemStack)
     public static dev.opencollab.paletter.creative.ItemMatcher namespace(java.lang.String)
     public default dev.opencollab.paletter.creative.ItemMatcher negate()
-    public static dev.opencollab.paletter.creative.ItemMatcher of(dev.opencollab.paletter.vanilla.ItemKey)
+    public static dev.opencollab.paletter.creative.ItemMatcher of(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public static dev.opencollab.paletter.creative.ItemMatcher of(java.lang.String, java.util.function.Predicate<dev.opencollab.paletter.item.BedrockItemStack>)
 }
 
@@ -2547,15 +2549,15 @@ public final class dev.opencollab.paletter.item.BedrockItemStack {
     public int aux()
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState()
     public long blockingTicks()
-    public static dev.opencollab.paletter.item.BedrockItemStack$Builder builder(dev.opencollab.paletter.vanilla.ItemKey)
+    public static dev.opencollab.paletter.item.BedrockItemStack$Builder builder(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public java.util.List<java.lang.String> canBreak()
     public java.util.List<java.lang.String> canPlace()
     public int count()
     public boolean equals(java.lang.Object)
     public int hashCode()
     public org.cloudburstmc.nbt.NbtMap nbt()
-    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.ItemKey)
-    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.ItemKey, int)
+    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemVariant)
+    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemVariant, int)
     public dev.opencollab.paletter.item.BedrockItemStack$Builder toBuilder()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemType type()
@@ -2563,7 +2565,7 @@ public final class dev.opencollab.paletter.item.BedrockItemStack {
     public dev.opencollab.paletter.item.BedrockItemStack withBlockState(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.item.BedrockItemStack withCount(int)
     public dev.opencollab.paletter.item.BedrockItemStack withNbt(org.cloudburstmc.nbt.NbtMap)
-    public dev.opencollab.paletter.item.BedrockItemStack withVariant(dev.opencollab.paletter.vanilla.ItemKey)
+    public dev.opencollab.paletter.item.BedrockItemStack withVariant(dev.opencollab.paletter.vanilla.BedrockItemVariant)
 }
 
 public static final class dev.opencollab.paletter.item.BedrockItemStack$Builder {
@@ -2577,7 +2579,7 @@ public static final class dev.opencollab.paletter.item.BedrockItemStack$Builder 
     public dev.opencollab.paletter.item.BedrockItemStack$Builder canPlace(java.util.List<java.lang.String>)
     public dev.opencollab.paletter.item.BedrockItemStack$Builder count(int)
     public dev.opencollab.paletter.item.BedrockItemStack$Builder nbt(org.cloudburstmc.nbt.NbtMap)
-    public dev.opencollab.paletter.item.BedrockItemStack$Builder variant(dev.opencollab.paletter.vanilla.ItemKey)
+    public dev.opencollab.paletter.item.BedrockItemStack$Builder variant(dev.opencollab.paletter.vanilla.BedrockItemVariant)
 }
 
 public final class dev.opencollab.paletter.item.CustomItem {
@@ -2615,7 +2617,7 @@ public final class dev.opencollab.paletter.item.ItemFallback {
     public boolean force()
     public dev.opencollab.paletter.item.ItemFallback forced()
     public int hashCode()
-    public static dev.opencollab.paletter.item.ItemFallback of(dev.opencollab.paletter.vanilla.ItemKey)
+    public static dev.opencollab.paletter.item.ItemFallback of(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.vanilla.BedrockItemType target()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
@@ -5737,7 +5739,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockExperiments {
     public static final java.lang.String Y_2026_DROP_4 = "y_2026_drop_4"
 }
 
-public final class dev.opencollab.paletter.vanilla.BedrockItemType implements dev.opencollab.paletter.vanilla.ItemKey {
+public final class dev.opencollab.paletter.vanilla.BedrockItemType {
     public static dev.opencollab.paletter.vanilla.BedrockItemType byIdentifier(java.lang.String)
     public java.lang.String constantName()
     public boolean equals(java.lang.Object)
@@ -5749,21 +5751,19 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemType implements de
     public boolean isEducation()
     public dev.opencollab.paletter.vanilla.BedrockItemType resolved()
     public java.lang.String toString()
-    public dev.opencollab.paletter.vanilla.BedrockItemType type()
     public static java.util.List<dev.opencollab.paletter.vanilla.BedrockItemType> vanillaTypes()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant(int)
     public java.util.List<dev.opencollab.paletter.vanilla.BedrockItemVariant> variants()
 }
 
-public final class dev.opencollab.paletter.vanilla.BedrockItemVariant implements dev.opencollab.paletter.vanilla.ItemKey {
+public final class dev.opencollab.paletter.vanilla.BedrockItemVariant {
     public int aux()
     public static dev.opencollab.paletter.vanilla.BedrockItemVariant byIdentifier(java.lang.String, int)
     public boolean equals(java.lang.Object)
     public int hashCode()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemType type()
-    public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
 }
 
 public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
@@ -8263,11 +8263,6 @@ public final class dev.opencollab.paletter.vanilla.IntState extends dev.opencoll
     public static dev.opencollab.paletter.vanilla.IntState of(java.lang.String, int...)
     public static dev.opencollab.paletter.vanilla.IntState range(java.lang.String, int, int)
     public java.util.List<java.lang.Integer> values()
-}
-
-public sealed interface dev.opencollab.paletter.vanilla.ItemKey permits dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemVariant {
-    public abstract dev.opencollab.paletter.vanilla.BedrockItemType type()
-    public abstract dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
 }
 
 public interface dev.opencollab.paletter.vanilla.StateValue {

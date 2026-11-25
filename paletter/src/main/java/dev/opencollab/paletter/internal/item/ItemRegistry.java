@@ -38,7 +38,6 @@ import dev.opencollab.paletter.internal.access.VanillaAccess;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 import dev.opencollab.paletter.internal.data.VanillaData;
 import dev.opencollab.paletter.internal.data.VanillaItem;
 import dev.opencollab.paletter.internal.component.ComponentIndex;
@@ -103,6 +102,8 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private final Map<String, RegisteredBlockState> defaultBlocks;
     private final Set<String> multiStateBlockItems;
     private final Map<String, ItemFallback> fallbacks;
+    /** Fallbacks of single variants (identifier and aux, no block state): checked before those of their identifier. */
+    private final Map<ItemVariant, ItemFallback> variantFallbacks;
     private final @Nullable ItemFallback defaultFallback;
     private final CanonicalItems canonical;
     /** The tags this registry changes, with all their items; all tags without parent. */
@@ -164,6 +165,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         this.defaultBlocks = Collections.unmodifiableMap(defaultBlocks);
         this.multiStateBlockItems = Set.copyOf(multiStateBlockItems);
         this.fallbacks = Map.copyOf(builder.fallbacks);
+        this.variantFallbacks = Map.copyOf(builder.variantFallbacks);
         this.defaultFallback = builder.defaultFallback;
         this.canonical = builder.canonical;
         Map<String, List<String>> tags = new HashMap<>();
@@ -409,11 +411,11 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      *     <li>the block of a custom block item.</li>
      * </ol>
      *
-     * @param key a variant (or a type, for its base variant), written against the newest Bedrock version like {@link #resolve(ItemVariant)}
+     * @param key a variant, written against the newest Bedrock version like {@link #resolve(ItemVariant)}
      * @return the block, or null if the item is not a block item here (or does not exist and has no fallback)
      * @since 1.0.0
      */
-    public @Nullable RegisteredBlockState blockOf(@NonNull ItemKey key) {
+    public @Nullable RegisteredBlockState blockOf(@NonNull BedrockItemVariant key) {
         ResolvedItem resolved = resolve(key);
         return resolved == null ? null : resolved.block();
     }
@@ -465,13 +467,13 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
      * What this version sends for a variant: its resolution, cached per canonical id. A field read and an array load
      * for the variants of the newest version, it does not allocate; any other variant is resolved on every call.
      *
-     * @param key a variant (or a type, for its base variant), written against the newest Bedrock version
+     * @param key a variant, written against the newest Bedrock version
      * @return the item, damage and block to send, and whether the item is a fallback; null if the item does not exist
      *         here and has no fallback
      * @since 1.0.0
      */
-    public @Nullable ResolvedItem resolve(@NonNull ItemKey key) {
-        BedrockItemVariant variant = key.variant();
+    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant key) {
+        BedrockItemVariant variant = key;
         int id = VANILLA.canonicalId(variant, canonical);
         if (id != -1) {
             return item(id);
@@ -542,13 +544,23 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         return result;
     }
 
+    /** The fallback of a variant: its own, else that of its identifier; null if neither has one. */
+    private @Nullable ItemFallback fallbackOf(ItemVariant variant) {
+        if (!variantFallbacks.isEmpty()) {
+            ItemFallback own = variantFallbacks.get(ItemVariant.of(variant.identifier(), variant.damage()));
+            if (own != null) {
+                return own;
+            }
+        }
+        return fallbacks.get(variant.identifier());
+    }
+
     private @Nullable ResolvedItem resolveUncached(ItemVariant variant) {
-        ItemFallback forced = fallbacks.get(variant.identifier());
-        RegisteredItem item = forced != null && forced.force() ? null : getDefinition(variant.identifier());
+        ItemFallback target = fallbackOf(variant);
+        RegisteredItem item = target != null && target.force() ? null : getDefinition(variant.identifier());
         boolean fallback = false;
         int damage = variant.damage();
         if (item == null) {
-            ItemFallback target = fallbacks.get(variant.identifier());
             item = target == null ? null : getDefinition(target.target().identifier());
             if (item == null) {
                 return null;
@@ -828,7 +840,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             if (items[i] == null || items[i].fallback()) {
                 // What could change this entry if an item of that identifier were added
                 unresolved.add(variant.identifier());
-                ItemFallback target = fallbacks.get(variant.identifier());
+                ItemFallback target = fallbackOf(variant);
                 if (target != null) {
                     unresolved.add(target.target().identifier());
                 }
@@ -1008,6 +1020,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          */
         private final Map<String, Set<String>> itemBlocks;
         private final Map<String, ItemFallback> fallbacks;
+        private final Map<ItemVariant, ItemFallback> variantFallbacks;
         private @Nullable ItemFallback defaultFallback;
         private final CanonicalItems canonical;
         private final Map<String, Set<String>> tags = new LinkedHashMap<>();
@@ -1037,6 +1050,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             this.customBlockItems = new HashSet<>();
             this.itemBlocks = new HashMap<>();
             this.fallbacks = new HashMap<>(fallbacks);
+            this.variantFallbacks = new HashMap<>();
             this.defaultFallback = ItemFallback.UNKNOWN;
             this.canonical = canonical;
             this.customItems = new ArrayList<>();
@@ -1052,6 +1066,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
             this.customBlockItems = new HashSet<>(parent.customBlockItems);
             this.itemBlocks = parent.itemBlocks;
             this.fallbacks = new HashMap<>(parent.fallbacks);
+            this.variantFallbacks = new HashMap<>(parent.variantFallbacks);
             this.defaultFallback = parent.defaultFallback;
             this.canonical = canonical;
             this.customItems = new ArrayList<>(parent.customItems);
@@ -1276,6 +1291,16 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         }
 
         /**
+         * Sets the fallback of one variant, replacing an earlier one; it is checked before that of its identifier.
+         *
+         * @param variant the identifier and aux of the variant the fallback replaces, without block state
+         * @param fallback the fallback
+         */
+        public void fallback(@NonNull ItemVariant variant, @NonNull ItemFallback fallback) {
+            variantFallbacks.put(variant, fallback);
+        }
+
+        /**
          * Adds items to an item tag, which is created if it does not exist.
          *
          * @param tag the tag name
@@ -1417,7 +1442,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
          */
         private boolean canReuseTable(Map<String, RegisteredBlockState> changedBlocks) {
             if (!blocks.extendsWithBlocks(parent.blocks) || !canonical.extendsOrIs(parent.canonical)
-                || !fallbacks.equals(parent.fallbacks) || !Objects.equals(defaultFallback, parent.defaultFallback)) {
+                || !fallbacks.equals(parent.fallbacks) || !variantFallbacks.equals(parent.variantFallbacks) || !Objects.equals(defaultFallback, parent.defaultFallback)) {
                 return false;
             }
             for (String identifier : changedBlocks.keySet()) {

@@ -13,7 +13,7 @@ import java.util.Objects;
 
 /**
  * An item variant resolved against one palette: what to send to the client, see
- * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.ItemKey)}. Resolutions are made by the
+ * {@link dev.opencollab.paletter.Palette#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)}. Resolutions are made by the
  * palette, kept, and shared between a palette and the palettes extending it. Resolutions are equal if they send the same
  * definition, aux and block, resolved the same way, with the same behaviour handle; compare them with {@code equals}.
  *

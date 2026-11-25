@@ -33,14 +33,13 @@ class ItemVariantsTest {
 
     private static final List<String> DATA = List.of("VanillaIndex", "PaletteDataSource", "PaletteDataCodec", "VanillaData");
 
-    /** What a fresh JVM does with item keys: the main of {@link #usingItemKeysLoadsNoData}. */
+    /** What a fresh JVM does with item variants: the main of {@link #usingItemVariantsLoadsNoData}. */
     public static final class KeyReference {
         public static void main(String[] args) {
-            ItemKey type = BedrockItems.POTION;
-            ItemKey base = BedrockItems.POTION.variant();
-            ItemKey damaged = BedrockItems.POTION.variant(7);
-            ItemKey custom = BedrockItemType.custom("example:ruby").variant(3);
-            System.out.println("KEYS " + type.variant().aux() + base.variant().aux() + damaged.variant().aux() + custom.variant().aux());
+            BedrockItemVariant base = BedrockItems.POTION.variant();
+            BedrockItemVariant damaged = BedrockItems.POTION.variant(7);
+            BedrockItemVariant custom = BedrockItemType.custom("example:ruby").variant(3);
+            System.out.println("KEYS " + base.aux() + damaged.aux() + custom.aux());
         }
     }
 
@@ -90,9 +89,9 @@ class ItemVariantsTest {
             check(potion == BedrockItems.POTION.variant(19), "POTION.variant(19) is stable");
             check(preview == BedrockItems.BRITTLE_ICE.variant(), "an absent type's base is stable");
             check(previewDamaged.type() == BedrockItems.BRITTLE_ICE, "variants are of their own type, not the fallback's");
-            check(palette.resolve(bed).equals(palette.resolve(BedrockItems.BED)), "bed resolves like its type");
+            check(palette.resolve(bed).equals(palette.resolve(BedrockItems.BED.variant())), "bed resolves like its type");
             check(palette.resolve(potion).equals(palette.resolve(BedrockItems.POTION.variant(19))), "potion resolves like after loading");
-            check(palette.resolve(preview).equals(palette.resolve(BedrockItems.BRITTLE_ICE)), "absent type resolves like its type");
+            check(palette.resolve(preview).equals(palette.resolve(BedrockItems.BRITTLE_ICE.variant())), "absent type resolves like its type");
             check(palette.resolve(previewDamaged).equals(palette.resolve(BedrockItems.BRITTLE_ICE.variant(3))), "absent variant resolves like after loading");
             System.out.println("PRELOAD OK");
         }
@@ -107,11 +106,11 @@ class ItemVariantsTest {
     @Test
     void aTypeAsAKeyMeansAuxZeroEverywhere() {
         var bed = BedrockItems.BED;
-        assertEquals(dev.opencollab.paletter.item.ItemFallback.of(bed), dev.opencollab.paletter.item.ItemFallback.of(bed.variant()));
-        var white = dev.opencollab.paletter.item.BedrockItemStack.of(bed);
+        assertEquals(dev.opencollab.paletter.item.ItemFallback.of(bed.variant()), dev.opencollab.paletter.item.ItemFallback.of(bed.variant()));
+        var white = dev.opencollab.paletter.item.BedrockItemStack.of(bed.variant());
         var silver = dev.opencollab.paletter.item.BedrockItemStack.of(bed.variant(8));
-        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed).matches(white));
-        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed).matches(silver));
+        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(white));
+        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(silver));
         assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(white));
         assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(silver));
         assertTrue(dev.opencollab.paletter.creative.ItemMatcher.anyVariantOf(bed).matches(white));
@@ -135,23 +134,22 @@ class ItemVariantsTest {
     }
 
     @Test
-    void usingItemKeysLoadsNoData(@TempDir Path temp) throws IOException, InterruptedException {
+    void usingItemVariantsLoadsNoData(@TempDir Path temp) throws IOException, InterruptedException {
         String output = run(temp, KeyReference.class);
-        assertTrue(output.contains("KEYS 0073"), output);
+        assertTrue(output.contains("KEYS 073"), output);
         for (String data : DATA) {
-            assertFalse(output.contains("." + data + " source:"), data + " was loaded by using an item key");
+            assertFalse(output.contains("." + data + " source:"), data + " was loaded by using an item variant");
         }
     }
 
     @Test
-    void aTypeIsItsBaseVariant() {
-        assertSame(BedrockItems.POTION.variant(), BedrockItems.POTION.variant().variant());
+    void aTypeHasItsBaseVariant() {
         assertEquals(BedrockItems.POTION, BedrockItems.POTION.variant().type());
         assertSame(BedrockItems.POTION.variant(), BedrockItems.POTION.variant(0));
         Paletter paletter = Paletter.bundled();
         dev.opencollab.paletter.Palette palette = paletter.palette(paletter.latest().protocolVersion());
-        assertSame(palette.resolve(BedrockItems.POTION.variant()), palette.resolve(BedrockItems.POTION));
-        assertEquals(dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.variant()), dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION));
+        assertSame(palette.resolve(BedrockItems.POTION.variant()), palette.resolve(BedrockItems.POTION.variant()));
+        assertEquals(dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.variant()), dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.variant()));
     }
 
     @Test

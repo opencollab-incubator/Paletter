@@ -47,7 +47,7 @@ class FallbackQueryTest {
             assertEquals(variant, newest.resolve(variant).variant(), variant.toString());
         }
         // Content behind an experiment the Paletter did not enable is missing even in the newest version
-        assertTrue(PALETTER.palette(Integer.MAX_VALUE).resolve(BedrockItems.ICICLE).fallback());
+        assertTrue(PALETTER.palette(Integer.MAX_VALUE).resolve(BedrockItems.ICICLE.variant()).fallback());
     }
 
     @Test
@@ -62,9 +62,9 @@ class FallbackQueryTest {
     @Test
     void existingItemsAreNotFallbacks() {
         Palette oldest = PALETTER.palette(OLDEST);
-        assertFalse(oldest.resolve(BedrockItems.STICK).fallback());
-        assertEquals(BedrockItems.STICK.variant(), oldest.resolve(BedrockItems.STICK).variant());
-        assertFalse(oldest.resolve(BedrockItems.DIAMOND_SWORD).fallback());
+        assertFalse(oldest.resolve(BedrockItems.STICK.variant()).fallback());
+        assertEquals(BedrockItems.STICK.variant(), oldest.resolve(BedrockItems.STICK.variant()).variant());
+        assertFalse(oldest.resolve(BedrockItems.DIAMOND_SWORD.variant()).fallback());
     }
 
     @Test
@@ -90,7 +90,7 @@ class FallbackQueryTest {
     void aFallbacksEntryNamesItsTarget() {
         BedrockItemVariant missing = missingInOldest().getFirst();
         Palette type = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(BedrockItems.STICK)).build())
+            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(BedrockItems.STICK.variant())).build())
             .build().palette(OLDEST);
         assertTrue(type.resolve(missing).fallback());
         // The aux of the replaced variant is kept
@@ -106,13 +106,13 @@ class FallbackQueryTest {
     @Test
     void aForcedFallbackReplacesAnExistingItem() {
         Palette forced = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK).forced()).build())
+            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK.variant()).forced()).build())
             .build().palette(OLDEST);
-        assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD).fallback());
-        assertEquals(BedrockItems.STICK.variant(), forced.resolve(BedrockItems.DIAMOND_SWORD).variant());
-        assertFalse(forced.resolve(BedrockItems.STICK).fallback());
-        assertEquals(ResolutionKind.FALLBACK, forced.resolve(BedrockItems.DIAMOND_SWORD).kind());
-        assertEquals(ResolutionKind.EXACT, forced.resolve(BedrockItems.STICK).kind());
+        assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).fallback());
+        assertEquals(BedrockItems.STICK.variant(), forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).variant());
+        assertFalse(forced.resolve(BedrockItems.STICK.variant()).fallback());
+        assertEquals(ResolutionKind.FALLBACK, forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).kind());
+        assertEquals(ResolutionKind.EXACT, forced.resolve(BedrockItems.STICK.variant()).kind());
     }
 
     @Test

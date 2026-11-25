@@ -10,7 +10,7 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
  * A variant of a {@link BedrockItemType}: the type and its aux value. Paletter says "aux" for the value that names a
  * variant (BDS's aux value, the {@code damage} field of Cloudburst's {@code ItemData}); "damage" is only an item's wear. The block a stack places is not part of
  * the variant, it belongs to the stack ({@link dev.opencollab.paletter.item.BedrockItemStack#blockState()}). Obtained from
- * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}, or {@link BedrockItemType#variant()} for the base variant. It is an {@link ItemKey}, as is a type (for its base variant).
+ * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}, or {@link BedrockItemType#variant()} for the base variant.
  * <p>
  * Equality: as for {@link BedrockItemType}, {@code equals} always works. {@code ==} works too for the variants of the
  * vanilla constants (the types of {@link BedrockItems}, the named variants of {@link BedrockItemVariants}) and for the base variant of registered custom content: {@code customItem.type().variant()} is the very
@@ -21,7 +21,7 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
  *
  * @since 1.0.0
  */
-public final class BedrockItemVariant implements ItemKey {
+public final class BedrockItemVariant {
     private final BedrockItemType type;
     private final int aux;
     /** The canonical id in the newest bundled data, or -1: a variant without one, and the named constants, which look it up. */
@@ -87,14 +87,6 @@ public final class BedrockItemVariant implements ItemKey {
             return BedrockItemType.fromIdentifier(split.identifier()).variant(split.aux());
         }
         return BedrockItemType.fromIdentifier(identifier).variant(aux);
-    }
-
-    /**
-     * @return this variant
-     */
-    @Override
-    public @NonNull BedrockItemVariant variant() {
-        return this;
     }
 
     /**

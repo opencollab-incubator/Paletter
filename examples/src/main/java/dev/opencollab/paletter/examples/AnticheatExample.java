@@ -97,9 +97,9 @@ public final class AnticheatExample {
             + custom.explain(BlockBehaviour.DESTROY_TIME));
 
         // Items: how long eating takes, the stack size, the damage of a weapon
-        System.out.println("apple use duration: " + palette.resolve(BedrockItems.APPLE).behaviour().get(ItemBehaviour.USE_DURATION) + " ticks");
-        System.out.println("ender pearl stack: " + palette.resolve(BedrockItems.ENDER_PEARL).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
+        System.out.println("apple use duration: " + palette.resolve(BedrockItems.APPLE.variant()).behaviour().get(ItemBehaviour.USE_DURATION) + " ticks");
+        System.out.println("ender pearl stack: " + palette.resolve(BedrockItems.ENDER_PEARL.variant()).behaviour().get(ItemBehaviour.MAX_STACK_SIZE));
         System.out.println("diamond sword attack damage: "
-            + palette.resolve(BedrockItems.DIAMOND_SWORD).behaviour().explain(ItemBehaviour.ATTACK_DAMAGE));
+            + palette.resolve(BedrockItems.DIAMOND_SWORD.variant()).behaviour().explain(ItemBehaviour.ATTACK_DAMAGE));
     }
 }

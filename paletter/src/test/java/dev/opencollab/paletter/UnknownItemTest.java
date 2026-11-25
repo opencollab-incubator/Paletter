@@ -71,7 +71,7 @@ class UnknownItemTest {
 
     @Test
     void theConfiguredDefaultFallbackIsUsedEverywhere() {
-        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK)).build()).build();
+        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK.variant())).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
         BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 7);
@@ -111,7 +111,7 @@ class UnknownItemTest {
         // A listed variant is still the known instance, an unlisted aux of an item with variants keeps its aux
         BedrockItemVariant potion = BedrockItems.POTION.variant(5);
         assertSame(potion, palette.decode(palette.encode(BedrockItemStack.of(potion))).variant());
-        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION)).toBuilder().damage(9999).build();
+        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant())).toBuilder().damage(9999).build();
         BedrockItemStack oddStack = palette.decode(odd);
         assertNotNull(oddStack);
         assertEquals(BedrockItems.POTION, oddStack.type());

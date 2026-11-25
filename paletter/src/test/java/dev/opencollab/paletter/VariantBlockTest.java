@@ -40,7 +40,7 @@ class VariantBlockTest {
         Palette palette = Palettes.palette(PALETTER.latest().protocolVersion(), layer);
         RegisteredBlockState block = palette.resolve(extra).block();
         assertNotNull(block);
-        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS).block(), block);
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.variant()).block(), block);
         // The extra variant has a handle in the palette, and so a key
         assertNotNull(palette.itemVariant(extra.type().identifier(), 7, Lookup.RENAMED));
         assertNotNull(palette.blocks().key(block));
@@ -50,7 +50,7 @@ class VariantBlockTest {
     void aVariantNobodyRegisteredStillGetsTheBlockOfItsItem() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
         BedrockItemVariant unknown = BedrockItems.OAK_PLANKS.variant(1234);
-        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS).block(), palette.resolve(unknown).block());
+        assertEquals(palette.resolve(BedrockItems.OAK_PLANKS.variant()).block(), palette.resolve(unknown).block());
         assertNull(palette.resolve(BedrockItems.STICK.variant(1234)).block());
     }
 

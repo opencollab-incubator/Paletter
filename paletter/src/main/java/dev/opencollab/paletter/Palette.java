@@ -54,7 +54,6 @@ import dev.opencollab.paletter.internal.block.RegisteredBlock;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ import java.util.function.Supplier;
  * }</pre>
  * Translating content uses keys, version independent objects ({@link BedrockBlockState}, {@link BedrockItemVariant}):
  * {@link #blockState(NbtMap, Lookup)} and {@link #itemVariant(String, int, Lookup)} find them once, then
- * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(ItemKey)}
+ * {@link #runtimeId(BedrockBlockState)} and {@link #blockDefinition(BedrockBlockState)} for blocks, {@link #resolve(BedrockItemVariant)}
  * for items: field reads and array lookups that do not allocate. {@link #encode} and {@link #decode} translate whole
  * stacks at the protocol boundary; {@code encode} builds the {@link ItemData} it returns. The ids behind the keys are not
  * API.
@@ -960,14 +959,14 @@ public final class Palette {
      * fallback's block in an old version, the custom block of a layer. {@link #runtimeId(BedrockBlockState)} gives its
      * runtime id here.
      *
-     * @param key the item type or variant
+     * @param key the item variant
      * @return the block's key, or null if the item is not a block item here (or no state of the newest data
      *         resolves to the block, see {@link #blockState(BlockDefinition)}). Null too for an item that places a block
      *         but that BDS sends without one, as its captured creative stacks show (doors, signs, beds, seeds, ...): this
      *         is the block sent with the item, not the block it places ({@link #itemOf} is the other direction)
      * @since 1.0.0
      */
-    public @Nullable BedrockBlockState blockOf(@NonNull ItemKey key) {
+    public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemVariant key) {
         RegisteredBlockState block = items.blockOf(key);
         return block == null ? null : blocks.key(block);
     }
@@ -1000,14 +999,14 @@ public final class Palette {
      * variant is sent as another item, {@link ResolvedItem#variant()} which. Whether this version registers an item
      * itself is {@link #itemDefinition(String)}.
      *
-     * @param key the item type or variant
+     * @param key the item variant
      * @return the resolution
      * @throws IllegalArgumentException if nothing is sent for the item: this version does not have it, and neither it
      *         nor the {@link Fallbacks} default has a fallback ({@link Fallbacks#NONE}). Use
-     *         {@link #resolve(ItemKey, ResolvedItem)} where that may happen
+     *         {@link #resolve(BedrockItemVariant, ResolvedItem)} where that may happen
      * @since 1.0.0
      */
-    public @NonNull ResolvedItem resolve(@NonNull ItemKey key) {
+    public @NonNull ResolvedItem resolve(@NonNull BedrockItemVariant key) {
         ResolvedItem resolved = items.resolve(key);
         if (resolved == null) {
             throw new IllegalArgumentException("Nothing is sent for " + key + " in " + this + ": the version lacks it and there is no fallback");
@@ -1016,14 +1015,14 @@ public final class Palette {
     }
 
     /**
-     * Resolves an item like {@link #resolve(ItemKey)}, but returns a default where that throws.
+     * Resolves an item like {@link #resolve(BedrockItemVariant)}, but returns a default where that throws.
      *
-     * @param key the item type or variant
-     * @param orElse what to return where {@link #resolve(ItemKey)} throws, may be null
+     * @param key the item variant
+     * @param orElse what to return where {@link #resolve(BedrockItemVariant)} throws, may be null
      * @return the resolution, or {@code orElse} if nothing is sent for the item
      * @since 1.0.0
      */
-    public @Nullable ResolvedItem resolve(@NonNull ItemKey key, @Nullable ResolvedItem orElse) {
+    public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant key, @Nullable ResolvedItem orElse) {
         ResolvedItem resolved = items.resolve(key);
         return resolved != null ? resolved : orElse;
     }

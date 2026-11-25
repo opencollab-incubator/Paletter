@@ -6,7 +6,6 @@ import org.cloudburstmc.nbt.NbtMap;
 import dev.opencollab.paletter.vanilla.BedrockBlockState;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
-import dev.opencollab.paletter.vanilla.ItemKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.Objects;
  * for an aux nobody named: it gives the base variant and keeps the client's value in {@link #aux()}, so the variants of
  * decoded stacks are bounded and safe as map keys.
  * <p>
- * Made with {@link #of(ItemKey)}, {@link #of(ItemKey, int)} or {@link #builder(ItemKey)}; a value with
+ * Made with {@link #of(BedrockItemVariant)}, {@link #of(BedrockItemVariant, int)} or {@link #builder(BedrockItemVariant)}; a value with
  * {@code equals}, {@code hashCode} and {@code toString} over every field.
  *
  * @since 1.0.0
@@ -53,39 +52,39 @@ public final class BedrockItemStack {
     /**
      * Creates a stack of one item.
      *
-     * @param key a variant, or a type for its base variant
-     * @return one item of a variant, or of a type's base variant, without NBT or block state
+     * @param key a variant
+     * @return one item of a variant, without NBT or block state
      * @throws NullPointerException if the key is null
      * @since 1.0.0
      */
-    public static @NonNull BedrockItemStack of(@NonNull ItemKey key) {
+    public static @NonNull BedrockItemStack of(@NonNull BedrockItemVariant key) {
         return builder(key).build();
     }
 
     /**
      * Creates a stack of several items.
      *
-     * @param key a variant, or a type for its base variant
+     * @param key a variant
      * @param count the stack size, at least 1
-     * @return a stack of a variant, or of a type's base variant, without NBT or block state
+     * @return a stack of a variant, without NBT or block state
      * @throws NullPointerException if the key is null
      * @throws IllegalArgumentException if the count is below 1
      * @since 1.0.0
      */
-    public static @NonNull BedrockItemStack of(@NonNull ItemKey key, int count) {
+    public static @NonNull BedrockItemStack of(@NonNull BedrockItemVariant key, int count) {
         return builder(key).count(count).build();
     }
 
     /**
      * Starts a stack of one item of a variant, with nothing else set.
      *
-     * @param key a variant, or a type for its base variant
+     * @param key a variant
      * @return a builder
      * @throws NullPointerException if the key is null
      * @since 1.0.0
      */
-    public static @NonNull Builder builder(@NonNull ItemKey key) {
-        return new Builder(key.variant());
+    public static @NonNull Builder builder(@NonNull BedrockItemVariant key) {
+        return new Builder(Objects.requireNonNull(key, "key"));
     }
 
     /**
@@ -200,11 +199,11 @@ public final class BedrockItemStack {
     /**
      * Returns a copy with another variant, keeping the other fields; an aux of its own (see {@link #aux()}) is dropped.
      *
-     * @param key a variant, or a type for its base variant
+     * @param key a variant
      * @return the new stack
      * @since 1.0.0
      */
-    public @NonNull BedrockItemStack withVariant(@NonNull ItemKey key) {
+    public @NonNull BedrockItemStack withVariant(@NonNull BedrockItemVariant key) {
         return toBuilder().variant(key).build();
     }
 
@@ -310,20 +309,20 @@ public final class BedrockItemStack {
         /**
          * Sets the variant. An aux set before is dropped: the stack takes the variant's aux.
          *
-         * @param key a variant, or a type for its base variant
+         * @param key a variant
          * @return this builder
          * @throws NullPointerException if the key is null
          * @since 1.0.0
          */
-        public @NonNull Builder variant(@NonNull ItemKey key) {
-            this.variant = Objects.requireNonNull(key, "key").variant();
+        public @NonNull Builder variant(@NonNull BedrockItemVariant key) {
+            this.variant = Objects.requireNonNull(key, "key");
             this.aux = null;
             return this;
         }
 
         /**
          * Sets the aux value to send for a stack of a base variant, where it names no variant: a legacy damage value, or
-         * what a client sent. A named variant is the {@link #variant(ItemKey) variant} itself, e.g.
+         * what a client sent. A named variant is the {@link #variant(BedrockItemVariant) variant} itself, e.g.
          * {@code BedrockItems.POTION.variant(5)}.
          *
          * @param aux the aux value

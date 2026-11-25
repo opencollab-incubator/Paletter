@@ -62,9 +62,9 @@ public final class BedrockServerExample {
 
         // Items: handle -> stack for the client, and back. The palette hands back the ruby's own handle, so == works
         // (equals works too, e.g. for an equal item registered by another layer)
-        ItemData stack = palette.encode(BedrockItemStack.of(ruby.type(), 3));
+        ItemData stack = palette.encode(BedrockItemStack.of(ruby.type().variant(), 3));
         System.out.println("decode(ruby stack) is ruby: " + (palette.decode(stack).variant() == ruby.type().variant()));
-        ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE));
+        ItemData apple = palette.encode(BedrockItemStack.of(BedrockItems.APPLE.variant()));
         System.out.println("decode(apple) = " + palette.decode(apple));
 
         // What an item is made of in this version: its registered item and its properties

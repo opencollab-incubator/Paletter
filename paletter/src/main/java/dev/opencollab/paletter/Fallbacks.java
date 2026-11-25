@@ -4,9 +4,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import dev.opencollab.paletter.block.BlockFallback;
 import dev.opencollab.paletter.data.DataVersion;
+import dev.opencollab.paletter.internal.item.ItemVariant;
 import dev.opencollab.paletter.item.ItemFallback;
 import dev.opencollab.paletter.vanilla.BedrockBlockType;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
+import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -47,18 +49,24 @@ public final class Fallbacks {
     public static final Fallbacks NONE = new Builder().defaultItem(null).defaultBlock(null).build();
 
     private final Map<String, ItemFallback> items;
+    private final Map<ItemVariant, ItemFallback> variants;
     private final Map<String, BlockFallback> blocks;
     private final Map<String, Map<String, ItemFallback>> versionItems;
+    private final Map<String, Map<ItemVariant, ItemFallback>> versionVariants;
     private final Map<String, Map<String, BlockFallback>> versionBlocks;
     private final @Nullable ItemFallback defaultItem;
     private final @Nullable BlockFallback defaultBlock;
 
     private Fallbacks(Builder builder) {
         this.items = Map.copyOf(builder.items);
+        this.variants = Map.copyOf(builder.variants);
         this.blocks = Map.copyOf(builder.blocks);
         Map<String, Map<String, ItemFallback>> versionItems = new LinkedHashMap<>();
         builder.versionItems.forEach((version, map) -> versionItems.put(version, Map.copyOf(map)));
         this.versionItems = Map.copyOf(versionItems);
+        Map<String, Map<ItemVariant, ItemFallback>> versionVariants = new LinkedHashMap<>();
+        builder.versionVariants.forEach((version, map) -> versionVariants.put(version, Map.copyOf(map)));
+        this.versionVariants = Map.copyOf(versionVariants);
         Map<String, Map<String, BlockFallback>> versionBlocks = new LinkedHashMap<>();
         builder.versionBlocks.forEach((version, map) -> versionBlocks.put(version, Map.copyOf(map)));
         this.versionBlocks = Map.copyOf(versionBlocks);
@@ -89,6 +97,23 @@ public final class Fallbacks {
             return items;
         }
         Map<String, ItemFallback> merged = new LinkedHashMap<>(items);
+        merged.putAll(specific);
+        return Map.copyOf(merged);
+    }
+
+    /**
+     * Merges the variant fallbacks that apply to a version.
+     *
+     * @param version the data version
+     * @return the item fallbacks of single variants that apply to a version, by identifier and aux of the replaced
+     * variant: those for every version, overridden by those for this one
+     */
+    @NonNull Map<ItemVariant, ItemFallback> variants(@NonNull DataVersion version) {
+        Map<ItemVariant, ItemFallback> specific = versionVariants.get(version.name());
+        if (specific == null) {
+            return variants;
+        }
+        Map<ItemVariant, ItemFallback> merged = new LinkedHashMap<>(variants);
         merged.putAll(specific);
         return Map.copyOf(merged);
     }
@@ -137,8 +162,10 @@ public final class Fallbacks {
      */
     public static final class Builder {
         private final Map<String, ItemFallback> items = new LinkedHashMap<>();
+        private final Map<ItemVariant, ItemFallback> variants = new LinkedHashMap<>();
         private final Map<String, BlockFallback> blocks = new LinkedHashMap<>();
         private final Map<String, Map<String, ItemFallback>> versionItems = new LinkedHashMap<>();
+        private final Map<String, Map<ItemVariant, ItemFallback>> versionVariants = new LinkedHashMap<>();
         private final Map<String, Map<String, BlockFallback>> versionBlocks = new LinkedHashMap<>();
         private @Nullable ItemFallback defaultItem = ItemFallback.UNKNOWN;
         private @Nullable BlockFallback defaultBlock = BlockFallback.UNKNOWN;
@@ -184,7 +211,7 @@ public final class Fallbacks {
          * @since 1.0.0
          */
         public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
-            return item(type, ItemFallback.of(replacement));
+            return item(type, ItemFallback.of(replacement.variant()));
         }
 
         /**
@@ -201,6 +228,43 @@ public final class Fallbacks {
             versionItems.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
                 .put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
+        }
+
+        /**
+         * Like {@link #item(BedrockItemType, ItemFallback)} for one variant only, e.g. to give each potion its own
+         * replacement. Checked before the entry of its type, and applies where that would: a version that lacks the item,
+         * or with {@link ItemFallback#forced()} every version, where it replaces only this variant. Paletter does not know
+         * which auxes a version has, so for an aux an older version lacks, force the entry for those versions with
+         * {@link #item(DataVersion, BedrockItemVariant, ItemFallback)}.
+         *
+         * @param variant the variant that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
+         */
+        public @NonNull Builder item(@NonNull BedrockItemVariant variant, @NonNull ItemFallback fallback) {
+            variants.put(key(variant), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        /**
+         * Like {@link #item(BedrockItemVariant, ItemFallback)} for one data version only, overriding the entry for every
+         * version.
+         *
+         * @param version the data version the entry is for
+         * @param variant the variant that may be missing
+         * @param fallback what it becomes
+         * @return this builder
+         * @since 1.0.0
+         */
+        public @NonNull Builder item(@NonNull DataVersion version, @NonNull BedrockItemVariant variant, @NonNull ItemFallback fallback) {
+            versionVariants.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
+                .put(key(variant), Objects.requireNonNull(fallback));
+            return this;
+        }
+
+        private static ItemVariant key(BedrockItemVariant variant) {
+            return ItemVariant.of(variant.type().identifier(), variant.aux());
         }
 
         /**

@@ -3,7 +3,7 @@ package dev.opencollab.paletter.creative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Objects;
 import dev.opencollab.paletter.vanilla.BedrockItemType;
-import dev.opencollab.paletter.vanilla.ItemKey;
+import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 /**
  * Where a custom item or block item goes in the creative inventory <i>within</i> its category and group: the position
@@ -52,12 +52,12 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
     /**
      * Places right after exactly one variant, if present.
      *
-     * @param anchor the variant to insert after, or a type for its base variant
+     * @param anchor the variant to insert after
      * @return the placement
      * @throws NullPointerException if the anchor is null
      * @since 1.0.0
      */
-    static @NonNull CreativePlacement after(@NonNull ItemKey anchor) {
+    static @NonNull CreativePlacement after(@NonNull BedrockItemVariant anchor) {
         return after(ItemMatcher.of(anchor));
     }
 
@@ -88,12 +88,12 @@ public sealed interface CreativePlacement permits DefaultPlacement, CreativePlac
     /**
      * Places right before exactly one variant, if present.
      *
-     * @param anchor the variant to insert before, or a type for its base variant
+     * @param anchor the variant to insert before
      * @return the placement
      * @throws NullPointerException if the anchor is null
      * @since 1.0.0
      */
-    static @NonNull CreativePlacement before(@NonNull ItemKey anchor) {
+    static @NonNull CreativePlacement before(@NonNull BedrockItemVariant anchor) {
         return before(ItemMatcher.of(anchor));
     }
 
