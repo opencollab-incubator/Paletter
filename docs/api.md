@@ -457,6 +457,7 @@ Fallbacks fallbacks = Fallbacks.builder()
 An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)` sends the base variant of that type, and
 `ItemFallback.of(BedrockItems.POTION.variant(5))` that variant, whichever variant it replaces.
 `item(BedrockItemVariant, ItemFallback)` gives one variant a fallback of its own, checked before its type's.
+`blockAndItem(block, replacement)` sets the block fallback and the item fallback of the same identifiers at once.
 
 `.forced()` replaces content even in versions that have it. Paletter ships no fallbacks: which replacement is right is
 your decision. `./gradlew :tools:run --args="check-data"` lists what each older version lacks.

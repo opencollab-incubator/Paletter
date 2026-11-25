@@ -190,6 +190,18 @@ class FallbackTest {
     }
 
     @Test
+    void blockAndItemReplacesBothOfOneIdentifier() {
+        Fallbacks fallbacks = Fallbacks.builder().blockAndItem(BedrockBlocks.ICICLE, BedrockBlocks.STONE).build();
+        DataVersion version = PALETTER.latest();
+        assertEquals(BlockFallback.of(BedrockBlocks.STONE), fallbacks.blocks(version).get(BedrockBlocks.ICICLE.identifier()));
+        assertEquals(ItemFallback.of(BedrockItems.STONE.variant()), fallbacks.items(version).get(BedrockItems.ICICLE.identifier()));
+
+        BedrockBlockType noItem = Access.vanilla().blockType("paletter:nothing");
+        assertThrows(IllegalArgumentException.class, () -> Fallbacks.builder().blockAndItem(noItem, BedrockBlocks.STONE));
+        assertThrows(IllegalArgumentException.class, () -> Fallbacks.builder().blockAndItem(BedrockBlocks.STONE, noItem));
+    }
+
+    @Test
     void defaultsCanBeChangedOrSwitchedOff() {
         Palette vanilla = PALETTER.palette(OLDEST);
         int block = blockWithoutFallback(vanilla);

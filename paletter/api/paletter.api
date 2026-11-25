@@ -26,6 +26,7 @@ public static final class dev.opencollab.paletter.Fallbacks$Builder {
     public dev.opencollab.paletter.Fallbacks$Builder block(dev.opencollab.paletter.vanilla.BedrockBlockType, dev.opencollab.paletter.block.BlockFallback)
     public dev.opencollab.paletter.Fallbacks$Builder block(dev.opencollab.paletter.vanilla.BedrockBlockType, dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.Fallbacks$Builder block(java.lang.String, dev.opencollab.paletter.block.BlockFallback)
+    public dev.opencollab.paletter.Fallbacks$Builder blockAndItem(dev.opencollab.paletter.vanilla.BedrockBlockType, dev.opencollab.paletter.vanilla.BedrockBlockType)
     public dev.opencollab.paletter.Fallbacks build()
     public dev.opencollab.paletter.Fallbacks$Builder defaultBlock(dev.opencollab.paletter.block.BlockFallback)
     public dev.opencollab.paletter.Fallbacks$Builder defaultItem(dev.opencollab.paletter.item.ItemFallback)

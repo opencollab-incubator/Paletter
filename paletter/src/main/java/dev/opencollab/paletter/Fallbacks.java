@@ -325,6 +325,32 @@ public final class Fallbacks {
         }
 
         /**
+         * Replaces a block and its item alike: {@link #block(BedrockBlockType, BedrockBlockType)} and
+         * {@link #item(BedrockItemType, BedrockItemType)} for the item types of the same identifiers. Loads the bundled
+         * data.
+         *
+         * @param type the block that may be missing, which has an item of the same identifier
+         * @param replacement the block it becomes, which has an item of the same identifier
+         * @return this builder
+         * @throws IllegalArgumentException if either block has no item type of its identifier
+         * @since 1.0.0
+         */
+        public @NonNull Builder blockAndItem(@NonNull BedrockBlockType type, @NonNull BedrockBlockType replacement) {
+            BedrockItemType item = itemOf(type);
+            BedrockItemType replacementItem = itemOf(replacement);
+            block(type, replacement);
+            return item(item, replacementItem);
+        }
+
+        private static BedrockItemType itemOf(BedrockBlockType block) {
+            BedrockItemType item = BedrockItemType.byIdentifier(block.identifier());
+            if (item == null || !item.identifier().equals(block.identifier())) {
+                throw new IllegalArgumentException(block.identifier() + " has no item type of the same identifier");
+            }
+            return item;
+        }
+
+        /**
          * Sets what items without an entry become.
          *
          * @param fallback what items without an entry become; null leaves them out. Default {@link ItemFallback#UNKNOWN}
