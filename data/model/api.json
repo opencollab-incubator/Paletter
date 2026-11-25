@@ -256,6 +256,11 @@
     "item:description": "menu_category",
     "block:description": "menu_category"
   },
+  "externalEnums": {
+    "_comment": "A string field with documented values whose Java type is a hand-written enum: its class, the method that returns the add-on string, and the documented value that null stands for (written in its place).",
+    "item:description:category": {"class": "dev.opencollab.paletter.creative.CreativeCategory", "accessor": "bedrockName", "nullAs": "none"},
+    "block:description:category": {"class": "dev.opencollab.paletter.creative.CreativeCategory", "accessor": "bedrockName", "nullAs": "none"}
+  },
   "openEnums": [
     "block:minecraft:geometry:identifier",
     "block:minecraft:embedded_visual:geometry.identifier",

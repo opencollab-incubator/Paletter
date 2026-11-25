@@ -719,36 +719,20 @@ public static final class dev.opencollab.paletter.block.component.BlockLightEmis
 public final class dev.opencollab.paletter.block.component.BlockMenuCategory {
     public static final java.lang.String NAME = "menu_category"
     public static dev.opencollab.paletter.block.component.BlockMenuCategory$Builder builder()
-    public dev.opencollab.paletter.block.component.BlockMenuCategory$Category category()
+    public dev.opencollab.paletter.creative.CreativeCategory category()
     public boolean equals(java.lang.Object)
     public java.lang.String group()
     public int hashCode()
     public boolean hiddenInCommands()
-    public static dev.opencollab.paletter.block.component.BlockMenuCategory of(dev.opencollab.paletter.block.component.BlockMenuCategory$Category)
     public dev.opencollab.paletter.block.component.BlockMenuCategory$Builder toBuilder()
     public java.lang.String toString()
 }
 
 public static final class dev.opencollab.paletter.block.component.BlockMenuCategory$Builder {
     public dev.opencollab.paletter.block.component.BlockMenuCategory build()
-    public dev.opencollab.paletter.block.component.BlockMenuCategory$Builder category(dev.opencollab.paletter.block.component.BlockMenuCategory$Category)
+    public dev.opencollab.paletter.block.component.BlockMenuCategory$Builder category(dev.opencollab.paletter.creative.CreativeCategory)
     public dev.opencollab.paletter.block.component.BlockMenuCategory$Builder group(java.lang.String)
     public dev.opencollab.paletter.block.component.BlockMenuCategory$Builder hiddenInCommands(boolean)
-}
-
-public static final class dev.opencollab.paletter.block.component.BlockMenuCategory$Category {
-    public static final dev.opencollab.paletter.block.component.BlockMenuCategory$Category CONSTRUCTION
-    public static final dev.opencollab.paletter.block.component.BlockMenuCategory$Category EQUIPMENT
-    public static final dev.opencollab.paletter.block.component.BlockMenuCategory$Category ITEMS
-    public static final dev.opencollab.paletter.block.component.BlockMenuCategory$Category NATURE
-    public static final dev.opencollab.paletter.block.component.BlockMenuCategory$Category NONE
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public boolean isKnown()
-    public static java.util.List<dev.opencollab.paletter.block.component.BlockMenuCategory$Category> known()
-    public static dev.opencollab.paletter.block.component.BlockMenuCategory$Category of(java.lang.String)
-    public java.lang.String toString()
-    public java.lang.String value()
 }
 
 public final class dev.opencollab.paletter.block.component.BlockTags implements dev.opencollab.paletter.block.component.BlockComponent {
@@ -2357,7 +2341,6 @@ public enum dev.opencollab.paletter.creative.CreativeCategory {
     public static final dev.opencollab.paletter.creative.CreativeCategory EQUIPMENT
     public static final dev.opencollab.paletter.creative.CreativeCategory ITEMS
     public static final dev.opencollab.paletter.creative.CreativeCategory NATURE
-    public static final java.lang.String NONE_NAME = "none"
     public java.lang.String bedrockName()
     public static dev.opencollab.paletter.creative.CreativeCategory fromBedrockName(java.lang.String)
     public static dev.opencollab.paletter.creative.CreativeCategory fromProtocol(org.cloudburstmc.protocol.bedrock.data.inventory.CreativeItemCategory)
@@ -3359,7 +3342,7 @@ public static final class dev.opencollab.paletter.item.component.ItemDisplayName
 public final class dev.opencollab.paletter.item.component.ItemMenuCategory {
     public static final java.lang.String NAME = "menu_category"
     public static dev.opencollab.paletter.item.component.ItemMenuCategory$Builder builder()
-    public dev.opencollab.paletter.item.component.ItemMenuCategory$Category category()
+    public dev.opencollab.paletter.creative.CreativeCategory category()
     public boolean equals(java.lang.Object)
     public java.lang.String group()
     public int hashCode()
@@ -3370,24 +3353,9 @@ public final class dev.opencollab.paletter.item.component.ItemMenuCategory {
 
 public static final class dev.opencollab.paletter.item.component.ItemMenuCategory$Builder {
     public dev.opencollab.paletter.item.component.ItemMenuCategory build()
-    public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder category(dev.opencollab.paletter.item.component.ItemMenuCategory$Category)
+    public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder category(dev.opencollab.paletter.creative.CreativeCategory)
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder group(java.lang.String)
     public dev.opencollab.paletter.item.component.ItemMenuCategory$Builder hiddenInCommands(java.lang.Boolean)
-}
-
-public static final class dev.opencollab.paletter.item.component.ItemMenuCategory$Category {
-    public static final dev.opencollab.paletter.item.component.ItemMenuCategory$Category CONSTRUCTION
-    public static final dev.opencollab.paletter.item.component.ItemMenuCategory$Category EQUIPMENT
-    public static final dev.opencollab.paletter.item.component.ItemMenuCategory$Category ITEMS
-    public static final dev.opencollab.paletter.item.component.ItemMenuCategory$Category NATURE
-    public static final dev.opencollab.paletter.item.component.ItemMenuCategory$Category NONE
-    public boolean equals(java.lang.Object)
-    public int hashCode()
-    public boolean isKnown()
-    public static java.util.List<dev.opencollab.paletter.item.component.ItemMenuCategory$Category> known()
-    public static dev.opencollab.paletter.item.component.ItemMenuCategory$Category of(java.lang.String)
-    public java.lang.String toString()
-    public java.lang.String value()
 }
 
 public sealed interface dev.opencollab.paletter.item.component.ItemsOrTags permits dev.opencollab.paletter.item.component.FutureItemsOrTags, dev.opencollab.paletter.item.component.ItemsOrTags$Items, dev.opencollab.paletter.item.component.ItemsOrTags$TagQuery {

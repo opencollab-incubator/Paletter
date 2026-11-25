@@ -21,7 +21,7 @@ final class WireValues {
     /** A list field's value as a wire list of its NBT type. */
     static CodeBlock listValue(String id, Type element, String nbt, CodeBlock list) {
         return switch (element) {
-            case EnumRef e -> CodeBlock.of("$T.strings($L.stream().map(x -> x.value()).toList())", WIRE, list);
+            case EnumRef e -> CodeBlock.of("$T.strings($L.stream().map(x -> x.$N()).toList())", WIRE, list, e.type().accessor);
             case Scalar s when s.kind() == ScalarKind.STRING -> CodeBlock.of("$T.strings($L)", WIRE, list);
             case Scalar s when s.kind() == ScalarKind.INT -> CodeBlock.of("$T.ints($L)", WIRE, list);
             case Scalar s when s.kind() == ScalarKind.FLOAT -> CodeBlock.of("$T.floats($L)", WIRE, list);
@@ -32,7 +32,7 @@ final class WireValues {
     /** A value as the key of a table rule. */
     static CodeBlock key(Type t, CodeBlock expr) {
         return switch (t) {
-            case EnumRef e -> CodeBlock.of("$L.value()", expr);
+            case EnumRef e -> string(e, expr);
             case Scalar s when s.kind() == ScalarKind.STRING -> expr;
             case Scalar s when s.kind() == ScalarKind.BOOL -> CodeBlock.of("$T.valueOf($L)", String.class, expr);
             default -> CodeBlock.of("$T.key($L)", WIRE, expr);
@@ -40,7 +40,12 @@ final class WireValues {
     }
 
     static CodeBlock stringOf(Type t, CodeBlock expr) {
-        return t instanceof EnumRef ? CodeBlock.of("$L.value()", expr) : CodeBlock.of("$T.valueOf($L)", String.class, expr);
+        return t instanceof EnumRef e ? string(e, expr) : CodeBlock.of("$T.valueOf($L)", String.class, expr);
+    }
+
+    /** The add-on string of an enum value: {@code value()} of a generated value class, or the external enum's accessor. */
+    static CodeBlock string(EnumRef e, CodeBlock expr) {
+        return CodeBlock.of("$L.$N()", expr, e.type().accessor);
     }
 
     static CodeBlock numeric(Type t, CodeBlock expr) {
@@ -53,11 +58,11 @@ final class WireValues {
      * @param where the component and field, for the error
      */
     static CodeBlock convert(String where, Type t, CodeBlock expr, String nbt) {
-        if (t instanceof EnumRef) {
+        if (t instanceof EnumRef e) {
             if (!nbt.equals("string")) {
                 throw new GenerationException(where + ": an enum written as " + nbt + " needs a table rule");
             }
-            return CodeBlock.of("$L.value()", expr);
+            return string(e, expr);
         }
         if (t instanceof Scalar s) {
             return switch (s.kind()) {

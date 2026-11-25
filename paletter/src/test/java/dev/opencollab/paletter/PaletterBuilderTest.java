@@ -273,7 +273,7 @@ class PaletterBuilderTest {
     void creativeOrderingIsGlobal() {
         PaletteLayer layer = PaletteLayer.builder("blocks").block(CustomBlock.builder("test:block_menu_only").menuCategory(
             dev.opencollab.paletter.block.component.BlockMenuCategory.builder()
-                .category(dev.opencollab.paletter.block.component.BlockMenuCategory.Category.CONSTRUCTION).build()).build()).build();
+                .category(CreativeCategory.CONSTRUCTION).build()).build()).build();
         int protocol = PALETTER.latest().protocolVersion();
         Palette bds = Paletter.builder().layer(layer).build().palette(protocol);
         Palette append = Paletter.builder().creativeOrdering(CreativeOrdering.APPEND).layer(layer).build()

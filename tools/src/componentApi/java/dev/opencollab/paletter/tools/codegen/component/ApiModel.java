@@ -361,6 +361,10 @@ final class ApiModel {
          */
         final List<String> removedValues = new ArrayList<>();
         final List<String> removedConstants = new ArrayList<>();
+        /** The hand-written enum the field takes instead of a generated value class (api.json externalEnums), or null. */
+        String external;
+        /** The method that returns the add-on string: {@code value} of a generated value class, else the external enum's. */
+        String accessor = "value";
     }
 
     static final class Field {
@@ -411,6 +415,8 @@ final class ApiModel {
         Field keyedExtraOf;
         /** Paths of the mapping fields whose rules apply to this field (its own path, or a form). */
         String mappingKey;
+        /** The documented value that null stands for, written in its place (api.json externalEnums nullAs), or null. */
+        String nullAs;
 
         boolean nullable() {
             return !required && defaultValue == null;

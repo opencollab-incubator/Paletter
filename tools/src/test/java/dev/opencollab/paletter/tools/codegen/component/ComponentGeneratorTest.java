@@ -346,6 +346,30 @@ class ComponentGeneratorTest {
     }
 
     @Test
+    void anExternalEnumIsTheHandWrittenTypeAndNullWritesItsNullValue() {
+        // api.json externalEnums: a hand-written enum instead of a value class; null writes what the value nullAs writes
+        Inputs in = inputs();
+        for (JsonElement field : in.components().getAsJsonArray("components").get(0).getAsJsonObject().getAsJsonArray("fields")) {
+            if (field.getAsJsonObject().get("path").getAsString().equals("mode")) {
+                field.getAsJsonObject().remove("defaultValue");
+            }
+        }
+        in.api().add("externalEnums", json("{\"item:test:widget:mode\": {\"class\": \"example.Speed\", \"accessor\": \"id\", \"nullAs\": \"slow\"}}"));
+        Map<String, String> files = ComponentGenerator.generate(in);
+        String widget = files.get("dev/opencollab/paletter/item/component/Widget.java");
+        assertTrue(widget.contains("import example.Speed;"), widget);
+        assertTrue(widget.contains("public @Nullable Speed mode()"), widget);
+        assertTrue(widget.contains("Optional (null: {@code slow})"), widget);
+        assertFalse(widget.contains("class Mode"), widget);
+        String wire = files.get("dev/opencollab/paletter/internal/component/ItemWire.java");
+        String encoder = wire.substring(wire.indexOf("Speed v"));
+        assertTrue(encoder.contains("switch (v"), encoder);
+        assertTrue(encoder.contains(".id())"), encoder);
+        // null is written as slow: the table's 1
+        assertTrue(encoder.substring(encoder.indexOf("} else {")).contains("(byte) 1)"), encoder);
+    }
+
+    @Test
     void aRoundedLineComputesAsBdsDoes() {
         // use_duration: the float product, truncated by the integral conversion (BDS sends 0.35 seconds as 7 ticks)
         Inputs in = inputs();

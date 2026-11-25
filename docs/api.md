@@ -88,7 +88,7 @@ deprecation warnings, not compile errors. The API is shaped so that the compiler
   A new field is a new accessor and builder setter. Records stay only where the shape is fixed by definition, not by
   Bedrock: the vector (`Vec3`, one type for every component, with `Vec3.of`), `BlockShape.Box`, `PotionMix`, `ContainerMix`, the
   one-value forms of a union and the `Ingredient` forms.
-- **Documented string values are open value classes, not enums.** `Wearable.Slot`, `ItemMenuCategory.Category` and
+- **Documented string values are open value classes, not enums.** `Wearable.Slot`, `Cooldown.Type` and
   every other generated one have a constant per documented value, `of(String)` for any value (a known one returns its constant, so `==`
   works for those), `value()`, `isKnown()` and `known()`. A value Bedrock adds can be built and sent before Paletter has a
   constant for it; Paletter's encoder leaves a value it has no wire mapping for out, with a report warning. There are no
@@ -428,8 +428,9 @@ PaletteLayer.builder("server").creative(editor -> {
 ```
 
 Custom items and blocks have a `menu_category` (the generated `ItemMenuCategory` and `BlockMenuCategory`: category, group,
-`hiddenInCommands`), which maps one to one from add-on JSON. As in BDS it alone decides whether the item or block item is in the
-creative inventory and in which category and group, under every ordering: absent or category `none` means not in it.
+`hiddenInCommands`), which maps one to one from add-on JSON. The category is a `CreativeCategory`; null is `none`. As in BDS
+it alone decides whether the item or block item is in the creative inventory and in which category and group, under every
+ordering: absent or category null means not in it.
 `menuCategory(CreativeCategory)` and `menuCategory(CreativeCategory, group)` on both builders are shortcuts. A block and the
 item that replaces its item each have a menu category of their own. A `CreativePlacement` adjusts only the position within
 that category and group: `CreativePlacement.DEFAULT` (the default), `FIRST` (the start of its group or category),

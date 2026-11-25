@@ -907,7 +907,7 @@ public final class CustomBlock {
          * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
-            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName())).build());
+            return menuCategory(BlockMenuCategory.builder().category(Objects.requireNonNull(category, "category")).build());
         }
 
         /**
@@ -920,7 +920,7 @@ public final class CustomBlock {
          * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
-            return menuCategory(BlockMenuCategory.builder().category(BlockMenuCategory.Category.of(category.bedrockName()))
+            return menuCategory(BlockMenuCategory.builder().category(Objects.requireNonNull(category, "category"))
                 .group(group).build());
         }
 

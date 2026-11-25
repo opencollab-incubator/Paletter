@@ -40,7 +40,7 @@ public interface Emitter {
     /** @return the emitter of the value of a union field as the alternative of a JSON type */
     Emitter as(String jsonType);
 
-    /** @return the value, an open value class of the API ({@code value()} is its string) */
+    /** @return the add-on string of the value, an enum of the API ({@code value()} of a generated value class) */
     CodeBlock enumValue();
 
     /** @return the name of the constant of the API's value class for an enum value of the schema; fails if it has none */

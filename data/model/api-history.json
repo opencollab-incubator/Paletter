@@ -141,7 +141,6 @@
     "item:minecraft:shooter:ammunition[]": "Ammunition"
   },
   "enums": {
-    "block:description:category": "Category",
     "block:minecraft:chest_obstruction:obstruction_rule": "ObstructionRule",
     "block:minecraft:connection_rule:accepts_connections_from": "AcceptsConnectionsFrom",
     "block:minecraft:connection_rule:enabled_directions": "EnabledDirections",
@@ -172,7 +171,6 @@
     "block:trait:minecraft:multi_block:enabled_states": "EnabledStates",
     "block:trait:minecraft:placement_direction:enabled_states": "EnabledStates",
     "block:trait:minecraft:placement_position:enabled_states": "EnabledStates",
-    "item:description:category": "Category",
     "item:minecraft:cooldown:type": "Type",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type": "ParticleType",
     "item:minecraft:use_animation:value": "Value",
@@ -180,11 +178,6 @@
     "item:minecraft:wearable:slot": "Slot"
   },
   "constants": {
-    "block:description:category=construction": "CONSTRUCTION",
-    "block:description:category=equipment": "EQUIPMENT",
-    "block:description:category=items": "ITEMS",
-    "block:description:category=nature": "NATURE",
-    "block:description:category=none": "NONE",
     "block:minecraft:chest_obstruction:obstruction_rule=always": "ALWAYS",
     "block:minecraft:chest_obstruction:obstruction_rule=never": "NEVER",
     "block:minecraft:chest_obstruction:obstruction_rule=shape": "SHAPE",
@@ -333,11 +326,6 @@
     "block:trait:minecraft:placement_direction:enabled_states=minecraft:sixteen_way_rotation": "SIXTEEN_WAY_ROTATION",
     "block:trait:minecraft:placement_position:enabled_states=minecraft:block_face": "BLOCK_FACE",
     "block:trait:minecraft:placement_position:enabled_states=minecraft:vertical_half": "VERTICAL_HALF",
-    "item:description:category=construction": "CONSTRUCTION",
-    "item:description:category=equipment": "EQUIPMENT",
-    "item:description:category=items": "ITEMS",
-    "item:description:category=nature": "NATURE",
-    "item:description:category=none": "NONE",
     "item:minecraft:cooldown:type=attack": "ATTACK",
     "item:minecraft:cooldown:type=use": "USE",
     "item:minecraft:durability_sensor:durability_thresholds[].particle_type=balloongas": "BALLOONGAS",
@@ -464,7 +452,8 @@
       "wire": [
         "menu_category.category"
       ],
-      "type": "enum:Category"
+      "type": "enum:CreativeCategory",
+      "nullable": true
     },
     "block:description:group": {
       "name": "group",
@@ -2155,7 +2144,7 @@
       "wire": [
         "item_properties.creative_category"
       ],
-      "type": "enum:Category",
+      "type": "enum:CreativeCategory",
       "nullable": true
     },
     "item:description:group": {

@@ -51,6 +51,7 @@ import dev.opencollab.paletter.block.component.Tick;
 import dev.opencollab.paletter.block.component.Transformation;
 import dev.opencollab.paletter.block.component.VibrationProperties;
 import dev.opencollab.paletter.block.component.WireOnlyBlockComponent;
+import dev.opencollab.paletter.creative.CreativeCategory;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -608,10 +609,15 @@ public final class BlockWire {
             out.put("menu_category.is_hidden_in_commands", (byte) 0);
             return;
         }
-        out.put("menu_category.category", c.category().value());
-        String v0 = c.group();
+        CreativeCategory v0 = c.category();
         if (v0 != null) {
-            out.put("menu_category.group", v0);
+            out.put("menu_category.category", v0.bedrockName());
+        } else {
+            out.put("menu_category.category", "none");
+        }
+        String v1 = c.group();
+        if (v1 != null) {
+            out.put("menu_category.group", v1);
         } else {
             out.put("menu_category.group", "");
         }

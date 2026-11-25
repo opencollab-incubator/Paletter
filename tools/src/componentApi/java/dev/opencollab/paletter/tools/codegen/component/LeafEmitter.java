@@ -87,7 +87,7 @@ final class LeafEmitter implements Emitter {
     @Override
     public CodeBlock enumValue() {
         enumType();
-        return expr;
+        return WireValues.stringOf(t, expr);
     }
 
     @Override
@@ -138,7 +138,7 @@ final class LeafEmitter implements Emitter {
         if (!list || !(t instanceof ListOf l)) {
             throw error("a rule of the strings of a list needs a list field");
         }
-        return l.element() instanceof EnumRef ? CodeBlock.of("$L.stream().map(x -> x.value()).toList()", expr) : expr;
+        return l.element() instanceof EnumRef e ? CodeBlock.of("$L.stream().map(x -> x.$N()).toList()", expr, e.type().accessor) : expr;
     }
 
     @Override

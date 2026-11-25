@@ -3,9 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.block.component;
 
-import dev.opencollab.paletter.internal.component.Check;
-import java.util.List;
-import java.util.Map;
+import dev.opencollab.paletter.creative.CreativeCategory;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -24,15 +22,14 @@ public final class BlockMenuCategory {
      */
     public static final String NAME = "menu_category";
 
-    private final @NonNull Category category;
+    private final @Nullable CreativeCategory category;
 
     private final @Nullable String group;
 
     private final boolean hiddenInCommands;
 
-    private BlockMenuCategory(@NonNull Category category, @Nullable String group,
+    private BlockMenuCategory(@Nullable CreativeCategory category, @Nullable String group,
             boolean hiddenInCommands) {
-        Objects.requireNonNull(category, "BlockMenuCategory.category");
         this.category = category;
         this.group = group;
         this.hiddenInCommands = hiddenInCommands;
@@ -42,11 +39,11 @@ public final class BlockMenuCategory {
      * Determines which category this block will be placed under in the inventory and crafting table container
      * screens. Options are "construction", "nature", "equipment", "items", and "none". If omitted or "none" is
      * specified, the block will not appear in the inventory or crafting table container screens. Add-on JSON {@code
-     * category}. Required.
+     * category}. Optional (null: {@code none}).
      *
      * @return the value
      */
-    public @NonNull Category category() {
+    public @Nullable CreativeCategory category() {
         return category;
     }
 
@@ -94,18 +91,7 @@ public final class BlockMenuCategory {
     }
 
     /**
-     * Creates the component with {@code category} set. Every other field is at its default.
-     *
-     * @param value the value of that field
-     * @return the component
-     */
-    public static @NonNull BlockMenuCategory of(@NonNull Category value) {
-        return builder().category(value).build();
-    }
-
-    /**
-     * Creates a builder with every optional field at its default; required fields must be set before
-     * {@code build()}.
+     * Creates a builder with every field at its default.
      *
      * @return a builder with the defaults applied
      */
@@ -130,7 +116,7 @@ public final class BlockMenuCategory {
      * Builds {@link BlockMenuCategory}: defaults applied, required fields and ranges checked by {@link #build()}.
      */
     public static final class Builder {
-        private @Nullable Category category;
+        private @Nullable CreativeCategory category;
 
         private @Nullable String group;
 
@@ -144,10 +130,9 @@ public final class BlockMenuCategory {
          *
          * @param category the value
          * @return this builder
-         * @throws NullPointerException if the value is null
          */
-        public @NonNull Builder category(@NonNull Category category) {
-            this.category = Objects.requireNonNull(category, "BlockMenuCategory.category");
+        public @NonNull Builder category(@Nullable CreativeCategory category) {
+            this.category = category;
             return this;
         }
 
@@ -181,105 +166,7 @@ public final class BlockMenuCategory {
          * @throws IllegalArgumentException if a value is out of range
          */
         public @NonNull BlockMenuCategory build() {
-            if (category == null) {
-                throw new IllegalStateException("BlockMenuCategory.category is required");
-            }
             return new BlockMenuCategory(category, group, hiddenInCommands);
-        }
-    }
-
-    /**
-     * A value of an add-on JSON string: a constant per documented value, {@link #of} for any other.
-     * {@link #value()} is the add-on JSON string. Not an enum: Bedrock adds values, so a {@code switch} over
-     * {@link #value()} needs a {@code default}.
-     */
-    public static final class Category {
-        /**
-         * {@code construction}
-         */
-        public static final Category CONSTRUCTION = new Category("construction");
-
-        /**
-         * {@code nature}
-         */
-        public static final Category NATURE = new Category("nature");
-
-        /**
-         * {@code equipment}
-         */
-        public static final Category EQUIPMENT = new Category("equipment");
-
-        /**
-         * {@code items}
-         */
-        public static final Category ITEMS = new Category("items");
-
-        /**
-         * {@code none}
-         */
-        public static final Category NONE = new Category("none");
-
-        private static final List<Category> KNOWN = List.of(CONSTRUCTION, NATURE, EQUIPMENT, ITEMS, NONE);
-
-        private static final Map<String, Category> BY_VALUE = Check.index(KNOWN, Category::value);
-
-        private final String value;
-
-        private Category(String value) {
-            this.value = value;
-        }
-
-        /**
-         * Returns the value of an add-on JSON string: the constant of a documented value, else a new value.
-         *
-         * @param value the value in add-on JSON
-         * @return the constant of the value, or a value Paletter does not know
-         */
-        public static @NonNull Category of(@NonNull String value) {
-            Category known = BY_VALUE.get(Objects.requireNonNull(value, "Category.value"));
-            return known != null ? known : new Category(value);
-        }
-
-        /**
-         * Returns the documented values, the constants of this class.
-         *
-         * @return the constants, in the order of the documentation
-         */
-        public static @NonNull List<Category> known() {
-            return KNOWN;
-        }
-
-        /**
-         * Returns the value in add-on JSON.
-         *
-         * @return the value in add-on JSON
-         */
-        public @NonNull String value() {
-            return value;
-        }
-
-        /**
-         * Returns whether the value is documented, one of the constants.
-         *
-         * @return whether this is one of {@link #known()}
-         */
-        public boolean isKnown() {
-            return BY_VALUE.get(value) == this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return this == o || o instanceof Category other && value.equals(other.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return value;
         }
     }
 }

@@ -43,13 +43,13 @@ class BlockOwnedItemTest {
         assertThrows(NullPointerException.class, () -> CustomBlock.builder("own:block").creativePlacement(null));
         assertThrows(NullPointerException.class, () -> CreativePlacement.after((ItemMatcher) null));
 
-        BlockMenuCategory none = BlockMenuCategory.builder().category(BlockMenuCategory.Category.NONE).build();
+        BlockMenuCategory none = BlockMenuCategory.builder().category(null).build();
         CustomBlock hidden = CustomBlock.builder("own:hidden").build();
         CustomBlock menuNone = CustomBlock.builder("own:menu_none").menuCategory(none).build();
         CustomBlock shown = CustomBlock.builder("own:shown").menuCategory(CreativeCategory.NATURE).build();
         CustomItem item = CustomItem.builder("own:item").build();
         CustomItem itemNone = CustomItem.builder("own:item_none").menuCategory(dev.opencollab.paletter.item.component.ItemMenuCategory.builder()
-            .category(dev.opencollab.paletter.item.component.ItemMenuCategory.Category.NONE).build()).build();
+            .category(null).build()).build();
         CustomItem itemShown = CustomItem.builder("own:item_shown").menuCategory(CreativeCategory.ITEMS).build();
         PaletteLayer layer = PaletteLayer.builder("menu").block(hidden).block(menuNone).block(shown)
             .item(item).item(itemNone).item(itemShown).build();
@@ -115,7 +115,7 @@ class BlockOwnedItemTest {
             .menuCategory(CreativeCategory.ITEMS).build();
         CustomBlock plain = CustomBlock.builder("own:plain").menuCategory(CreativeCategory.CONSTRUCTION).build();
         Palette palette = Palettes.palette(PROTOCOL, PaletteLayer.builder("driven").block(block).block(plain).item(item).build());
-        assertEquals(BlockMenuCategory.Category.CONSTRUCTION, block.menuCategory().category(), "the block keeps its own category");
+        assertEquals(CreativeCategory.CONSTRUCTION, block.menuCategory().category(), "the block keeps its own category");
         assertNull(stacksOf(palette, "own:driven").getFirst().blockState());
         assertNotNull(stacksOf(palette, "own:plain").getFirst().blockState());
         assertEquals(1, stacksOf(palette, "own:driven").size());

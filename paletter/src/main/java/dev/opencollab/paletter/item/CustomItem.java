@@ -339,7 +339,7 @@ public final class CustomItem {
          * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category) {
-            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName())).build());
+            return menuCategory(ItemMenuCategory.builder().category(Objects.requireNonNull(category, "category")).build());
         }
 
         /**
@@ -352,7 +352,7 @@ public final class CustomItem {
          * @since 1.0.0
          */
         public @NonNull Builder menuCategory(@NonNull CreativeCategory category, @NonNull String group) {
-            return menuCategory(ItemMenuCategory.builder().category(ItemMenuCategory.Category.of(category.bedrockName()))
+            return menuCategory(ItemMenuCategory.builder().category(Objects.requireNonNull(category, "category"))
                 .group(group).build());
         }
 

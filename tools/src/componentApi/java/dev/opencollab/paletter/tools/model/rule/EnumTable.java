@@ -67,13 +67,13 @@ public final class EnumTable extends Rule {
 
     @Override
     public void emit(Emitter e) {
-        e.code().beginControlFlow("switch ($L.value())", e.enumValue());
+        e.code().beginControlFlow("switch ($L)", e.enumValue());
         for (String k : new TreeSet<>(table.keySet())) {
             String v = table.get(k);
             e.enumConstant(k);
             e.code().addStatement("case $S -> $L", k, e.write(v.equals(NOT_SENT) ? v : v + " (" + nbt + ")"));
         }
-        CodeBlock unknown = e.unknown(this, CodeBlock.of("$L.value()", e.enumValue()));
+        CodeBlock unknown = e.unknown(this, e.enumValue());
         if (unknown != null) {
             e.code().addStatement("default -> $L", unknown);
         }

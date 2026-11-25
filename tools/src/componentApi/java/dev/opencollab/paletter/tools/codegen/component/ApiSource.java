@@ -236,7 +236,7 @@ final class ApiSource {
                 case FLOAT -> boxed ? ClassName.get(Float.class) : TypeName.FLOAT;
                 case STRING -> STRING;
             };
-            case EnumRef e -> className(c).nestedClass(e.type().name);
+            case EnumRef e -> e.type().external != null ? ClassName.bestGuess(e.type().external) : className(c).nestedClass(e.type().name);
             case ObjRef r -> className(c).nestedClass(r.type().name);
             case Vec3 v -> VEC3;
             case ListOf l -> ParameterizedTypeName.get(LIST, typeName(c, l.element(), true));
@@ -269,7 +269,7 @@ final class ApiSource {
                     throw new GenerationException(c.id + ": the default " + v + " is no documented value of " + e.type().name + " "
                         + e.type().values + "; fix the docs default with an erratum (fixtures.json) or api.json noDefaults");
                 }
-                yield CodeBlock.of("$T.$L", className(c).nestedClass(e.type().name), e.type().constants.get(i));
+                yield CodeBlock.of("$T.$L", typeName(c, e, false), e.type().constants.get(i));
             }
             case Vec3 vec -> {
                 List<String> xyz = new ArrayList<>();

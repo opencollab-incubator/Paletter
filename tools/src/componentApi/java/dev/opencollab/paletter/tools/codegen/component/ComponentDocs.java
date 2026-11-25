@@ -175,6 +175,8 @@ final class ComponentDocs {
             s.append(" Required.");
         } else if (f.defaultValue != null) {
             s.append(" Default: ").append(Docs.literal(f.defaultValue)).append('.');
+        } else if (f.nullAs != null) {
+            s.append(" Optional (null: {@code ").append(Docs.escape(f.nullAs)).append("}).");
         } else {
             s.append(" Optional (null: not set).");
         }

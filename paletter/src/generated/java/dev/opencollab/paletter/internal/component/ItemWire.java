@@ -3,6 +3,7 @@
 // data/model/ATTRIBUTION.md.
 package dev.opencollab.paletter.internal.component;
 
+import dev.opencollab.paletter.creative.CreativeCategory;
 import dev.opencollab.paletter.item.component.AllowOffHand;
 import dev.opencollab.paletter.item.component.BlockPlacer;
 import dev.opencollab.paletter.item.component.BundleInteraction;
@@ -572,15 +573,15 @@ public final class ItemWire {
             out.put("item_properties.hidden_in_commands", (byte) 2);
             return;
         }
-        ItemMenuCategory.Category v0 = c.category();
+        CreativeCategory v0 = c.category();
         if (v0 != null) {
-            switch (v0.value()) {
+            switch (v0.bedrockName()) {
                 case "construction" -> out.put("item_properties.creative_category", 1);
                 case "equipment" -> out.put("item_properties.creative_category", 3);
                 case "items" -> out.put("item_properties.creative_category", 4);
                 case "nature" -> out.put("item_properties.creative_category", 2);
                 case "none" -> out.put("item_properties.creative_category", 5);
-                default -> ctx.drop(ItemMenuCategory.NAME, "category = " + v0.value() + " has no known wire value");
+                default -> ctx.drop(ItemMenuCategory.NAME, "category = " + v0.bedrockName() + " has no known wire value");
             }
         } else {
             out.put("item_properties.creative_category", 5);

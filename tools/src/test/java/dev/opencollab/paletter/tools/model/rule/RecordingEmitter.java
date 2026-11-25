@@ -65,7 +65,7 @@ final class RecordingEmitter implements Emitter {
 
     @Override
     public CodeBlock enumValue() {
-        return CodeBlock.of("key");
+        return CodeBlock.of("key.value()");
     }
 
     @Override

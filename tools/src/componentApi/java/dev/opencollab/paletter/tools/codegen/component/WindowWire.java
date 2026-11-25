@@ -2,6 +2,7 @@ package dev.opencollab.paletter.tools.codegen.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.palantir.javapoet.CodeBlock;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Comp;
 import dev.opencollab.paletter.tools.codegen.component.ApiModel.Field;
@@ -311,7 +312,9 @@ final class WindowWire {
             present = presentBlock(f, read, node, prefix);
         }
         b = CodeBlock.builder();
-        if (nullable) {
+        if (nullable && f.nullAs != null) {
+            nullAsLines(f, node, prefix);
+        } else if (nullable) {
             absentLines(f, f, node, prefix, new TreeSet<>());
         }
         CodeBlock absent = b.build();
@@ -574,6 +577,23 @@ final class WindowWire {
             }
         }
         return false;
+    }
+
+    /** For null, what the documented value null stands for writes (api.json externalEnums nullAs). */
+    private void nullAsLines(Field f, String node, String prefix) {
+        for (Rule r : rules(f)) {
+            if (!r.writesValue()) {
+                continue;
+            }
+            String value = r.evaluate(new JsonPrimitive(f.nullAs));
+            if (value == null) {
+                throw new GenerationException(c.id + " " + f.path + ": the " + r.kind() + " rule writes nothing for " + f.nullAs);
+            }
+            String wire = strip(r.wire);
+            if (placeable(wire, prefix)) {
+                put(node, relative(wire, prefix), literal(value));
+            }
+        }
     }
 
     private void absentLines(Field subject, Field f, String node, String prefix, Set<String> decided) {

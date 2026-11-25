@@ -73,6 +73,10 @@ final class TypeBuilder {
         f.transform = hand.transform(c.id, d.path);
         f.descriptor = hand.apiString("descriptors", c.id + ":" + d.path);
         f.type = type(c, d, fields);
+        if (f.type instanceof EnumRef r && r.type().external != null) {
+            JsonObject external = hand.api("externalEnums").getAsJsonObject(c.id + ":" + d.path);
+            f.nullAs = external.has("nullAs") ? external.get("nullAs").getAsString() : null;
+        }
         if (isOpenEnum(c, d) && !d.enumValues.isEmpty() && f.type instanceof Scalar s && s.kind() == ScalarKind.STRING) {
             f.documentedValues = d.enumValues.stream().map(JsonElement::getAsString).toList();
         }
@@ -84,7 +88,7 @@ final class TypeBuilder {
         JsonObject observed = evidence == null ? null : evidence.field(d.path);
         boolean omissionAccepted = observed != null && observed.has("whenAbsent");
         boolean optional = hand.listed("optional", c.id + ":" + d.path);
-        f.required = !optional && (d.required || (notes.contains("required") && !omissionAccepted));
+        f.required = !optional && f.nullAs == null && (d.required || (notes.contains("required") && !omissionAccepted));
         limits.limits(c, f, feedbackPath, d.range, d.enumValues, observed);
         return f;
     }
@@ -261,8 +265,30 @@ final class TypeBuilder {
         };
     }
 
+    /**
+     * api.json {@code externalEnums}: the field takes a hand-written enum, not a generated value class. Its constants are
+     * named like generated ones; the documented value {@code nullAs} is null in Java, so the enum need not have it.
+     */
+    static EnumType externalEnum(String key, List<JsonElement> values, JsonObject external) {
+        EnumType e = new EnumType();
+        e.external = external.get("class").getAsString();
+        e.name = e.external.substring(e.external.lastIndexOf('.') + 1);
+        e.accessor = external.get("accessor").getAsString();
+        for (JsonElement value : values) {
+            e.values.add(value.getAsString());
+            e.constants.add(JavaNames.constant(value.getAsString()));
+        }
+        if (e.values.isEmpty()) {
+            throw new GenerationException(key + ": an external enum needs the documented values");
+        }
+        return e;
+    }
+
     EnumType enumType(Comp c, String computed, List<JsonElement> values, String path) {
         String key = c.id + ":" + path;
+        if (hand.api("externalEnums").has(key)) {
+            return externalEnum(key, values, hand.api("externalEnums").getAsJsonObject(key));
+        }
         String name = hand.history.name("enums", key, computed, hand.apiString("enums", c.id + ":" + computed));
         List<String> strings = values.stream().map(JsonElement::getAsString).toList();
         EnumType existing = c.enums.get(name);

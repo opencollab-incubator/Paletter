@@ -449,6 +449,20 @@ public final class ApiBinder {
             }
             return value.getAsString();
         }
+        if (raw == dev.opencollab.paletter.creative.CreativeCategory.class) {
+            // api.json externalEnums: none is null
+            if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
+                throw new Unbindable("not a category");
+            }
+            if (value.getAsString().equals("none")) {
+                return null;
+            }
+            try {
+                return dev.opencollab.paletter.creative.CreativeCategory.fromBedrockName(value.getAsString());
+            } catch (IllegalArgumentException e) {
+                throw new Unbindable(e.getMessage());
+            }
+        }
         if (openValueClass(raw)) {
             if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
                 throw new Unbindable("not an enum value");

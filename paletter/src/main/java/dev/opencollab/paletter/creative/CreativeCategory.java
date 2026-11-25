@@ -25,12 +25,6 @@ public enum CreativeCategory {
     /** The items tab. */
     ITEMS("items", CreativeItemCategory.ITEMS);
 
-    /**
-     * Name to use in {@code menu_category} for blocks that are not in the creative inventory.
-     *
-     * @since 1.0.0
-     */
-    public static final String NONE_NAME = "none";
 
     private static final CreativeCategory[] VALUES = values();
 
@@ -67,7 +61,7 @@ public enum CreativeCategory {
      *
      * @param name the name used in data, e.g. {@code construction}
      * @return the category
-     * @throws IllegalArgumentException if there is no such category ({@link #NONE_NAME} is not one)
+     * @throws IllegalArgumentException if there is no such category ({@code none} is not one)
      * @since 1.0.0
      */
     public static @NonNull CreativeCategory fromBedrockName(@NonNull String name) {

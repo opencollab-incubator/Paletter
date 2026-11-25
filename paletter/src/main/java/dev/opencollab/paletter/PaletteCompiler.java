@@ -311,22 +311,18 @@ final class PaletteCompiler {
     private record Menu(CreativeCategory category, @Nullable String group) {
     }
 
-    /** @return the menu of a block's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
+    /** @return the menu of a block's {@code menu_category}, or null if it is absent or its category null ({@code none}): not in creative */
     private static @Nullable Menu menu(dev.opencollab.paletter.block.component.@Nullable BlockMenuCategory menu) {
-        return menu == null ? null : menu(menu.category().value(), menu.group());
+        return menu == null ? null : menu(menu.category(), menu.group());
     }
 
-    /** @return the menu of an item's {@code menu_category}, or null if it is absent or {@code none}: not in creative */
+    /** @return the menu of an item's {@code menu_category}, or null if it is absent or its category null ({@code none}): not in creative */
     private static @Nullable Menu menu(dev.opencollab.paletter.item.component.@Nullable ItemMenuCategory menu) {
-        // A menu category without a category is sent as none, so the item is not in creative
-        return menu == null || menu.category() == null ? null : menu(menu.category().value(), menu.group());
+        return menu == null ? null : menu(menu.category(), menu.group());
     }
 
-    private static @Nullable Menu menu(String category, @Nullable String group) {
-        if (category.equals(CreativeCategory.NONE_NAME)) {
-            return null;
-        }
-        return new Menu(CreativeCategory.fromBedrockName(category), group == null || group.isEmpty() ? null : group);
+    private static @Nullable Menu menu(@Nullable CreativeCategory category, @Nullable String group) {
+        return category == null ? null : new Menu(category, group == null || group.isEmpty() ? null : group);
     }
 
     /** The custom items of a layer, then the items its blocks own ({@link CustomBlock.BlockItem#custom}), in block order. */
