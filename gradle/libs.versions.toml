@@ -11,13 +11,13 @@ fastutil = "8.5.15"
 checker = "4.4.0"
 gson = "2.15.0"
 # Code generation only (tools module), never a dependency of paletter. square/javapoet is archived; this is its maintained fork
-javapoet = "0.22.0"
+javapoet = "0.23.0"
 junit = "6.1.3"
 picocli = "4.7.7"
 # The API dump (tools module, apiDump source set) reads class files
 asm = "9.11.1"
 # The white-box discovery (tools module) decodes x86-64 instructions of the BDS binary
-iced = "1.21.0"
+iced = "1.22.0"
 # build-logic: the conventions of the published modules. Same as Geyser
 indra = "4.0.0"
 # build-logic, apiCompat: binary compatibility against the released artifact
