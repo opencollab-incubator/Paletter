@@ -913,7 +913,7 @@ public final class Paletter {
          * @return this builder
          * @since 1.0.0
          */
-        public @NonNull Builder removeItems(@NonNull BedrockItemType... items) {
+        public @NonNull Builder removeItemTypes(@NonNull BedrockItemType... items) {
             vanillaContent.remove(items);
             return this;
         }

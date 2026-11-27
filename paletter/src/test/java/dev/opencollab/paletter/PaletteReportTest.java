@@ -42,7 +42,7 @@ class PaletteReportTest {
         // Items are exact variants: the base variant of the cushion is what is missing
         assertTrue(report.unknownItems().stream().anyMatch(variant -> variant.type().equals(BedrockItems.BLACK_CUSHION) && variant.aux() == 0));
 
-        Palette removed = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE, BedrockItems.STICK).build()
+        Palette removed = Paletter.builder().fallbacks(Fallbacks.NONE).removeItemTypes(BedrockItems.APPLE, BedrockItems.STICK).build()
             .palette(PALETTER.latest().protocolVersion());
         assertTrue(removed.report().unknownItems().stream().anyMatch(item -> item.type().equals(BedrockItems.APPLE)));
         assertTrue(removed.report().unknownItems().stream().anyMatch(item -> item.type().equals(BedrockItems.STICK)));
@@ -67,7 +67,7 @@ class PaletteReportTest {
         assertEquals(base.report().unknownBlocks(), extended.report().unknownBlocks());
         assertEquals(base.report().unknownItems(), extended.report().unknownItems());
         assertFalse(extended.report().unknownBlocks().contains(lamp.type()));
-        assertFalse(extended.report().unknownItems().contains(ruby.type().variant()));
+        assertFalse(extended.report().unknownItems().contains(ruby.type().base()));
     }
 
     @Test

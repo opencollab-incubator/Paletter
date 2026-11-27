@@ -972,6 +972,17 @@ public final class Palette {
     }
 
     /**
+     * {@link #blockOf(BedrockItemVariant)} of the base variant of a type.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @return the block's key, or null if the item is not a block item here
+     * @since 1.0.0
+     */
+    public @Nullable BedrockBlockState blockOf(@NonNull BedrockItemType type) {
+        return blockOf(type.base());
+    }
+
+    /**
      * The item the Script API gives for the block's default permutation: the block's own item for a custom block (registered
      * with the block, see {@link dev.opencollab.paletter.block.CustomBlock#item()}, or the item that replaces it), else the item
      * of the bundled block to item relation of the data. Whether the client's pick block gives this item is
@@ -1025,6 +1036,32 @@ public final class Palette {
     public @Nullable ResolvedItem resolve(@NonNull BedrockItemVariant key, @Nullable ResolvedItem orElse) {
         ResolvedItem resolved = items.resolve(key);
         return resolved != null ? resolved : orElse;
+    }
+
+    /**
+     * {@link #resolve(BedrockItemVariant)} of the base variant of a type: {@code resolve(BedrockItems.APPLE)}. For a type
+     * with variants it is aux 0 (the water bottle, the white bed); name another one with its getter or
+     * {@link BedrockItemType#variant(int)}.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @return the resolution
+     * @throws IllegalArgumentException if nothing is sent for the item, see {@link #resolve(BedrockItemVariant)}
+     * @since 1.0.0
+     */
+    public @NonNull ResolvedItem resolve(@NonNull BedrockItemType type) {
+        return resolve(type.base());
+    }
+
+    /**
+     * {@link #resolve(BedrockItemVariant, ResolvedItem)} of the base variant of a type.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @param orElse what to return where {@link #resolve(BedrockItemType)} throws, may be null
+     * @return the resolution, or {@code orElse} if nothing is sent for the item
+     * @since 1.0.0
+     */
+    public @Nullable ResolvedItem resolve(@NonNull BedrockItemType type, @Nullable ResolvedItem orElse) {
+        return resolve(type.base(), orElse);
     }
 
     /**

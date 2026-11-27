@@ -15,14 +15,19 @@ import java.util.Objects;
  * {@link dev.opencollab.paletter.block.CustomBlock}) has one too, so both are used alike:
  * <pre>{@code
  * ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
- * ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant(5)));
+ * ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.withEffect(BedrockPotionTypes.HEALING)));
+ * ItemData banner = palette.encode(BedrockItemStack.of(BedrockItems.BANNER.blue()));
  * }</pre>
- * Methods that take an item take a {@link BedrockItemVariant}: {@link #variant()} is the base variant. Items whose
- * variants differ by aux value (potions, banners, goat horns, ...) expose them with {@link #variant(int)}.
- * The potions, tipped arrows, beds and banners have constants for them in {@link BedrockItemVariants}.
+ * A method that means one item takes a type or a {@link BedrockItemVariant}; the type stands for its {@link #base() base
+ * variant}, aux 0. A method that could mean the whole type takes only a variant, and has a separately named method for
+ * the whole type ({@code itemType}, {@code anyVariantOf}). Variants that differ by aux value are {@link #variant(int)};
+ * the ones BDS names have typed getters on the constant: {@link PotionItemType#withEffect} for potions and tipped
+ * arrows, and a getter per colour for beds and banners ({@code BedrockItems.BED.lightBlue()}).
+ * <p>
+ * Only Paletter subclasses this class: the constants of the items with named variants.
  * <p>
  * Equality: {@code equals} always works, and types are map keys. {@code ==} works too for vanilla types, which are
- * singletons (the constants), for their {@link #variant() base variant} and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
+ * singletons (the constants), for their {@link #base() base variant} and for registered custom content: a {@link CustomItem} owns its {@link CustomItem#type()
  * type} (a {@link dev.opencollab.paletter.block.CustomBlock} its {@link dev.opencollab.paletter.block.CustomBlock#itemType()
  * item type}), and a palette it is registered in hands back exactly that type. Custom types made for an
  * identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
@@ -38,7 +43,7 @@ import java.util.Objects;
  *
  * @since 1.0.0
  */
-public final class BedrockItemType {
+public class BedrockItemType {
     private final @Nullable String constantName;
     private final String identifier;
     private final @Nullable String fallback;
@@ -47,7 +52,7 @@ public final class BedrockItemType {
     private volatile @Nullable Linked linked;
     /** The base variant: made with the type, so it is the same object whenever it is asked for. */
     private final BedrockItemVariant base = new BedrockItemVariant(this, 0, -1);
-    /** The named variants with a nonzero aux, registered by the generated constants of {@link BedrockItemVariants}. */
+    /** The named variants with a nonzero aux, registered by the getters of the generated constants and {@link BedrockPotionTypes}. */
     private volatile BedrockItemVariant[] named = new BedrockItemVariant[0];
 
     /**
@@ -220,7 +225,7 @@ public final class BedrockItemType {
      * @return the item identifier, e.g. {@code minecraft:apple}
      * @since 1.0.0
      */
-    public @NonNull String identifier() {
+    public final @NonNull String identifier() {
         return identifier;
     }
 
@@ -231,7 +236,7 @@ public final class BedrockItemType {
      * @return the constant's name, e.g. {@code APPLE}, or null for a custom type or one without a constant
      * @since 1.0.0
      */
-    public @Nullable String constantName() {
+    public final @Nullable String constantName() {
         return constantName;
     }
 
@@ -242,7 +247,7 @@ public final class BedrockItemType {
      *         identifier the bundled data does not know
      * @since 1.0.0
      */
-    public boolean isCustom() {
+    public final boolean isCustom() {
         return custom;
     }
 
@@ -254,7 +259,7 @@ public final class BedrockItemType {
      * @return true if BDS only offers the item with Education Edition features
      * @since 1.0.0
      */
-    public boolean isEducation() {
+    public final boolean isEducation() {
         return education;
     }
 
@@ -266,7 +271,7 @@ public final class BedrockItemType {
      *         it through their {@link dev.opencollab.paletter.Fallbacks}
      * @since 1.0.0
      */
-    public boolean isAvailable() {
+    public final boolean isAvailable() {
         return linked().available;
     }
 
@@ -277,35 +282,35 @@ public final class BedrockItemType {
      * @return this type, or for a type that is not {@link #isAvailable() available} its fallback type
      * @since 1.0.0
      */
-    public @NonNull BedrockItemType resolved() {
+    public final @NonNull BedrockItemType resolved() {
         return linked().owner;
     }
 
     /**
-     * The base variant of the type.
+     * The base variant of the type: what the type stands for where one item is meant.
      *
      * @return the base variant: aux 0, no block state. Loads no data
      * @since 1.0.0
      */
-    public @NonNull BedrockItemVariant variant() {
+    public final @NonNull BedrockItemVariant base() {
         return base;
     }
 
     /**
      * The variant of this type with an aux value, never null, and always of this type (also for a type that is not
-     * {@link #isAvailable() available}: it resolves like any variant of it). The base variant and the named constants of
-     * {@link BedrockItemVariants} are the same instance every time, so {@code ==} holds for them whenever the key was
+     * {@link #isAvailable() available}: it resolves like any variant of it). The base variant and the named variants
+     * (the typed getters of the constants) are the same instance every time, so {@code ==} holds for them whenever the key was
      * made. Any other aux gives a new variant until the bundled data is loaded; after that, the other variants the data
      * lists are its instances. Compare those with {@code equals}, which always works. An aux nobody named gives a new
      * variant without a canonical id (a layer can give it one with
      * {@link dev.opencollab.paletter.PaletteLayer.Builder#variant(BedrockItemVariant)}); those are not kept, so arbitrary auxes cannot
-     * grow memory. Loads no bundled data: only the constants of {@link BedrockItemVariants}.
+     * grow memory. Loads no bundled data: only the named variants.
      *
      * @param aux the aux value
      * @return the variant of this type with this aux value
      * @since 1.0.0
      */
-    public @NonNull BedrockItemVariant variant(int aux) {
+    public final @NonNull BedrockItemVariant variant(int aux) {
         if (aux == 0) {
             return base;
         }
@@ -335,7 +340,7 @@ public final class BedrockItemType {
      *         {@link #variants()}. Loads the data
      * @since 1.0.0
      */
-    public boolean hasVariant(int aux) {
+    public final boolean hasVariant(int aux) {
         for (BedrockItemVariant variant : linked().variants) {
             if (variant.aux() == aux) {
                 return true;
@@ -350,7 +355,7 @@ public final class BedrockItemType {
      * @return the variants with a canonical id: the base variant first, then the creative inventory's other variants
      * @since 1.0.0
      */
-    public @NonNull List<BedrockItemVariant> variants() {
+    public final @NonNull List<BedrockItemVariant> variants() {
         return linked().variants;
     }
 
@@ -360,7 +365,7 @@ public final class BedrockItemType {
      * @return the base variant as an {@link ItemVariant} (of the {@link #resolved()} type)
      */
     @NonNull ItemVariant toItemVariant() {
-        return variant().toItemVariant();
+        return base.toItemVariant();
     }
 
     /**
@@ -370,11 +375,11 @@ public final class BedrockItemType {
      * @return the canonical id of the base variant in a palette's canonical items, or -1
      */
     int canonicalIn(@NonNull CanonicalItems canonical) {
-        return variant().canonicalIn(canonical);
+        return base.canonicalIn(canonical);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         return this == o || o instanceof BedrockItemType other && identifier.equals(other.identifier);
     }
 
@@ -384,7 +389,7 @@ public final class BedrockItemType {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return identifier;
     }
 

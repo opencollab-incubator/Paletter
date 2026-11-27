@@ -34,7 +34,7 @@ class CraftingDataTest {
     private static final Palette PALETTE = Paletter.builder().build().palette(VERSION.protocolVersion());
 
     private static Recipe.Shapeless shapeless(String id, Ingredient ingredient) {
-        Result result = Result.builder().item(BedrockItems.TORCH.variant()).count(4).build();
+        Result result = Result.builder().item(BedrockItems.TORCH.base()).count(4).build();
         return Recipe.Shapeless.builder().id(id).ingredients(List.of(ingredient)).results(List.of(result)).station(RecipeStations.CRAFTING_TABLE).build();
     }
 
@@ -43,7 +43,7 @@ class CraftingDataTest {
         Recipe good = shapeless("test:good", new Ingredient.AnyVariant(BedrockItems.STICK, 1));
         Recipe missingItem = shapeless("test:item", new Ingredient.AnyVariant(Access.vanilla().itemType("test:missing"), 1));
         Recipe emptyTag = shapeless("test:tag", new Ingredient.Tag("test:no_such_tag", 1));
-        Recipe later = shapeless("test:later", new Ingredient.Item(BedrockItems.COAL.variant(), 1));
+        Recipe later = shapeless("test:later", new Ingredient.Item(BedrockItems.COAL.base(), 1));
 
         CraftingData data = CraftingData.builder(PALETTE).recipes(List.of(good, missingItem, emptyTag, later)).build();
 
@@ -61,8 +61,8 @@ class CraftingDataTest {
     @Test
     void mixesWithMissingItemsAreReported() {
         BedrockItemType missing = Access.vanilla().itemType("test:missing");
-        PotionMix badPotion = new PotionMix(missing.variant(), BedrockItems.STICK.variant(), BedrockItems.STICK.variant());
-        PotionMix goodPotion = new PotionMix(BedrockItems.STICK.variant(), BedrockItems.COAL.variant(), BedrockItems.TORCH.variant());
+        PotionMix badPotion = new PotionMix(missing.base(), BedrockItems.STICK.base(), BedrockItems.STICK.base());
+        PotionMix goodPotion = new PotionMix(BedrockItems.STICK.base(), BedrockItems.COAL.base(), BedrockItems.TORCH.base());
         ContainerMix badContainer = new ContainerMix(BedrockItems.STICK, missing, BedrockItems.COAL);
         ContainerMix goodContainer = new ContainerMix(BedrockItems.STICK, BedrockItems.COAL, BedrockItems.TORCH);
 
@@ -99,7 +99,7 @@ class CraftingDataTest {
     void aMissingResultBlockStateDropsTheRecipe() {
         NbtMap state = NbtMap.builder().putString("name", "test:no_such_block").putCompound("states", NbtMap.EMPTY).build();
         Recipe.Shapeless recipe = Recipe.Shapeless.builder().id("test:block").ingredients(List.of(new Ingredient.AnyVariant(BedrockItems.STICK, 1)))
-            .results(List.of(Result.builder().item(BedrockItems.TORCH.variant()).blockState(state).build())).station(RecipeStations.CRAFTING_TABLE).build();
+            .results(List.of(Result.builder().item(BedrockItems.TORCH.base()).blockState(state).build())).station(RecipeStations.CRAFTING_TABLE).build();
         CraftingData data = CraftingData.builder(PALETTE).recipes(List.of(recipe)).build();
         assertEquals(List.of(recipe), data.dropped());
         assertEquals(-1, data.netId(recipe));
@@ -147,7 +147,7 @@ class CraftingDataTest {
             .menuCategory(CreativeCategory.CONSTRUCTION)
             .build();
         Palette palette = PALETTE.extend(PaletteLayer.builder("content").item(ruby).block(lamp).build());
-        Result lampResult = Result.builder().item(Access.vanilla().itemType("example:lamp").variant()).blockState(lamp.defaultState()).build();
+        Result lampResult = Result.builder().item(Access.vanilla().itemType("example:lamp").base()).blockState(lamp.defaultState()).build();
         Recipe.Shapeless recipe = Recipe.Shapeless.builder().id("test:lamp")
             .ingredients(List.of(new Ingredient.AnyVariant(Access.vanilla().itemType("example:ruby"), 1))).results(List.of(lampResult))
             .station(RecipeStations.CRAFTING_TABLE).build();

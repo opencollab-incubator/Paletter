@@ -8,8 +8,8 @@ import dev.opencollab.paletter.annotation.SincePreview;
 /**
  * Every item type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  * the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.
- * Variants that differ by aux are {@link BedrockItemType#variant(int)}; the named ones are the constants of
- * {@link BedrockItemVariants}.
+ * Variants that differ by aux are {@link BedrockItemType#variant(int)}; the items with variants BDS names have a
+ * constant of their own class with typed getters: {@code POTION.withEffect(BedrockPotionTypes.HEALING)}, {@code BED.lightBlue()}.
  * <p>
  * Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated: palettes
  * that have the item send it, the others resolve it through their {@link dev.opencollab.paletter.Fallbacks}
@@ -252,7 +252,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:arrow}: 42 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType ARROW = VanillaTypes.item("ARROW", "minecraft:arrow");
+    public static final PotionItemType ARROW = VanillaTypes.item(new PotionItemType("ARROW", "minecraft:arrow"));
 
     /**
      * {@code minecraft:axolotl_bucket}.
@@ -419,7 +419,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:banner}: 15 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType BANNER = VanillaTypes.item("BANNER", "minecraft:banner");
+    public static final BannerItemType BANNER = VanillaTypes.item(new BannerItemType("BANNER", "minecraft:banner"));
 
     /**
      * {@code minecraft:banner_pattern}.
@@ -454,7 +454,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:bed}: 15 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType BED = VanillaTypes.item("BED", "minecraft:bed");
+    public static final BedItemType BED = VanillaTypes.item(new BedItemType("BED", "minecraft:bed"));
 
     /**
      * {@code minecraft:bedrock}.
@@ -6147,7 +6147,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:lingering_potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType LINGERING_POTION = VanillaTypes.item("LINGERING_POTION", "minecraft:lingering_potion");
+    public static final PotionItemType LINGERING_POTION = VanillaTypes.item(new PotionItemType("LINGERING_POTION", "minecraft:lingering_potion"));
 
     /**
      * {@code minecraft:lit_blast_furnace}.
@@ -8199,7 +8199,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType POTION = VanillaTypes.item("POTION", "minecraft:potion");
+    public static final PotionItemType POTION = VanillaTypes.item(new PotionItemType("POTION", "minecraft:potion"));
 
     /**
      * {@code minecraft:powder_snow}.
@@ -9358,7 +9358,7 @@ public final class BedrockItems {
     /**
      * {@code minecraft:splash_potion}: 46 more variants by aux, see {@link BedrockItemType#variant(int)}.
      */
-    public static final BedrockItemType SPLASH_POTION = VanillaTypes.item("SPLASH_POTION", "minecraft:splash_potion");
+    public static final PotionItemType SPLASH_POTION = VanillaTypes.item(new PotionItemType("SPLASH_POTION", "minecraft:splash_potion"));
 
     /**
      * {@code minecraft:sponge}.

@@ -141,11 +141,11 @@ class PaletterBuilderTest {
         DataVersion oldest = PALETTER.version(OLDEST);
         DataVersion newest = PALETTER.latest();
         Fallbacks fallbacks = Fallbacks.builder()
-            .item(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK.variant()).forced())
-            .item(newest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.APPLE.variant()).forced())
+            .itemType(oldest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.STICK.base()).forced())
+            .itemType(newest, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.APPLE.base()).forced())
             .build();
-        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.STICK.variant()).forced()), fallbacks.items(PALETTER.version(OLDEST)));
-        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.APPLE.variant()).forced()), fallbacks.items(PALETTER.latest()));
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.STICK.base()).forced()), fallbacks.items(PALETTER.version(OLDEST)));
+        assertEquals(Map.of("minecraft:poplar_boat", ItemFallback.of(BedrockItems.APPLE.base()).forced()), fallbacks.items(PALETTER.latest()));
         assertEquals(ItemFallback.UNKNOWN, fallbacks.defaultItem());
         assertNull(Fallbacks.NONE.defaultItem());
         assertNull(Fallbacks.NONE.defaultBlock());
@@ -157,7 +157,7 @@ class PaletterBuilderTest {
 
     @Test
     void vanillaContentRemovesItems() {
-        Paletter paletter = Paletter.builder().removeItems(BedrockItems.APPLE).build();
+        Paletter paletter = Paletter.builder().removeItemTypes(BedrockItems.APPLE).build();
         for (DataVersion version : paletter.versions()) {
             Palette palette = paletter.palette(version.protocolVersion());
             assertNull(palette.items().getDefinition("minecraft:apple"), version.toString());
@@ -171,7 +171,7 @@ class PaletterBuilderTest {
         }
         assertNotNull(PALETTER.palette(OLDEST).items().getDefinition("minecraft:apple"));
 
-        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItems(BedrockItems.APPLE).build();
+        Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).removeItemTypes(BedrockItems.APPLE).build();
         assertNull(none.palette(OLDEST).items().resolve(ItemVariant.of("minecraft:apple")));
     }
 

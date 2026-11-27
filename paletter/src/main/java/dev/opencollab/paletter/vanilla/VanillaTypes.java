@@ -104,21 +104,30 @@ final class VanillaTypes {
         return register(new BedrockItemType(name, identifier, UNKNOWN, false));
     }
 
+    /** A constant of a type with named variants: a generated subclass, or {@link PotionItemType}. */
+    static <T extends BedrockItemType> @NonNull T item(@NonNull T type) {
+        register(type);
+        return type;
+    }
+
     /**
-     * A named variant of a vanilla type ({@code BedrockItemVariants}). The index adopts it as the type's variant of that aux,
+     * A named variant of a vanilla type (a typed getter of its constant). The index adopts it as the type's variant of that aux,
      * so it is the instance {@link BedrockItemType#variant(int)} answers.
      */
     static @NonNull BedrockItemVariant variant(@NonNull BedrockItemType type, int aux) {
-        return aux == 0 ? type.variant() : type.name(new BedrockItemVariant(type, aux, -1));
+        return aux == 0 ? type.base() : type.name(new BedrockItemVariant(type, aux, -1));
     }
 
     private static volatile boolean namedLoaded;
 
-    /** Initializes {@code BedrockItemVariants}, which registers the named variants on their types: constants only, no data. */
+    /**
+     * Initializes {@code BedrockPotionTypes}, which registers the potion variants on their types: constants only, no data.
+     * The other named variants are registered by the constants of {@code BedrockItems} themselves.
+     */
     static void loadNamedVariants() {
         if (!namedLoaded) {
             try {
-                Class.forName(VanillaTypes.class.getPackageName() + ".BedrockItemVariants", true, VanillaTypes.class.getClassLoader());
+                Class.forName(VanillaTypes.class.getPackageName() + ".BedrockPotionTypes", true, VanillaTypes.class.getClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e);
             }

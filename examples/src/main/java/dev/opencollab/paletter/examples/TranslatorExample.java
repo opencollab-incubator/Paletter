@@ -61,8 +61,8 @@ public final class TranslatorExample {
         // Items, both directions: variant <-> the translator's own item table. Decoding only gives variants the palette
         // knows, so a map keyed by them stays bounded whatever a client sends; an aux no variant has stays on the stack
         Map<BedrockItemVariant, String> bedrockToJava = new HashMap<>();
-        bedrockToJava.put(ruby.type().variant(), "java:ruby");
-        ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type().variant(), 2));
+        bedrockToJava.put(ruby.type().base(), "java:ruby");
+        ItemData toClient = shared.encode(BedrockItemStack.of(ruby.type().base(), 2));
         System.out.println("from client: " + bedrockToJava.get(shared.decode(toClient).variant()));
         BedrockItemStack odd = shared.decode(toClient.toBuilder().damage(12345).build());
         System.out.println("from client with aux " + odd.aux() + ": " + bedrockToJava.get(odd.variant()));

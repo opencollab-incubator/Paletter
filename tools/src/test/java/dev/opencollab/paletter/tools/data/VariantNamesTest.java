@@ -98,7 +98,7 @@ class VariantNamesTest {
     @Test
     void onlyTheVariantsOfTheCreativeInventoryAreNamed() {
         // Aux 6 is not in the creative inventory of the version, so it has no constant there
-        assertEquals(List.of(new VariantNames.Entry("minecraft:potion", 5, "POTION_NIGHTVISION"), new VariantNames.Entry("minecraft:bed", 8, "BED_SILVER")),
+        assertEquals(List.of(new VariantNames.Entry("minecraft:potion", 5, "POTION_NIGHTVISION", "minecraft:nightvision"), new VariantNames.Entry("minecraft:bed", 8, "BED_SILVER")),
             sorted(VariantNames.of(dump(), creative("minecraft:potion@5", "minecraft:arrow@0", "minecraft:bed@8", "minecraft:apple@0"))));
     }
 
@@ -134,7 +134,7 @@ class VariantNamesTest {
         assertEquals(List.of(new VariantNames.Entry("minecraft:bed", 8, "BED_SILVER")), all.get("1.0"));
 
         VariantNames.update(all, "1.0", dump(), creative("minecraft:potion@5"));
-        assertEquals(List.of(new VariantNames.Entry("minecraft:potion", 5, "POTION_NIGHTVISION")), all.get("1.0"));
+        assertEquals(List.of(new VariantNames.Entry("minecraft:potion", 5, "POTION_NIGHTVISION", "minecraft:nightvision")), all.get("1.0"));
     }
 
     private static final List<String> VERSIONS = List.of("26.50", "26.60", "26.70");

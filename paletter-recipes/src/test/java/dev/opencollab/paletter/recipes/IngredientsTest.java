@@ -89,9 +89,9 @@ class IngredientsTest {
 
     @Test
     void noTagMatchesGivesNull() {
-        assertNull(Ingredients.tagOf(NEWEST, Set.of(BedrockItems.STICK.variant(), BedrockItems.COAL.variant()), item -> false));
+        assertNull(Ingredients.tagOf(NEWEST, Set.of(BedrockItems.STICK.base(), BedrockItems.COAL.base()), item -> false));
         assertNull(Ingredients.tagOf(NEWEST, Set.of(), item -> false));
-        assertNull(Ingredients.tagOf(NEWEST, Set.of(BedrockItems.STICK.variant()), item -> true));
+        assertNull(Ingredients.tagOf(NEWEST, Set.of(BedrockItems.STICK.base()), item -> true));
     }
 
     @Test
@@ -212,8 +212,8 @@ class IngredientsTest {
         BedrockItemType x = Access.vanilla().itemType("example:x");
         BedrockItemType y = Access.vanilla().itemType("example:y");
         BedrockItemType z = Access.vanilla().itemType("example:z");
-        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x.variant(), y.variant()), item -> false).tag(), "tie on 2 members: the first name");
+        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x.base(), y.base()), item -> false).tag(), "tie on 2 members: the first name");
         // With z unobtainable a matches too, and sorts first by name, but has more members
-        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x.variant(), y.variant()), z::equals).tag());
+        assertEquals("example:b", Ingredients.tagOf(palette, Set.of(x.base(), y.base()), z::equals).tag());
     }
 }

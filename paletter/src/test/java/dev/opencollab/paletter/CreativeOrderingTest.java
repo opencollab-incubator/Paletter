@@ -75,10 +75,10 @@ class CreativeOrderingTest {
         List<CreativeNode> items = palette.creativeLayout().nodes(CreativeCategory.ITEMS);
         CreativeGroup sword = assertInstanceOf(CreativeGroup.class, items.getLast());
         assertEquals("itemGroup.name.sword", sword.name());
-        assertEquals(List.of(BedrockItemStack.of(Access.vanilla().itemType("test:wrong_category").variant())), sword.stacks());
+        assertEquals(List.of(BedrockItemStack.of(Access.vanilla().itemType("test:wrong_category").base())), sword.stacks());
 
         List<CreativeNode> nature = palette.creativeLayout().nodes(CreativeCategory.NATURE);
-        assertEquals(new CreativeItem(BedrockItemStack.of(Access.vanilla().itemType("test:loose").variant())), nature.getLast());
+        assertEquals(new CreativeItem(BedrockItemStack.of(Access.vanilla().itemType("test:loose").base())), nature.getLast());
         CreativeGroup created = assertInstanceOf(CreativeGroup.class, nature.get(nature.size() - 2));
         assertEquals("test:itemGroup.new", created.name());
     }

@@ -174,21 +174,23 @@ public final class Fallbacks {
         }
 
         /**
-         * Uses {@code fallback} for an item in every version that lacks it (or, with {@link ItemFallback#force()},
-         * in every version).
+         * Uses {@code fallback} for every variant of an item type in every version that lacks the type (or, with
+         * {@link ItemFallback#force()}, in every version). For one variant, use {@link #item(BedrockItemVariant, ItemFallback)}.
+         * Which entry applies to a variant: its own entry before the entry of its type, a version's entry before the entry for
+         * every version within each, then {@link #defaultItem(ItemFallback)}.
          *
          * @param type the item that may be missing
          * @param fallback what it becomes
          * @return this builder
          * @since 1.0.0
          */
-        public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
+        public @NonNull Builder itemType(@NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
             items.put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
         /**
-         * Like {@link #item(BedrockItemType, ItemFallback)} for an identifier, which needs no type: for an item the bundled
+         * Like {@link #itemType(BedrockItemType, ItemFallback)} for an identifier, which needs no type: for an item the bundled
          * data does not know.
          *
          * @param identifier the identifier of the item that may be missing
@@ -197,25 +199,26 @@ public final class Fallbacks {
          * @throws NullPointerException if the identifier or the fallback is null
          * @since 1.0.0
          */
-        public @NonNull Builder item(@NonNull String identifier, @NonNull ItemFallback fallback) {
+        public @NonNull Builder itemType(@NonNull String identifier, @NonNull ItemFallback fallback) {
             items.put(Objects.requireNonNull(identifier), Objects.requireNonNull(fallback));
             return this;
         }
 
         /**
-         * Like {@link #item(BedrockItemType, ItemFallback)} with {@link ItemFallback#of} the base variant of {@code replacement}.
+         * Like {@link #itemType(BedrockItemType, ItemFallback)} with {@link ItemFallback#of(BedrockItemType)} {@code replacement}:
+         * every variant of {@code type} becomes the base variant of {@code replacement}.
          *
          * @param type the item that may be missing
          * @param replacement the item it becomes
          * @return this builder
          * @since 1.0.0
          */
-        public @NonNull Builder item(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
-            return item(type, ItemFallback.of(replacement.variant()));
+        public @NonNull Builder itemType(@NonNull BedrockItemType type, @NonNull BedrockItemType replacement) {
+            return itemType(type, ItemFallback.of(replacement));
         }
 
         /**
-         * Like {@link #item(BedrockItemType, ItemFallback)} for one data version only, overriding the entry for every
+         * Like {@link #itemType(BedrockItemType, ItemFallback)} for one data version only, overriding the entry for every
          * version.
          *
          * @param version the data version the entry is for
@@ -224,14 +227,14 @@ public final class Fallbacks {
          * @return this builder
          * @since 1.0.0
          */
-        public @NonNull Builder item(@NonNull DataVersion version, @NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
+        public @NonNull Builder itemType(@NonNull DataVersion version, @NonNull BedrockItemType type, @NonNull ItemFallback fallback) {
             versionItems.computeIfAbsent(version.name(), v -> new LinkedHashMap<>())
                 .put(type.identifier(), Objects.requireNonNull(fallback));
             return this;
         }
 
         /**
-         * Like {@link #item(BedrockItemType, ItemFallback)} for one variant only, e.g. to give each potion its own
+         * Like {@link #itemType(BedrockItemType, ItemFallback)} for one variant only, e.g. to give each potion its own
          * replacement. Checked before the entry of its type, and applies where that would: a version that lacks the item,
          * or with {@link ItemFallback#forced()} every version, where it replaces only this variant. Paletter does not know
          * which auxes a version has, so for an aux an older version lacks, force the entry for those versions with
@@ -326,7 +329,7 @@ public final class Fallbacks {
 
         /**
          * Replaces a block and its item alike: {@link #block(BedrockBlockType, BedrockBlockType)} and
-         * {@link #item(BedrockItemType, BedrockItemType)} for the item types of the same identifiers. Loads the bundled
+         * {@link #itemType(BedrockItemType, BedrockItemType)} for the item types of the same identifiers. Loads the bundled
          * data.
          *
          * @param type the block that may be missing, which has an item of the same identifier
@@ -339,7 +342,7 @@ public final class Fallbacks {
             BedrockItemType item = itemOf(type);
             BedrockItemType replacementItem = itemOf(replacement);
             block(type, replacement);
-            return item(item, replacementItem);
+            return itemType(item, replacementItem);
         }
 
         private static BedrockItemType itemOf(BedrockBlockType block) {

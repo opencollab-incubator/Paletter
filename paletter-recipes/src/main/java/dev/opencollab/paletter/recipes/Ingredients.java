@@ -39,7 +39,7 @@ public final class Ingredients {
      * <p>
      * A tag lists item types, and a listed type stands for every variant (aux value) of it. A type is covered if
      * {@code items} holds every variant the type has in this palette (for most types just the base variant,
-     * {@link BedrockItemType#variant()}); a type with only some of its variants is not covered, and then no tag matches, as
+     * {@link BedrockItemType#base()}); a type with only some of its variants is not covered, and then no tag matches, as
      * a tag would accept the other variants too.
      * <p>
      * A tag matches if its members and the covered types are the same set, after leaving out the items the palette does not have

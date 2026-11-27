@@ -32,6 +32,7 @@ import java.util.Random;
 import java.util.function.UnaryOperator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -150,14 +151,15 @@ class ConstantsSyntheticBundleTest {
     /** {@code variant_names.txt} of the second generation: the release names two potion variants, the preview one more. */
     private static final String VARIANT_NAMES = """
         # test
-        1.1.. minecraft:potion 5 POTION_NIGHTVISION
-        1.1.. minecraft:potion 7 POTION_LONG_NIGHTVISION
-        1.2.. minecraft:potion 0 POTION_WATER
+        1.1.. minecraft:potion 5 POTION_NIGHTVISION minecraft:nightvision
+        1.1.. minecraft:potion 7 POTION_LONG_NIGHTVISION minecraft:long_nightvision
+        1.2.. minecraft:potion 0 POTION_WATER minecraft:water
         """;
 
-    private static JsonObject variantEntry(String identifier, int aux) {
+    private static JsonObject variantEntry(String identifier, int aux, String potion) {
         JsonObject entry = entry(identifier);
         entry.addProperty("aux", aux);
+        entry.addProperty("potion", potion);
         return entry;
     }
 
@@ -188,10 +190,10 @@ class ConstantsSyntheticBundleTest {
         history.getAsJsonObject("blocks").add("REMOVED_BLOCK", entry("minecraft:removed_block"));
         history.getAsJsonObject("blocks").add("OLD_DOOR", entry("minecraft:old_door"));
         history.getAsJsonObject("items").add("OLD_STICK", entry("minecraft:old_stick"));
-        history.getAsJsonObject("variants").add("POTION_NIGHTVISION", variantEntry("minecraft:potion", 5));
-        history.getAsJsonObject("variants").add("OLD_POTION", variantEntry("minecraft:potion", 9));
+        history.getAsJsonObject("variants").add("POTION_NIGHTVISION", variantEntry("minecraft:potion", 5, "minecraft:nightvision"));
+        history.getAsJsonObject("variants").add("OLD_POTION", variantEntry("minecraft:potion", 9, "minecraft:old_potion"));
         // The name BDS gave aux 5 before: an alias of the new one
-        history.getAsJsonObject("variants").add("NIGHT_VISION", variantEntry("minecraft:potion", 5));
+        history.getAsJsonObject("variants").add("NIGHT_VISION", variantEntry("minecraft:potion", 5, "minecraft:night_vision"));
 
         Path second = temp.resolve("second");
         List<List<NbtMap>> previewBlocks = new ArrayList<>(releaseBlocks(true));
@@ -260,10 +262,10 @@ class ConstantsSyntheticBundleTest {
         assertEquals(List.of("BedrockBlocks.OLD_DOOR (minecraft:old_door, now TEST_DOOR)",
             "BedrockBlocks.REMOVED_BLOCK (minecraft:removed_block, removed; resolves through the fallbacks)",
             "BedrockItems.OLD_STICK (minecraft:old_stick, removed; resolves through the fallbacks)",
-            "BedrockItemVariants.OLD_POTION (minecraft:potion@9, removed)",
-            "BedrockItemVariants.NIGHT_VISION (minecraft:potion@5, now POTION_NIGHTVISION)"), result.deprecated());
+            "named variant OLD_POTION (minecraft:potion@9, removed)",
+            "named variant NIGHT_VISION (minecraft:potion@5, now POTION_NIGHTVISION)"), result.deprecated());
         assertEquals(List.of("BedrockStates.LEVEL = level", "BedrockBlocks.TEST_LAMP = minecraft:test_lamp", "BedrockItems.TEST_LAMP = minecraft:test_lamp",
-            "BedrockItemVariants.POTION_LONG_NIGHTVISION = minecraft:potion@7"), result.added());
+            "named variant POTION_LONG_NIGHTVISION = minecraft:potion@7"), result.added());
         assertEquals("1.1", result.release());
         assertEquals("1.2", result.preview());
     }
@@ -391,40 +393,44 @@ class ConstantsSyntheticBundleTest {
 
     @Test
     void variantsAreKeptAcrossReleases(@TempDir Path temp) throws IOException {
-        JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 2 POTION_B\n",
+        JsonObject first = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n1.1.. minecraft:potion 2 POTION_B minecraft:b\n",
             new JsonObject(), "1.0.0").files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
 
         // Release 1.1 drops B, renames aux 3 and adds C: A keeps its since, B is deprecated, C is new
-        ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_C\n", first, "2.1.0");
+        ConstantsGenerator.Result second = variants(temp.resolve("b"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n1.1.. minecraft:potion 3 POTION_C minecraft:c\n", first, "2.1.0");
         JsonObject history = historyOf(second);
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"since\":\"1.0.0\"}", history.get("POTION_A").toString());
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"since\":\"1.0.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\"}", history.get("POTION_C").toString());
-        assertEquals(List.of("BedrockItemVariants.POTION_C = minecraft:potion@3"), second.added().stream().filter(a -> a.startsWith("BedrockItemVariants")).toList());
-        assertEquals(List.of("BedrockItemVariants.POTION_B (minecraft:potion@2, removed)"), second.deprecated());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":1,\"potion\":\"minecraft:a\",\"since\":\"1.0.0\"}", history.get("POTION_A").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":2,\"potion\":\"minecraft:b\",\"since\":\"1.0.0\",\"deprecated\":\"2.1.0\"}", history.get("POTION_B").toString());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"potion\":\"minecraft:c\",\"since\":\"2.1.0\"}", history.get("POTION_C").toString());
+        assertEquals(List.of("named variant POTION_C = minecraft:potion@3"), second.added().stream().filter(a -> a.startsWith("named variant")).toList());
+        assertEquals(List.of("named variant POTION_B (minecraft:potion@2, removed)"), second.deprecated());
 
         // A later generation of the same data changes nothing, and the deprecation stays as it was
         JsonObject secondHistory = JsonParser.parseString(second.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
-        ConstantsGenerator.Result third = variants(temp.resolve("c"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_C\n", secondHistory, "3.0.0");
+        ConstantsGenerator.Result third = variants(temp.resolve("c"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n1.1.. minecraft:potion 3 POTION_C minecraft:c\n", secondHistory, "3.0.0");
         assertEquals(second.files(), third.files());
         assertEquals(List.of(), third.deprecated());
 
         // BDS names aux 3 differently: the old name becomes an alias of the new one, and stays one
-        ConstantsGenerator.Result renamed = variants(temp.resolve("d"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_D\n", secondHistory, "3.0.0");
-        assertEquals(List.of("BedrockItemVariants.POTION_C (minecraft:potion@3, now POTION_D)"), renamed.deprecated());
-        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"since\":\"2.1.0\",\"deprecated\":\"3.0.0\",\"replacement\":\"POTION_D\"}",
+        ConstantsGenerator.Result renamed = variants(temp.resolve("d"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n1.1.. minecraft:potion 3 POTION_D minecraft:d\n", secondHistory, "3.0.0");
+        assertEquals(List.of("named variant POTION_C (minecraft:potion@3, now POTION_D)"), renamed.deprecated());
+        assertEquals("{\"identifier\":\"minecraft:potion\",\"aux\":3,\"potion\":\"minecraft:c\",\"since\":\"2.1.0\",\"deprecated\":\"3.0.0\",\"replacement\":\"POTION_D\"}",
             historyOf(renamed).get("POTION_C").toString());
-        String source = renamed.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockItemVariants.java");
-        assertTrue(source.contains("public static final BedrockItemVariant POTION_C = POTION_D;"), source);
-        assertTrue(source.indexOf("POTION_D = VanillaTypes") < source.indexOf("POTION_C = POTION_D"), "an alias comes after its target");
-        ConstantsGenerator.Result again = variants(temp.resolve("e"), "1.1.. minecraft:potion 1 POTION_A\n1.1.. minecraft:potion 3 POTION_D\n",
+        // The potion types of the current names are generated, the alias C has none of its own
+        String potionTypes = renamed.files().get(ConstantsGenerator.PACKAGE_DIR + "/BedrockPotionTypes.java");
+        assertTrue(potionTypes.contains("new BedrockPotionType(\"minecraft:a\")"), potionTypes);
+        assertTrue(potionTypes.contains(".add(BedrockItems.POTION, 1)"), potionTypes);
+        assertTrue(potionTypes.contains("new BedrockPotionType(\"minecraft:d\")"), potionTypes);
+        assertTrue(potionTypes.contains(".add(BedrockItems.POTION, 3)"), potionTypes);
+        assertFalse(potionTypes.contains("minecraft:c\""), potionTypes);
+        ConstantsGenerator.Result again = variants(temp.resolve("e"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n1.1.. minecraft:potion 3 POTION_D minecraft:d\n",
             JsonParser.parseString(renamed.files().get(ConstantsGenerator.HISTORY)).getAsJsonObject(), "4.0.0");
         assertEquals(renamed.files(), again.files());
     }
 
     @Test
     void aReleaseWithoutVariantNamesDoesNotDeprecateThem(@TempDir Path temp) throws IOException {
-        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A\n", new JsonObject(), "1.0.0")
+        JsonObject history = JsonParser.parseString(variants(temp.resolve("a"), "1.1.. minecraft:potion 1 POTION_A minecraft:a\n", new JsonObject(), "1.0.0")
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
         assertEquals("The newest release 1.1 has no variant names in data/model/variant_names.txt, but data/model/constants-history.json has 1: "
             + "that would deprecate them all. Run script-dump on a build of it; names are not carried forward",
@@ -441,10 +447,10 @@ class ConstantsSyntheticBundleTest {
         ConstantsGenerator.Sources sources = ConstantsGenerator.Sources.read(data, null, data.resolve("variant_names.txt"));
         JsonObject history = JsonParser.parseString(ConstantsGenerator.generate(data, names(), new JsonObject(), "1.0.0", sources)
             .files().get(ConstantsGenerator.HISTORY)).getAsJsonObject();
-        assertEquals(variantEntry("minecraft:potion", 7).get("aux"), history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").get("aux"));
+        assertEquals(variantEntry("minecraft:potion", 7, "minecraft:long_nightvision").get("aux"), history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").get("aux"));
 
         history.getAsJsonObject("variants").getAsJsonObject("POTION_LONG_NIGHTVISION").addProperty("aux", 6);
-        assertEquals("BedrockItemVariants.POTION_LONG_NIGHTVISION is minecraft:potion@6 in data/model/constants-history.json but BDS now has "
+        assertEquals("The named variant POTION_LONG_NIGHTVISION is minecraft:potion@6 in data/model/constants-history.json but BDS now has "
             + "minecraft:potion@7 under that name; a name keeps its meaning, so this needs a split in renames.txt and a new name",
             assertThrows(IllegalStateException.class, () -> ConstantsGenerator.generate(data, names(), history, "1.0.0", sources)).getMessage());
     }

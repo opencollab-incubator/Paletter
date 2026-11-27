@@ -161,7 +161,7 @@ class RecipeBundleLoadTest {
                 if (ingredient instanceof Ingredient.Item item) {
                     keys.add(item.item());
                 } else if (ingredient instanceof Ingredient.AnyVariant any) {
-                    keys.add(any.type().variant());
+                    keys.add(any.type().base());
                 }
             });
             for (Recipe recipe : loaded.recipes()) {
@@ -174,7 +174,7 @@ class RecipeBundleLoadTest {
                 results.forEach(result -> keys.add(result.item()));
             }
             loaded.potionMixes().forEach(mix -> keys.addAll(List.of(mix.input(), mix.reagent(), mix.output())));
-            loaded.containerMixes().forEach(mix -> keys.addAll(List.of(mix.input().variant(), mix.reagent().variant(), mix.output().variant())));
+            loaded.containerMixes().forEach(mix -> keys.addAll(List.of(mix.input().base(), mix.reagent().base(), mix.output().base())));
             assertFalse(keys.isEmpty());
             for (BedrockItemVariant key : keys) {
                 String identifier = key.type().identifier();

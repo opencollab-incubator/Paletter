@@ -163,9 +163,9 @@ class CreativeBlockStatesTest {
     @Test
     void aDoorIsSentWithoutABlockAndPlanksWithOne() {
         Palette palette = PALETTER.palette(PALETTER.latest().protocolVersion());
-        assertNull(palette.blockOf(BedrockItems.WOODEN_DOOR.variant()));
-        assertNull(palette.encode(BedrockItemStack.of(BedrockItems.WOODEN_DOOR.variant())).getBlockDefinition());
-        assertTrue(palette.encode(BedrockItemStack.of(BedrockItems.OAK_PLANKS.variant())).getBlockDefinition() instanceof RegisteredBlockState block
+        assertNull(palette.blockOf(BedrockItems.WOODEN_DOOR.base()));
+        assertNull(palette.encode(BedrockItemStack.of(BedrockItems.WOODEN_DOOR.base())).getBlockDefinition());
+        assertTrue(palette.encode(BedrockItemStack.of(BedrockItems.OAK_PLANKS.base())).getBlockDefinition() instanceof RegisteredBlockState block
             && block.identifier().equals("minecraft:oak_planks"));
         // The other direction is unchanged: the door block's item is the door
         assertEquals(BedrockItems.WOODEN_DOOR, palette.itemOf(BedrockBlocks.WOODEN_DOOR));

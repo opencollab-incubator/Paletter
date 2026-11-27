@@ -58,8 +58,8 @@ class KeysTest {
 
     @Test
     void variantsOfKnownTypesAreTheKnownInstances() {
-        assertSame(BedrockItems.APPLE.variant(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
-        assertSame(BedrockItems.APPLE.variant(), BedrockItems.APPLE.variant(0));
+        assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
+        assertSame(BedrockItems.APPLE.base(), BedrockItems.APPLE.variant(0));
         for (BedrockItemVariant known : BedrockItems.POTION.variants()) {
             assertSame(known, BedrockItems.POTION.variant(known.aux()));
         }
@@ -76,7 +76,7 @@ class KeysTest {
         CanonicalItems items = CanonicalItems.of(Access.palette().vanillaData(PALETTER, PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("test:old_apple", 0));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
-        assertEquals(BedrockItems.APPLE.variant().canonicalIn(items), forwarding.canonical());
+        assertEquals(BedrockItems.APPLE.base().canonicalIn(items), forwarding.canonical());
     }
 
     @Test
@@ -90,9 +90,9 @@ class KeysTest {
         CanonicalItems items = CanonicalItems.of(Access.palette().vanillaData(PALETTER, PALETTER.latest()), renames);
         Forwarding forwarding = items.forward(item("minecraft:apple", 5));
         assertEquals(Forwarding.Kind.RENAMED, forwarding.kind());
-        assertEquals(BedrockItems.GOLDEN_APPLE.variant().canonicalIn(items), forwarding.canonical());
+        assertEquals(BedrockItems.GOLDEN_APPLE.base().canonicalIn(items), forwarding.canonical());
         Forwarding other = items.forward(item("test:legacy", 2));
-        assertEquals(BedrockItems.APPLE.variant().canonicalIn(items), other.canonical());
+        assertEquals(BedrockItems.APPLE.base().canonicalIn(items), other.canonical());
     }
 
     private static dev.opencollab.paletter.internal.item.ItemVariant item(String id, int damage) {

@@ -268,7 +268,7 @@ aux the item lacks is none: untrusted input is not reset to defaults. Each retur
 the aux of an item). Content of the palette's layers is always accepted.
 
 A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content removed
-with `Paletter.Builder#removeItems`, and content behind an experiment the palette does not enable. To get keys that resolve through
+with `Paletter.Builder#removeItemTypes`, and content behind an experiment the palette does not enable. To get keys that resolve through
 fallbacks on every version, look them up on the newest palette, with the experiments you need (`allExperiments()` enables
 all), or use the constants (`BedrockBlocks`, `BedrockItems`). There is no lookup without a `Lookup`: a mapping written
 against 26.50 keeps working when 26.60 becomes the newest version by using `Lookup.RENAMED` on the newest palette.
@@ -298,7 +298,7 @@ descending order. Read ids from the palette, never keep them across layers.
 ## Vanilla constants
 
 `dev.opencollab.paletter.vanilla` has generated constants for the newest bundled release: `BedrockBlocks`, `BedrockStates`,
-`BedrockItems`, `BedrockItemVariants` and `BedrockExperiments` (the experiment toggle ids, as Strings), plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
+`BedrockItems`, `BedrockPotionTypes` and `BedrockExperiments` (the experiment toggle ids, as Strings), plus enums for string states in `vanilla.state`. They are objects, not `int` constants, and load
 nothing until used.
 
 ```java
@@ -320,25 +320,30 @@ it, the others resolve it through the fallbacks (`minecraft:unknown` by default)
 it last had. A renamed identifier keeps its old constant as a deprecated alias. `@since` on a constant is the Paletter version that
 added it; the line `First in Bedrock` names the first bundled Bedrock release that has the content without an experiment (none for content older than the oldest bundled release). `@Education` marks Education Edition content.
 
-The methods that take an item (`Palette#resolve`, `blockOf`, `BedrockItemStack.of`, `PaletteLayer.Builder#variant`,
-`ItemFallback.of`, `ItemMatcher.of`, `CreativePlacement.after`) take a `BedrockItemVariant`, and mean exactly that
-variant: `palette.resolve(BedrockItems.APPLE.variant())`. `type.variant()` is the base variant (aux 0) and
-`type.variant(aux)` the variant of an aux, never null (an aux the data does not name gives a plain variant without a
-canonical id). A variant is a type and an aux, so creating or using one loads no bundled data, and a variant made before
-any palette resolves exactly like one made after. The base variant and the named constants of `BedrockItemVariants` are
-the same object whenever they are asked for, so `==` holds for them; other auxes are new variants until the data is
-loaded (then the data's own for the auxes it lists), so compare those with `equals`. Where a type means every aux, the
-name says so (`ItemMatcher.anyVariantOf`, `CreativePlacement.afterAnyVariantOf`). Variants for an identifier are made
-with `Palette#itemType` and `Palette#itemVariant`, or are of the type of a `CustomItem`.
+An item is a type and an aux value, a `BedrockItemVariant`. Methods that mean one item (`Palette#resolve`, `blockOf`,
+`BedrockItemStack.of`, `ItemFallback.of`, the result of a recipe) take a variant or a type, and a type stands for its base
+variant, aux 0: `palette.resolve(BedrockItems.APPLE)`. Methods where a type could as well mean all of its variants take only
+a variant, and the whole type has a method of its own name: `Fallbacks.Builder#item(BedrockItemVariant, ...)` and
+`itemType(BedrockItemType, ...)`, `ItemMatcher.of` and `anyVariantOf`, `CreativePlacement.after` and `afterAnyVariantOf`.
+There is no common supertype of types and variants, so a collection of items is a collection of variants, and
+`type.base()` is the base variant. Items are returned as variants.
 
-`BedrockItemVariants` names the aux variants of potions, splash and lingering potions, tipped arrows, beds and banners.
-The names are BDS's own spellings (`POTION_LONG_NIGHTVISION`, `BED_SILVER`), taken from the Script API when the data is
-captured. A constant is the very variant of `type.variant(aux)`, and referencing it loads nothing. Variants of other items
-(suspicious stew, goat horns, ...) have no names.
+`type.variant(aux)` is the variant of an aux, never null (an aux the data does not name gives a plain variant without a
+canonical id). A variant is a type and an aux, so creating or using one loads no bundled data, and a variant made before
+any palette resolves exactly like one made after. Variants for an identifier are made with `Palette#itemType` and
+`Palette#itemVariant`, or are of the type of a `CustomItem`.
+
+The items whose variants BDS names have typed getters on their constant: the potions and the tipped arrow take a potion
+type (`BedrockItems.POTION.withEffect(BedrockPotionTypes.LONG_NIGHTVISION)`, which throws for a potion type the item does
+not have), and beds and banners have a getter per colour (`BedrockItems.BED.silver()`). The names are BDS's own spellings,
+taken from the Script API when the data is captured. A getter returns the very variant of `type.variant(aux)`, and the base
+variant and the named variants are the same object whenever they are asked for, so `==` holds for them; other auxes are new
+variants until the data is loaded (then the data's own for the auxes it lists), so compare those with `equals`. Variants of
+other items (suspicious stew, goat horns, ...) have no names.
 
 ```java
-ItemData potion = palette.encode(BedrockItemStack.of(BedrockItemVariants.POTION_LONG_NIGHTVISION));
-boolean same = BedrockItemVariants.BED_SILVER == BedrockItems.BED.variant(8); // true
+ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.withEffect(BedrockPotionTypes.LONG_NIGHTVISION)));
+boolean same = BedrockItems.BED.silver() == BedrockItems.BED.variant(8); // true
 ```
 
 ## Components
@@ -450,14 +455,15 @@ items).
 ```java
 Fallbacks fallbacks = Fallbacks.builder()
     .block(BedrockBlocks.ICICLE, BedrockBlocks.STONE)
-    .item(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
+    .itemType(version, BedrockItems.POPLAR_BOAT, ItemFallback.of(BedrockItems.BIRCH_BOAT))
     .block(version, BedrockBlocks.POPLAR_LOG, BlockFallback.of(BedrockBlocks.BIRCH_LOG).forced())
     .build();
 ```
 
 An item fallback is an exact variant: `ItemFallback.of(BedrockItems.BIRCH_BOAT)` sends the base variant of that type, and
 `ItemFallback.of(BedrockItems.POTION.variant(5))` that variant, whichever variant it replaces.
-`item(BedrockItemVariant, ItemFallback)` gives one variant a fallback of its own, checked before its type's.
+`itemType(BedrockItemType, ItemFallback)` covers every variant of a type, `item(BedrockItemVariant, ItemFallback)` one
+variant, checked before its type's entry.
 `blockAndItem(block, replacement)` sets the block fallback and the item fallback of the same identifiers at once.
 
 `.forced()` replaces content even in versions that have it. Paletter ships no fallbacks: which replacement is right is
@@ -469,7 +475,7 @@ resolves through the fallbacks, and the creative content leaves it out. Its item
 `itemDefinition(String)` treats them as missing.
 `Paletter.builder().experiments("y_2026_drop_3")` enables it in every version; `experiments(version, "y_2026_drop_3")`
 enables it in one version (a version that is not served makes `build()` throw an `IllegalArgumentException`). Every call adds to
-the earlier ones, like `removeItems(...)`, which hides vanilla items. `allExperiments()` enables every toggle
+the earlier ones, like `removeItemTypes(...)`, which hides vanilla items. `allExperiments()` enables every toggle
 the version gates content with, except the voxel shape experiment, which only comes with an explicit
 `experiments("voxel_shapes")`; the palette lists them in `Palette#experiments()`. A component a version's BDS takes only with a toggle
 (by the `spec-gating` captures: `minecraft:multi_block` in 26.30) counts as content of that
@@ -609,4 +615,4 @@ A protocol newer than the newest data gets the newest data's palette itself, and
 one) and knows its `version()`; `unknownBlocks()` (block types) and `unknownItems()` (item variants, so a missing aux is
 exact) are the content of the newest data that the
 version lacks and no specific fallback covers (a default fallback does not count; content behind a disabled experiment or
-removed with `removeItems` is included).
+removed with `removeItemTypes` is included).

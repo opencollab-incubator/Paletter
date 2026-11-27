@@ -37,7 +37,7 @@ PaletteLayer content = PaletteLayer.builder("server")
 // One Paletter per application: policy and global content. build() compiles every served version with all it needs,
 // so no later call waits for data (narrow them with versions(...); behaviour(false) if behaviour values are never read)
 Paletter paletter = Paletter.builder()
-    .fallbacks(Fallbacks.builder().item(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
+    .fallbacks(Fallbacks.builder().itemType(BedrockItems.POPLAR_BOAT, BedrockItems.OAK_BOAT).build())
     .layer(content)
     .build();
 
@@ -72,7 +72,7 @@ and an anticheat.
 ## Concepts
 
 **Keys, registered entries and stacks.** A key names content and does not depend on a version: `BedrockBlockType`,
-`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value; methods that take an item take a variant, `type.variant()` for the base variant). Vanilla keys are generated
+`BedrockBlockState`, `BedrockItemType` and `BedrockItemVariant` (a type plus an aux value; where one item is meant a type stands for its base variant, aux 0, and named variants have getters: `BedrockItems.BED.silver()`, `BedrockItems.POTION.withEffect(BedrockPotionTypes.HEALING)`). Vanilla keys are generated
 constants (`BedrockBlocks.STONE`, `BedrockItems.APPLE`); custom content gets its keys from `CustomBlock#type()` and
 `CustomItem#type()`. A registered entry (`RegisteredItem`, `RegisteredBlockState`) is a key inside one palette, with its
 runtime id and components; these implement Cloudburst's `ItemDefinition` and `BlockDefinition`. A stack

@@ -49,8 +49,8 @@ class CustomHandleIdentityTest {
         CustomItem ruby = ruby("example:ruby");
         CustomBlock lamp = lamp("example:lamp");
         assertSame(ruby.type(), ruby.type());
-        assertSame(ruby.type().variant(), ruby.type().variant());
-        assertSame(ruby.type().variant(), ruby.type().variant(0));
+        assertSame(ruby.type().base(), ruby.type().base());
+        assertSame(ruby.type().base(), ruby.type().variant(0));
         assertSame(lamp.type(), lamp.type());
         assertSame(lamp.type().defaultState(), lamp.type().defaultState());
         assertSame(lamp.itemType(), lamp.itemType());
@@ -113,16 +113,16 @@ class CustomHandleIdentityTest {
     void aFallbackToACustomItemResolvesToItsOwnedVariant() {
         CustomItem ruby = ruby("example:ruby");
         Paletter paletter = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(ruby.type().variant()).forced()).build())
+            .fallbacks(Fallbacks.builder().itemType(BedrockItems.DIAMOND_SWORD, ItemFallback.of(ruby.type().base()).forced()).build())
             .layer(PaletteLayer.builder("content").item(ruby).build())
             .build();
         Palette palette = paletter.palette(paletter.latest().protocolVersion());
-        ResolvedItem resolved = palette.resolve(BedrockItems.DIAMOND_SWORD.variant());
+        ResolvedItem resolved = palette.resolve(BedrockItems.DIAMOND_SWORD.base());
         assertNotNull(resolved);
         assertTrue(resolved.fallback());
         assertSame(ruby.type(), resolved.definition().type());
-        assertSame(ruby.type().variant(), palette.resolve(BedrockItems.DIAMOND_SWORD.variant()).variant());
-        assertSame(ruby.type().variant(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD.variant()))).variant());
+        assertSame(ruby.type().base(), palette.resolve(BedrockItems.DIAMOND_SWORD.base()).variant());
+        assertSame(ruby.type().base(), palette.decode(palette.encode(BedrockItemStack.of(BedrockItems.DIAMOND_SWORD.base()))).variant());
     }
 
     @Test
@@ -137,12 +137,12 @@ class CustomHandleIdentityTest {
         Palette palette = blockOnly.extend(PaletteLayer.builder("lamps").block(lamp).build());
         BedrockItemType itemType = lamp.itemType();
         assertSame(itemType, palette.itemOf(lamp.type()));
-        assertSame(itemType.variant(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
+        assertSame(itemType.base(), palette.itemVariant("example:lamp", 0, Lookup.RENAMED));
         assertSame(itemType, palette.itemDefinition(itemType.identifier()).type());
-        BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType.variant())));
+        BedrockItemStack decoded = palette.decode(palette.encode(BedrockItemStack.of(itemType.base())));
         assertNotNull(decoded);
-        assertSame(itemType.variant(), decoded.variant());
-        assertSame(lamp.type().defaultState(), palette.blockOf(itemType.variant()));
+        assertSame(itemType.base(), decoded.variant());
+        assertSame(lamp.type().defaultState(), palette.blockOf(itemType.base()));
     }
 
     @Test
@@ -194,14 +194,14 @@ class CustomHandleIdentityTest {
         assertSame(state, palette.blockState(lamp.type().defaultState().toNbt(), Lookup.RENAMED));
         assertSame(lamp.type().defaultState(), state);
         assertSame(variant, palette.itemVariant("example:ruby", 0, Lookup.RENAMED));
-        assertSame(ruby.type().variant(), variant);
+        assertSame(ruby.type().base(), variant);
         assertOwned(palette, ruby, lamp);
     }
 
     private static WeakReference<CustomBlock> temporaryCopies() {
         CustomBlock copy = lamp("example:lamp");
         copy.type().states();
-        ruby("example:ruby").type().variant();
+        ruby("example:ruby").type().base();
         return new WeakReference<>(copy);
     }
 
@@ -209,7 +209,7 @@ class CustomHandleIdentityTest {
     private static void assertOwned(Palette palette, CustomItem item, CustomBlock block) {
         String where = palette.version() + " " + palette.layers().size() + " layers";
         BedrockItemType type = item.type();
-        BedrockItemVariant base = type.variant();
+        BedrockItemVariant base = type.base();
 
         // Items
         assertSame(base, palette.itemVariant(item.identifier(), 0, Lookup.RENAMED), where);
@@ -227,10 +227,10 @@ class CustomHandleIdentityTest {
 
         // The block item
         BedrockItemType blockItem = block.itemType();
-        assertSame(blockItem.variant(), palette.itemVariant(block.identifier(), 0, Lookup.RENAMED), where);
-        BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem.variant())));
+        assertSame(blockItem.base(), palette.itemVariant(block.identifier(), 0, Lookup.RENAMED), where);
+        BedrockItemStack decodedBlockItem = palette.decode(palette.encode(BedrockItemStack.of(blockItem.base())));
         assertNotNull(decodedBlockItem, where);
-        assertSame(blockItem.variant(), decodedBlockItem.variant(), where);
+        assertSame(blockItem.base(), decodedBlockItem.variant(), where);
         assertSame(blockItem, palette.itemDefinition(blockItem.identifier()).type(), where);
         assertSame(blockItem, palette.creativeLayout().stacks().filter(stack -> stack.type().identifier().equals(block.identifier()))
             .findFirst().orElseThrow().type(), where);
@@ -244,6 +244,6 @@ class CustomHandleIdentityTest {
             assertSame(state, Access.vanilla().blockState(palette.blocks().canonical(), palette.blocks().canonical().index(state.toNbt())), where);
             assertSame(state, palette.explain(state.toNbt()).handle(), where);
         }
-        assertSame(block.type().defaultState(), palette.blockOf(blockItem.variant()), where);
+        assertSame(block.type().defaultState(), palette.blockOf(blockItem.base()), where);
     }
 }

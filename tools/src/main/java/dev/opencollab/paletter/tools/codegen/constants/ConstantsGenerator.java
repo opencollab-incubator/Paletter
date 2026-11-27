@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.codegen.constants;
 
+import com.palantir.javapoet.ClassName;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
 
 /**
  * Generates the vanilla constants ({@code dev.opencollab.paletter.vanilla.BedrockBlocks}, {@code BedrockStates},
- * {@code BedrockItems}, {@code BedrockItemVariants} and the state enums) from the newest bundled release, with what only a newer bundled preview has
+ * {@code BedrockItems} with the getter classes of its named variants, {@code BedrockPotionTypes} and the state enums) from the newest bundled release, with what only a newer bundled preview has
  * marked {@code @SincePreview}, {@code renames.txt} and
  * {@code data/model/constants-history.json}. See {@code docs/data-pipeline.md}.
  * <p>
@@ -277,7 +278,9 @@ public final class ConstantsGenerator {
             variantCounts(g.preview).forEach(variantCounts::putIfAbsent);
         }
         List<Constant> items = new ContentConstants(g).constants("items", itemIds, previewItemIds, "BedrockItems", null);
-        files.put(PACKAGE_DIR + "/BedrockItems.java", ConstantsSource.items(items, variantCounts, g.release.version().name(), oldest));
+        List<Variant> variants = new VariantConstants(g).variants();
+        Map<String, ClassName> variantTypes = ConstantsSource.variantTypes(variants);
+        files.put(PACKAGE_DIR + "/BedrockItems.java", ConstantsSource.items(items, variantCounts, variantTypes, g.release.version().name(), oldest));
         counts.put("BedrockItems", items.size());
         if (g.preview != null) {
             counts.put("preview only", (int) (blocks.stream().filter(c -> c.preview() != null).count()
@@ -285,11 +288,18 @@ public final class ConstantsGenerator {
                 + states.constants.values().stream().filter(c -> c.preview != null).count()));
         }
 
-        List<Variant> variants = new VariantConstants(g).variants();
         Map<String, String> itemNames = new HashMap<>();
         items.stream().filter(c -> c.replacement() == null).forEach(c -> itemNames.putIfAbsent(c.identifier(), c.name()));
-        files.put(PACKAGE_DIR + "/BedrockItemVariants.java", ConstantsSource.variants(variants, itemNames, g.release.version().name()));
-        counts.put("BedrockItemVariants", variants.size());
+        variantTypes.forEach((identifier, type) -> {
+            if (type.simpleName().equals("PotionItemType")) { // hand-written
+                return;
+            }
+            List<Variant> own = variants.stream().filter(v -> v.constant().identifier().equals(identifier)).toList();
+            files.put(PACKAGE_DIR + "/" + type.simpleName() + ".java",
+                ConstantsSource.itemType(identifier, itemNames.get(identifier), own, g.release.version().name()));
+        });
+        files.put(PACKAGE_DIR + "/BedrockPotionTypes.java", ConstantsSource.potionTypes(variants, itemNames, g.release.version().name()));
+        counts.put("named variants", variants.size());
 
         Set<String> unused = new TreeSet<>(g.names.hand());
         unused.removeAll(g.usedNames);

@@ -162,7 +162,7 @@ class CustomKeysLeakTest {
     @Test
     void vanillaKeysStayIdentitySingletons() {
         assertSame(BedrockItems.APPLE, BedrockItemType.fromIdentifier("minecraft:apple"));
-        assertSame(BedrockItems.APPLE.variant(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
+        assertSame(BedrockItems.APPLE.base(), BedrockItemVariant.fromIdentifier("minecraft:apple", 0));
         assertSame(BedrockBlocks.STONE, BedrockBlockType.fromIdentifier("minecraft:stone"));
         assertSame(BedrockBlocks.STONE.defaultState(), BedrockBlockType.fromIdentifier("minecraft:stone").defaultState());
     }

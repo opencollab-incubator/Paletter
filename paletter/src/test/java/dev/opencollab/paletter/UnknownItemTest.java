@@ -55,7 +55,7 @@ class UnknownItemTest {
         assertSame(fromMissing.getDefinition(), fromNobody.getDefinition());
         assertEquals(3, fromNobody.getCount());
         assertTrue(oldest.resolve(nobody).fallback());
-        assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(nobody).variant());
+        assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(nobody).variant());
         assertEquals(oldest.resolve(missing).variant(), oldest.resolve(nobody).variant());
         // The newest version has no item of that name either
         assertEquals("minecraft:unknown", latest().encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
@@ -66,18 +66,18 @@ class UnknownItemTest {
         Palette oldest = PALETTER.palette(OLDEST);
         BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 7);
         assertEquals(0, oldest.resolve(nobody).variant().aux());
-        assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(nobody).variant());
+        assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(nobody).variant());
     }
 
     @Test
     void theConfiguredDefaultFallbackIsUsedEverywhere() {
-        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK.variant())).build()).build();
+        Paletter stick = Paletter.builder().fallbacks(Fallbacks.builder().defaultItem(ItemFallback.of(BedrockItems.STICK.base())).build()).build();
         Palette oldest = stick.palette(OLDEST);
         BedrockItemVariant missing = missingInOldest(oldest);
         BedrockItemVariant nobody = Access.vanilla().itemVariant("nobody:item", 7);
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(missing)).getDefinition().getIdentifier());
         assertEquals("minecraft:stick", oldest.encode(BedrockItemStack.of(nobody)).getDefinition().getIdentifier());
-        assertEquals(BedrockItems.STICK.variant(), oldest.resolve(nobody).variant());
+        assertEquals(BedrockItems.STICK.base(), oldest.resolve(nobody).variant());
     }
 
     @Test
@@ -94,7 +94,7 @@ class UnknownItemTest {
     @Test
     void decodeKeepsTheAuxOfAnItemWithoutThatVariant() {
         Palette palette = latest();
-        BedrockItemVariant sword = BedrockItems.DIAMOND_SWORD.variant();
+        BedrockItemVariant sword = BedrockItems.DIAMOND_SWORD.base();
         ItemData worn = palette.encode(BedrockItemStack.of(sword, 2)).toBuilder().damage(17).build();
         BedrockItemStack decoded = palette.decode(worn);
         assertNotNull(decoded);
@@ -111,11 +111,11 @@ class UnknownItemTest {
         // A listed variant is still the known instance, an unlisted aux of an item with variants keeps its aux
         BedrockItemVariant potion = BedrockItems.POTION.variant(5);
         assertSame(potion, palette.decode(palette.encode(BedrockItemStack.of(potion))).variant());
-        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION.variant())).toBuilder().damage(9999).build();
+        ItemData odd = palette.encode(BedrockItemStack.of(BedrockItems.POTION.base())).toBuilder().damage(9999).build();
         BedrockItemStack oddStack = palette.decode(odd);
         assertNotNull(oddStack);
         assertEquals(BedrockItems.POTION, oddStack.type());
-        assertSame(BedrockItems.POTION.variant(), oddStack.variant());
+        assertSame(BedrockItems.POTION.base(), oddStack.variant());
         assertEquals(9999, oddStack.aux());
         // The base variant itself decodes to itself
         assertSame(sword, palette.decode(palette.encode(BedrockItemStack.of(sword))).variant());

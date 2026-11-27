@@ -250,7 +250,7 @@ class ResilienceTest {
         assertNotNull(stone.definition());
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> stone.behaviour().get(BlockBehaviour.FRICTION));
         assertTrue(e.getMessage().contains("behaviour(false)"), e.getMessage());
-        assertThrows(IllegalStateException.class, () -> palette.resolve(BedrockItems.STICK.variant()).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
+        assertThrows(IllegalStateException.class, () -> palette.resolve(BedrockItems.STICK.base()).behaviour().getOrElse(ItemBehaviour.MAX_STACK_SIZE, 0));
     }
 
     @Test

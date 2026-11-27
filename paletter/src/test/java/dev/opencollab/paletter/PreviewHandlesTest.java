@@ -97,7 +97,7 @@ class PreviewHandlesTest {
             BedrockItemType key = palette.items().getDefinition(item.identifier()).type();
             assertSame(constant, key, item.identifier());
             assertSame(constant, palette.itemVariant(item.identifier(), 0, Lookup.EXACT).type(), item.identifier());
-            assertEquals(item.identifier(), palette.items().resolve(key.variant()).definition().getIdentifier(), item.identifier());
+            assertEquals(item.identifier(), palette.items().resolve(key.base()).definition().getIdentifier(), item.identifier());
             byKey.put(key, item.identifier());
         }
         for (VanillaItem item : data.items()) {
@@ -114,7 +114,7 @@ class PreviewHandlesTest {
             assertNotNull(type, block);
             BedrockItemType itemType = palette.itemOf(type);
             assertNotNull(itemType, block);
-            assertEquals(item, palette.items().resolve(itemType.variant()).definition().getIdentifier(), block);
+            assertEquals(item, palette.items().resolve(itemType.base()).definition().getIdentifier(), block);
         });
     }
 
@@ -133,8 +133,8 @@ class PreviewHandlesTest {
             }
             BedrockItemType constant = (BedrockItemType) field.get(null);
             assertFalse(constant.isAvailable(), field.getName());
-            assertEquals("minecraft:unknown", release.items().resolve(constant.variant()).definition().getIdentifier(), field.getName());
-            assertEquals(constant.identifier(), palette.items().resolve(constant.variant()).definition().getIdentifier(), field.getName());
+            assertEquals("minecraft:unknown", release.items().resolve(constant.base()).definition().getIdentifier(), field.getName());
+            assertEquals(constant.identifier(), palette.items().resolve(constant.base()).definition().getIdentifier(), field.getName());
             checked++;
         }
         assertTrue(checked > 0);
@@ -143,28 +143,28 @@ class PreviewHandlesTest {
     /** Without previews, a preview item constant resolves through the fallback policy like any item a version lacks. */
     @Test
     void aReleasePaletteSendsThePolicyFallbackOfAPreviewItem() {
-        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().item(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
-        ResolvedItem ice = withEntry.vanilla(withEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE.variant());
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().itemType(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
+        ResolvedItem ice = withEntry.vanilla(withEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE.base());
         assertEquals("minecraft:ice", ice.definition().getIdentifier());
         assertTrue(ice.fallback());
 
         Paletter withoutEntry = Paletter.builder().build();
-        ResolvedItem unknown = withoutEntry.vanilla(withoutEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE.variant());
+        ResolvedItem unknown = withoutEntry.vanilla(withoutEntry.latest()).items().resolve(BedrockItems.BRITTLE_ICE.base());
         assertEquals("minecraft:unknown", unknown.definition().getIdentifier());
         assertTrue(unknown.fallback());
 
         Paletter none = Paletter.builder().fallbacks(Fallbacks.NONE).build();
-        assertNull(none.vanilla(none.latest()).items().resolve(BedrockItems.BRITTLE_ICE.variant()));
+        assertNull(none.vanilla(none.latest()).items().resolve(BedrockItems.BRITTLE_ICE.base()));
     }
 
     /** With previews, a release that lacks a preview item sends what the fallback policy gives for it. */
     @Test
     void anOlderVersionSendsThePolicyFallbackOfAPreviewItem() {
         Paletter previews = Paletter.builder().previews(true)
-            .fallbacks(Fallbacks.builder().item(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
+            .fallbacks(Fallbacks.builder().itemType(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
         Palette newestRelease = previews.vanilla(Paletter.builder().build().latest());
-        assertEquals("minecraft:ice", newestRelease.items().resolve(BedrockItems.BRITTLE_ICE.variant()).definition().getIdentifier());
-        assertEquals("minecraft:brittle_ice", previews.vanilla(previews.latest()).items().resolve(BedrockItems.BRITTLE_ICE.variant())
+        assertEquals("minecraft:ice", newestRelease.items().resolve(BedrockItems.BRITTLE_ICE.base()).definition().getIdentifier());
+        assertEquals("minecraft:brittle_ice", previews.vanilla(previews.latest()).items().resolve(BedrockItems.BRITTLE_ICE.base())
             .definition().getIdentifier());
     }
 
@@ -271,11 +271,11 @@ class PreviewHandlesTest {
     /** The resolution of a preview item constant a palette lacks is made once per palette, like those of its own items. */
     @Test
     void aReleasePaletteResolvesAPreviewItemOnce() {
-        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().item(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
+        Paletter withEntry = Paletter.builder().fallbacks(Fallbacks.builder().itemType(BedrockItems.BRITTLE_ICE, BedrockItems.ICE).build()).build();
         Palette release = withEntry.vanilla(withEntry.latest());
-        ResolvedItem first = release.items().resolve(BedrockItems.BRITTLE_ICE.variant());
-        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE.variant()));
-        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE.variant()));
+        ResolvedItem first = release.items().resolve(BedrockItems.BRITTLE_ICE.base());
+        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE.base()));
+        assertSame(first, release.items().resolve(BedrockItems.BRITTLE_ICE.base()));
     }
 
     /**

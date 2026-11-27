@@ -10,10 +10,10 @@ import dev.opencollab.paletter.internal.item.ItemVariant;
  * A variant of a {@link BedrockItemType}: the type and its aux value. Paletter says "aux" for the value that names a
  * variant (BDS's aux value, the {@code damage} field of Cloudburst's {@code ItemData}); "damage" is only an item's wear. The block a stack places is not part of
  * the variant, it belongs to the stack ({@link dev.opencollab.paletter.item.BedrockItemStack#blockState()}). Obtained from
- * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}, or {@link BedrockItemType#variant()} for the base variant.
+ * {@link BedrockItemType#variant(int)} and {@link BedrockItemType#variants()}, or {@link BedrockItemType#base()} for the base variant.
  * <p>
  * Equality: as for {@link BedrockItemType}, {@code equals} always works. {@code ==} works too for the variants of the
- * vanilla constants (the types of {@link BedrockItems}, the named variants of {@link BedrockItemVariants}) and for the base variant of registered custom content: {@code customItem.type().variant()} is the very
+ * vanilla constants (the types of {@link BedrockItems}, the named variants their getters give) and for the base variant of registered custom content: {@code customItem.type().base()} is the very
  * variant {@link dev.opencollab.paletter.Palette#decode} gives back. Variants made by
  * {@link BedrockItemType#variant(int)} for an aux value that is not one of {@link BedrockItemType#variants()}, and
  * variants of types made for unknown identifiers, are new objects: compare those

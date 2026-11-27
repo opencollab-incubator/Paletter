@@ -1,5 +1,6 @@
 package dev.opencollab.paletter.tools.codegen.constants;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.opencollab.paletter.tools.data.VariantNames;
@@ -10,7 +11,7 @@ import java.util.TreeMap;
 import static dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator.CONSTANT;
 import static dev.opencollab.paletter.tools.codegen.constants.ConstantsGenerator.HISTORY;
 
-/** The constants of {@code BedrockItemVariants}. */
+/** The named variants: the typed getters of the {@code BedrockItems} constants, and {@code BedrockPotionTypes}. */
 final class VariantConstants {
     private final Generation g;
 
@@ -19,17 +20,18 @@ final class VariantConstants {
     }
 
     /**
-     * An item variant constant: the generated constant of {@code BedrockItemVariants}.
+     * A named item variant: a getter of its item's constant, or an entry of its potion type.
      *
      * @param constant the name, the item's identifier, {@code since} and the marks. It has no {@code bedrock} release: the
      *                 names come from dumps of only the newest builds, which say nothing of older ones
      * @param aux the aux value
+     * @param potion the potion type of a potion or tipped arrow, e.g. {@code minecraft:long_nightvision}; null for the others
      */
-    record Variant(ContentConstants.Constant constant, int aux) {
+    record Variant(ContentConstants.Constant constant, int aux, @Nullable String potion) {
     }
 
     /**
-     * The constants of {@code BedrockItemVariants}: the names of {@code variant_names.txt} for the newest release, with
+     * The named variants: the names of {@code variant_names.txt} for the newest release, with
      * what only the bundled preview has marked {@code @SincePreview}. The history records each name with its identifier and
      * aux: a name is never dropped (one the data no longer has stays, deprecated; one that is now another name for the same
      * variant becomes an alias of it) and never changes meaning (a changed identifier or aux fails generation: older
@@ -52,11 +54,11 @@ final class VariantConstants {
             if (old != null) {
                 checkUnchanged(entry, old);
             } else {
-                g.added.add("BedrockItemVariants." + entry.name() + " = " + entry.identifier() + "@" + entry.aux());
+                g.added.add("named variant " + entry.name() + " = " + entry.identifier() + "@" + entry.aux());
             }
             String since = old != null ? ConstantsHistory.required(old, "since", "variants." + entry.name()) : g.version;
             variants.put(entry.name(), new Variant(new ContentConstants.Constant(entry.name(), entry.identifier(), since, null, null, null, false, null, null),
-                entry.aux()));
+                entry.aux(), entry.potion()));
         }
         // Names the data no longer has stay, deprecated
         for (Map.Entry<String, JsonElement> entry : previous.entrySet()) {
@@ -73,20 +75,23 @@ final class VariantConstants {
                 target = old.get("replacement").getAsString();
             }
             if (!old.has("deprecated")) {
-                g.deprecated.add("BedrockItemVariants." + name + " (" + identifier + "@" + aux + (target != null ? ", now " + target : ", removed") + ")");
+                g.deprecated.add("named variant " + name + " (" + identifier + "@" + aux + (target != null ? ", now " + target : ", removed") + ")");
             }
             variants.put(name, new Variant(new ContentConstants.Constant(name, identifier, ConstantsHistory.required(old, "since", "variants." + name), deprecatedSince, target,
-                null, false, null, null), aux));
+                null, false, null, null), aux, old.has("potion") ? old.get("potion").getAsString() : null));
         }
         JsonObject out = new JsonObject();
         for (Variant variant : variants.values()) {
             ContentConstants.Constant constant = variant.constant();
             if (constant.replacement() != null && !variants.containsKey(constant.replacement())) {
-                throw new IllegalStateException("BedrockItemVariants." + constant.name() + " is deprecated for " + constant.replacement() + ", which does not exist");
+                throw new IllegalStateException("The named variant " + constant.name() + " is deprecated for " + constant.replacement() + ", which does not exist");
             }
             JsonObject entry = new JsonObject();
             entry.addProperty("identifier", constant.identifier());
             entry.addProperty("aux", variant.aux());
+            if (variant.potion() != null) {
+                entry.addProperty("potion", variant.potion());
+            }
             entry.addProperty("since", constant.since());
             if (constant.deprecated() != null) {
                 entry.addProperty("deprecated", constant.deprecated());
@@ -105,7 +110,7 @@ final class VariantConstants {
                 }
                 checkName(entry);
                 variants.put(entry.name(), new Variant(new ContentConstants.Constant(entry.name(), entry.identifier(), g.version, null, null, null, false, null,
-                    g.previewName()), entry.aux()));
+                    g.previewName()), entry.aux(), entry.potion()));
             }
         }
         return List.copyOf(variants.values());
@@ -121,7 +126,7 @@ final class VariantConstants {
         String identifier = old.get("identifier").getAsString();
         int aux = old.get("aux").getAsInt();
         if (!identifier.equals(entry.identifier()) || aux != entry.aux()) {
-            throw new IllegalStateException("BedrockItemVariants." + entry.name() + " is " + identifier + "@" + aux + " in " + HISTORY + " but BDS now has "
+            throw new IllegalStateException("The named variant " + entry.name() + " is " + identifier + "@" + aux + " in " + HISTORY + " but BDS now has "
                 + entry.identifier() + "@" + entry.aux() + " under that name; a name keeps its meaning, so this needs a split in renames.txt and a new name");
         }
     }

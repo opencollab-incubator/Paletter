@@ -2,6 +2,7 @@ package dev.opencollab.paletter.recipes;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.nbt.NbtMap;
+import dev.opencollab.paletter.vanilla.BedrockItemType;
 import dev.opencollab.paletter.vanilla.BedrockItemVariant;
 
 import java.util.Objects;
@@ -121,6 +122,17 @@ public final class Result {
         public @NonNull Builder item(@NonNull BedrockItemVariant item) {
             this.item = Objects.requireNonNull(item, "Result.item");
             return this;
+        }
+
+        /**
+         * Sets the item to the base variant of a type.
+         *
+         * @param type the item type, standing for its base variant (aux 0)
+         * @return this builder
+         * @throws NullPointerException if the type is null
+         */
+        public @NonNull Builder item(@NonNull BedrockItemType type) {
+            return item(Objects.requireNonNull(type, "Result.item").base());
         }
 
         /**

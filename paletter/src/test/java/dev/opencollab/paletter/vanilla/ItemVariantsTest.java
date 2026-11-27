@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,14 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** The named variant constants of {@link BedrockItemVariants}. */
+/** The named variants of the item types: the getters of {@link BedItemType} and the like, and {@link PotionItemType#withEffect}. */
 class ItemVariantsTest {
     /** What a fresh JVM does with a constant: the main of {@link #referencingAConstantLoadsNoData()}. */
     public static final class Reference {
         public static void main(String[] args) {
-            System.out.println("VARIANT " + BedrockItemVariants.POTION_LONG_NIGHTVISION.aux());
+            System.out.println("VARIANT " + BedrockItems.POTION.withEffect(BedrockPotionTypes.LONG_NIGHTVISION).aux());
         }
     }
 
@@ -36,7 +36,7 @@ class ItemVariantsTest {
     /** What a fresh JVM does with item variants: the main of {@link #usingItemVariantsLoadsNoData}. */
     public static final class KeyReference {
         public static void main(String[] args) {
-            BedrockItemVariant base = BedrockItems.POTION.variant();
+            BedrockItemVariant base = BedrockItems.POTION.base();
             BedrockItemVariant damaged = BedrockItems.POTION.variant(7);
             BedrockItemVariant custom = BedrockItemType.custom("example:ruby").variant(3);
             System.out.println("KEYS " + base.aux() + damaged.aux() + custom.aux());
@@ -61,7 +61,7 @@ class ItemVariantsTest {
         String output = run(temp, Reference.class);
         assertTrue(output.contains("VARIANT 6"), output);
         // A fresh JVM that only reads a constant loads the constants classes, never the index or the data
-        assertTrue(output.contains(BedrockItemVariants.class.getName()), "the constants class was not loaded");
+        assertTrue(output.contains(BedrockPotionTypes.class.getName()), "the constants class was not loaded");
         for (String data : DATA) {
             assertFalse(output.contains("." + data + " source:"), data + " was loaded by referencing a constant");
         }
@@ -76,22 +76,22 @@ class ItemVariantsTest {
         }
 
         public static void main(String[] args) {
-            BedrockItemVariant bed = BedrockItems.BED.variant();
+            BedrockItemVariant bed = BedrockItems.BED.base();
             BedrockItemVariant potion = BedrockItems.POTION.variant(19);
-            BedrockItemVariant preview = BedrockItems.BRITTLE_ICE.variant();
+            BedrockItemVariant preview = BedrockItems.BRITTLE_ICE.base();
             BedrockItemVariant previewDamaged = BedrockItems.BRITTLE_ICE.variant(3);
 
             Paletter paletter = Paletter.bundled();
             dev.opencollab.paletter.Palette palette = paletter.palette(paletter.latest().protocolVersion());
-            check(bed == BedrockItemVariants.BED_WHITE, "BED.variant() is BED_WHITE");
-            check(bed == BedrockItems.BED.variant(), "BED.variant() is stable");
-            check(potion == BedrockItemVariants.POTION_WATER_BREATHING, "POTION.variant(19) is the named constant");
+            check(bed == BedrockItems.BED.white(), "BED.base() is BED.white()");
+            check(bed == BedrockItems.BED.base(), "BED.variant() is stable");
+            check(potion == BedrockItems.POTION.withEffect(BedrockPotionTypes.WATER_BREATHING), "POTION.variant(19) is the named variant");
             check(potion == BedrockItems.POTION.variant(19), "POTION.variant(19) is stable");
-            check(preview == BedrockItems.BRITTLE_ICE.variant(), "an absent type's base is stable");
+            check(preview == BedrockItems.BRITTLE_ICE.base(), "an absent type's base is stable");
             check(previewDamaged.type() == BedrockItems.BRITTLE_ICE, "variants are of their own type, not the fallback's");
-            check(palette.resolve(bed).equals(palette.resolve(BedrockItems.BED.variant())), "bed resolves like its type");
+            check(palette.resolve(bed).equals(palette.resolve(BedrockItems.BED.base())), "bed resolves like its type");
             check(palette.resolve(potion).equals(palette.resolve(BedrockItems.POTION.variant(19))), "potion resolves like after loading");
-            check(palette.resolve(preview).equals(palette.resolve(BedrockItems.BRITTLE_ICE.variant())), "absent type resolves like its type");
+            check(palette.resolve(preview).equals(palette.resolve(BedrockItems.BRITTLE_ICE.base())), "absent type resolves like its type");
             check(palette.resolve(previewDamaged).equals(palette.resolve(BedrockItems.BRITTLE_ICE.variant(3))), "absent variant resolves like after loading");
             System.out.println("PRELOAD OK");
         }
@@ -106,13 +106,13 @@ class ItemVariantsTest {
     @Test
     void aTypeAsAKeyMeansAuxZeroEverywhere() {
         var bed = BedrockItems.BED;
-        assertEquals(dev.opencollab.paletter.item.ItemFallback.of(bed.variant()), dev.opencollab.paletter.item.ItemFallback.of(bed.variant()));
-        var white = dev.opencollab.paletter.item.BedrockItemStack.of(bed.variant());
+        assertEquals(dev.opencollab.paletter.item.ItemFallback.of(bed.base()), dev.opencollab.paletter.item.ItemFallback.of(bed.base()));
+        var white = dev.opencollab.paletter.item.BedrockItemStack.of(bed.base());
         var silver = dev.opencollab.paletter.item.BedrockItemStack.of(bed.variant(8));
-        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(white));
-        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(silver));
-        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(white));
-        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.variant()).matches(silver));
+        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.base()).matches(white));
+        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.base()).matches(silver));
+        assertTrue(dev.opencollab.paletter.creative.ItemMatcher.of(bed.base()).matches(white));
+        assertFalse(dev.opencollab.paletter.creative.ItemMatcher.of(bed.base()).matches(silver));
         assertTrue(dev.opencollab.paletter.creative.ItemMatcher.anyVariantOf(bed).matches(white));
         assertTrue(dev.opencollab.paletter.creative.ItemMatcher.anyVariantOf(bed).matches(silver));
     }
@@ -121,15 +121,15 @@ class ItemVariantsTest {
     void aVariantWithoutAnIdResolvesToTheRightId() {
         CanonicalItems canonical = Access.palette().canonicalItems(Paletter.bundled());
         // Named constants and the base have no id of their own: the type's link knows it
-        assertEquals(canonical.index(ItemVariant.of("minecraft:potion", 19)), BedrockItemVariants.POTION_WATER_BREATHING.canonicalIn(canonical));
-        assertEquals(canonical.index(ItemVariant.of("minecraft:bed", 0)), BedrockItems.BED.variant().canonicalIn(canonical));
-        assertEquals(canonical.index(ItemVariant.of("minecraft:apple", 0)), BedrockItems.APPLE.variant().canonicalIn(canonical));
+        assertEquals(canonical.index(ItemVariant.of("minecraft:potion", 19)), BedrockItems.POTION.withEffect(BedrockPotionTypes.WATER_BREATHING).canonicalIn(canonical));
+        assertEquals(canonical.index(ItemVariant.of("minecraft:bed", 0)), BedrockItems.BED.base().canonicalIn(canonical));
+        assertEquals(canonical.index(ItemVariant.of("minecraft:apple", 0)), BedrockItems.APPLE.base().canonicalIn(canonical));
         // A variant the data does not have has none
         assertEquals(-1, BedrockItems.POTION.variant(9999).canonicalIn(canonical));
         // An absent type's variants have no id where the data lacks the item: they resolve through the fallbacks
         BedrockItemType absent = BedrockItems.BRITTLE_ICE;
         assertFalse(absent.isAvailable());
-        assertEquals(-1, absent.variant().canonicalIn(canonical));
+        assertEquals(-1, absent.base().canonicalIn(canonical));
         assertEquals(absent, absent.variant(3).type());
     }
 
@@ -144,12 +144,12 @@ class ItemVariantsTest {
 
     @Test
     void aTypeHasItsBaseVariant() {
-        assertEquals(BedrockItems.POTION, BedrockItems.POTION.variant().type());
-        assertSame(BedrockItems.POTION.variant(), BedrockItems.POTION.variant(0));
+        assertEquals(BedrockItems.POTION, BedrockItems.POTION.base().type());
+        assertSame(BedrockItems.POTION.base(), BedrockItems.POTION.variant(0));
         Paletter paletter = Paletter.bundled();
         dev.opencollab.paletter.Palette palette = paletter.palette(paletter.latest().protocolVersion());
-        assertSame(palette.resolve(BedrockItems.POTION.variant()), palette.resolve(BedrockItems.POTION.variant()));
-        assertEquals(dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.variant()), dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.variant()));
+        assertSame(palette.resolve(BedrockItems.POTION.base()), palette.resolve(BedrockItems.POTION.base()));
+        assertEquals(dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.base()), dev.opencollab.paletter.item.BedrockItemStack.of(BedrockItems.POTION.base()));
     }
 
     @Test
@@ -161,33 +161,44 @@ class ItemVariantsTest {
     }
 
     @Test
-    void aConstantIsTheVariantOfItsType() {
-        assertEquals(BedrockItems.POTION, BedrockItemVariants.POTION_LONG_NIGHTVISION.type());
-        assertEquals(6, BedrockItemVariants.POTION_LONG_NIGHTVISION.aux());
-        assertSame(BedrockItems.POTION.variant(6), BedrockItemVariants.POTION_LONG_NIGHTVISION);
-        assertSame(BedrockItems.BED.variant(8), BedrockItemVariants.BED_SILVER);
-        assertSame(BedrockItems.ARROW.variant(6), BedrockItemVariants.ARROW_NIGHTVISION);
+    void aGetterIsTheVariantOfItsType() {
+        BedrockItemVariant longNightVision = BedrockItems.POTION.withEffect(BedrockPotionTypes.LONG_NIGHTVISION);
+        assertEquals(BedrockItems.POTION, longNightVision.type());
+        assertEquals(6, longNightVision.aux());
+        assertSame(BedrockItems.POTION.variant(6), longNightVision);
+        assertSame(BedrockItems.BED.variant(8), BedrockItems.BED.silver());
+        assertSame(BedrockItems.BED.variant(3), BedrockItems.BED.lightBlue());
+        assertSame(BedrockItems.ARROW.variant(6), BedrockItems.ARROW.withEffect(BedrockPotionTypes.NIGHTVISION));
     }
 
     @Test
-    void everyConstantIsInTheNewestPalette() throws IllegalAccessException {
+    void aTippedArrowHasNoWaterVariant() {
+        assertThrows(IllegalArgumentException.class, () -> BedrockItems.ARROW.withEffect(BedrockPotionTypes.WATER));
+    }
+
+    @Test
+    void everyGetterIsInTheNewestPalette() throws Exception {
         Paletter paletter = Paletter.bundled();
         List<String> missing = new ArrayList<>();
         int count = 0;
-        for (Field field : BedrockItemVariants.class.getFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) || !(field.get(null) instanceof BedrockItemVariant variant)) {
-                continue;
-            }
-            count++;
-            // Deprecated and preview constants may be absent; everything else is the data's own variant
-            boolean optional = field.isAnnotationPresent(Deprecated.class)
-                || field.isAnnotationPresent(dev.opencollab.paletter.annotation.SincePreview.class);
-            boolean named = variant.type().hasVariant(variant.aux());
-            if (!named && !optional) {
-                missing.add(field.getName());
-            } else if (named) {
-                assertSame(variant, variant.type().variant(variant.aux()), field.getName());
-                assertTrue(variant.canonicalIn(Access.palette().canonicalItems(paletter)) >= 0, field.getName());
+        for (BedrockItemType type : List.of(BedrockItems.BED, BedrockItems.BANNER)) {
+            for (Method method : type.getClass().getMethods()) {
+                if (method.getDeclaringClass() != type.getClass() || method.getParameterCount() != 0
+                    || method.getReturnType() != BedrockItemVariant.class) {
+                    continue;
+                }
+                BedrockItemVariant variant = (BedrockItemVariant) method.invoke(type);
+                count++;
+                // Deprecated and preview getters may be absent; everything else is the data's own variant
+                boolean optional = method.isAnnotationPresent(Deprecated.class)
+                    || method.isAnnotationPresent(dev.opencollab.paletter.annotation.SincePreview.class);
+                boolean named = variant.type().hasVariant(variant.aux());
+                if (!named && !optional) {
+                    missing.add(type.identifier() + "." + method.getName());
+                } else if (named) {
+                    assertSame(variant, variant.type().variant(variant.aux()), method.getName());
+                    assertTrue(variant.canonicalIn(Access.palette().canonicalItems(paletter)) >= 0, method.getName());
+                }
             }
         }
         assertTrue(count > 0);
@@ -196,9 +207,10 @@ class ItemVariantsTest {
 
     @Test
     void variantsOfOtherTypesAreNotNamed() {
-        assertNotNull(BedrockItemVariants.BANNER_BLACK);
+        assertNotNull(BedrockItems.BANNER.black());
         assertFalse(BedrockItems.SUSPICIOUS_STEW.variants().isEmpty());
-        assertEquals(0, java.util.Arrays.stream(BedrockItemVariants.class.getFields())
-            .filter(field -> field.getName().startsWith("SUSPICIOUS_STEW") || field.getName().startsWith("GOAT_HORN")).count());
+        // Types without named variants are plain types, with no getters
+        assertSame(BedrockItemType.class, BedrockItems.SUSPICIOUS_STEW.getClass());
+        assertSame(BedrockItemType.class, BedrockItems.GOAT_HORN.getClass());
     }
 }

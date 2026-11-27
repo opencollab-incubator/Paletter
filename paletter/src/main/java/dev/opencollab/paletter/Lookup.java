@@ -11,7 +11,7 @@ package dev.opencollab.paletter;
  * Custom content of the palette's layers is always accepted. What is returned is a key: the same object a constant or a custom item or block hands out.
  * <p>
  * A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content
- * removed with {@code Paletter.Builder#removeItems}, and content behind an experiment the palette does not enable. To get keys
+ * removed with {@code Paletter.Builder#removeItemTypes}, and content behind an experiment the palette does not enable. To get keys
  * that resolve through fallbacks on every version, look them up on the newest palette, with the experiments you need
  * ({@code Paletter.Builder#allExperiments()}), or use the constants.
  *

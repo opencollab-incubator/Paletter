@@ -107,11 +107,12 @@ A run downloads BDS and, in `<cache>/runs/<platform>-<version>/`:
    effect or the localization key of each. If that part fails, the add-on reports an error and leaves it out, the rest of
    the dump stands, and the names stay as they are. `update` turns the variants into `data/model/variant_names.txt` (only
    the variants the version's creative inventory has; a creative variant without a name fails). Each variant is one line,
-   `<first>..<last> <item> <aux> <name>`, with the bundled data versions (in `versions.txt` order) it exists in, both
+   `<first>..<last> <item> <aux> <name> [<potion type>]`, with the bundled data versions (in `versions.txt` order) it exists in, both
    included; a range that reaches the newest version has no `<last>` (`26.60.. minecraft:bed 14 BED_RED`), so a new version
    that keeps the variant changes no line. The versions are needed because the release and the preview each have their own
    names (preview-only ones become `@SincePreview`), which `constants-history.json` does not know. `generateConstants`
-   turns into `BedrockItemVariants`. The names are BDS's own spellings, never renamed: a name in `constants-history.json`
+   turns into the typed getters of the item constants (`BedItemType`, `BannerItemType`) and `BedrockPotionTypes` (from the
+   potion type column of the potions and the tipped arrow). The names are BDS's own spellings, never renamed: a name in `constants-history.json`
    keeps its identifier and aux, and a different name BDS gives the same variant makes the old one a deprecated alias.
 2. Captures a vanilla world with the headless client: item registry, creative inventory and block properties. Every
    creative block id is checked against the computed state hash. It captures again with sequential ids.

@@ -47,7 +47,7 @@ class FallbackQueryTest {
             assertEquals(variant, newest.resolve(variant).variant(), variant.toString());
         }
         // Content behind an experiment the Paletter did not enable is missing even in the newest version
-        assertTrue(PALETTER.palette(Integer.MAX_VALUE).resolve(BedrockItems.ICICLE.variant()).fallback());
+        assertTrue(PALETTER.palette(Integer.MAX_VALUE).resolve(BedrockItems.ICICLE.base()).fallback());
     }
 
     @Test
@@ -55,16 +55,16 @@ class FallbackQueryTest {
         Palette oldest = PALETTER.palette(OLDEST);
         for (BedrockItemVariant variant : missingInOldest()) {
             assertTrue(oldest.resolve(variant).fallback(), variant.toString());
-            assertEquals(BedrockItems.UNKNOWN.variant(), oldest.resolve(variant).variant(), variant.toString());
+            assertEquals(BedrockItems.UNKNOWN.base(), oldest.resolve(variant).variant(), variant.toString());
         }
     }
 
     @Test
     void existingItemsAreNotFallbacks() {
         Palette oldest = PALETTER.palette(OLDEST);
-        assertFalse(oldest.resolve(BedrockItems.STICK.variant()).fallback());
-        assertEquals(BedrockItems.STICK.variant(), oldest.resolve(BedrockItems.STICK.variant()).variant());
-        assertFalse(oldest.resolve(BedrockItems.DIAMOND_SWORD.variant()).fallback());
+        assertFalse(oldest.resolve(BedrockItems.STICK.base()).fallback());
+        assertEquals(BedrockItems.STICK.base(), oldest.resolve(BedrockItems.STICK.base()).variant());
+        assertFalse(oldest.resolve(BedrockItems.DIAMOND_SWORD.base()).fallback());
     }
 
     @Test
@@ -90,7 +90,7 @@ class FallbackQueryTest {
     void aFallbacksEntryNamesItsTarget() {
         BedrockItemVariant missing = missingInOldest().getFirst();
         Palette type = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(BedrockItems.STICK.variant())).build())
+            .fallbacks(Fallbacks.builder().itemType(missing.type(), ItemFallback.of(BedrockItems.STICK.base())).build())
             .build().palette(OLDEST);
         assertTrue(type.resolve(missing).fallback());
         // The aux of the replaced variant is kept
@@ -98,7 +98,7 @@ class FallbackQueryTest {
 
         BedrockItemVariant target = BedrockItems.STICK.variant(3);
         Palette variant = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(missing.type(), ItemFallback.of(target)).build())
+            .fallbacks(Fallbacks.builder().itemType(missing.type(), ItemFallback.of(target)).build())
             .build().palette(OLDEST);
         assertEquals(target, variant.resolve(missing).variant());
     }
@@ -106,13 +106,13 @@ class FallbackQueryTest {
     @Test
     void aForcedFallbackReplacesAnExistingItem() {
         Palette forced = Paletter.builder()
-            .fallbacks(Fallbacks.builder().item(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK.variant()).forced()).build())
+            .fallbacks(Fallbacks.builder().itemType(BedrockItems.DIAMOND_SWORD, ItemFallback.of(BedrockItems.STICK.base()).forced()).build())
             .build().palette(OLDEST);
-        assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).fallback());
-        assertEquals(BedrockItems.STICK.variant(), forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).variant());
-        assertFalse(forced.resolve(BedrockItems.STICK.variant()).fallback());
-        assertEquals(ResolutionKind.FALLBACK, forced.resolve(BedrockItems.DIAMOND_SWORD.variant()).kind());
-        assertEquals(ResolutionKind.EXACT, forced.resolve(BedrockItems.STICK.variant()).kind());
+        assertTrue(forced.resolve(BedrockItems.DIAMOND_SWORD.base()).fallback());
+        assertEquals(BedrockItems.STICK.base(), forced.resolve(BedrockItems.DIAMOND_SWORD.base()).variant());
+        assertFalse(forced.resolve(BedrockItems.STICK.base()).fallback());
+        assertEquals(ResolutionKind.FALLBACK, forced.resolve(BedrockItems.DIAMOND_SWORD.base()).kind());
+        assertEquals(ResolutionKind.EXACT, forced.resolve(BedrockItems.STICK.base()).kind());
     }
 
     @Test
@@ -145,7 +145,7 @@ class FallbackQueryTest {
         assertNull(none.itemDefinition(missing.type().identifier()));
 
         // A key Paletter has never heard of
-        BedrockItemVariant custom = Access.vanilla().itemType("paletter:nothing").variant();
+        BedrockItemVariant custom = Access.vanilla().itemType("paletter:nothing").base();
         assertNull(none.resolve(custom, null));
     }
 

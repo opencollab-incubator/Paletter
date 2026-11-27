@@ -21,7 +21,7 @@ public final class ItemFallback {
      *
      * @since 1.0.0
      */
-    public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN.variant());
+    public static final ItemFallback UNKNOWN = of(BedrockItems.UNKNOWN);
 
     private final BedrockItemVariant variant;
     private final boolean force;
@@ -44,6 +44,18 @@ public final class ItemFallback {
     }
 
     /**
+     * Creates a fallback to the base variant of a type, which is not forced.
+     *
+     * @param target the replacement: its base variant, aux 0
+     * @return a fallback to {@code target.base()}
+     * @throws NullPointerException if the target is null
+     * @since 1.0.0
+     */
+    public static @NonNull ItemFallback of(@NonNull BedrockItemType target) {
+        return of(Objects.requireNonNull(target, "target").base());
+    }
+
+    /**
      * Returns this fallback, forced.
      *
      * @return this fallback, used even in versions that have the item, e.g. because it is experimental there
@@ -51,16 +63,6 @@ public final class ItemFallback {
      */
     public @NonNull ItemFallback forced() {
         return force ? this : new ItemFallback(variant, true);
-    }
-
-    /**
-     * The replacement item type.
-     *
-     * @return the type of {@link #variant()}
-     * @since 1.0.0
-     */
-    public @NonNull BedrockItemType target() {
-        return variant.type();
     }
 
     /**

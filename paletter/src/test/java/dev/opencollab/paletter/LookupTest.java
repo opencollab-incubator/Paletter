@@ -130,7 +130,7 @@ class LookupTest {
         Palette palette = LATEST.extend(PaletteLayer.builder("lookup").block(lamp).item(ruby).build());
         for (Lookup lookup : Lookup.values()) {
             assertSame(lamp.type().defaultState(), palette.blockState(lamp.type().defaultState().toNbt(), lookup));
-            assertSame(ruby.type().variant(), palette.itemVariant("lookup:ruby", 0, lookup));
+            assertSame(ruby.type().base(), palette.itemVariant("lookup:ruby", 0, lookup));
             assertSame(ruby.type(), palette.itemType("lookup:ruby", lookup));
         }
         assertNull(LATEST.blockState(lamp.type().defaultState().toNbt(), Lookup.EXACT));
@@ -195,14 +195,14 @@ class LookupTest {
 
     @Test
     void itemsMatchExactly() {
-        assertSame(BedrockItems.APPLE.variant(), LATEST.itemVariant("minecraft:apple", 0, Lookup.EXACT));
+        assertSame(BedrockItems.APPLE.base(), LATEST.itemVariant("minecraft:apple", 0, Lookup.EXACT));
         assertSame(BedrockItems.POTION.variant(5), LATEST.itemVariant("minecraft:potion", 5, Lookup.EXACT));
         assertNull(LATEST.itemVariant("minecraft:potion", 9999, Lookup.EXACT));
         assertNull(LATEST.itemVariant("minecraft:paletter_test_unknown", 0, Lookup.RENAMED));
         for (BedrockItemType type : BedrockItemType.vanillaTypes()) {
             // Items behind an experiment toggle are not in the palette's version unless it enables the toggle
             if (LATEST.itemDefinition(type.identifier()) != null) {
-                assertSame(type.variant(), LATEST.itemVariant(type.identifier(), 0, Lookup.EXACT), type.identifier());
+                assertSame(type.base(), LATEST.itemVariant(type.identifier(), 0, Lookup.EXACT), type.identifier());
             }
         }
     }

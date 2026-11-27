@@ -120,7 +120,7 @@ final class VanillaIndex {
             BedrockItemType type = itemsById.computeIfAbsent(variant.identifier(),
                 id -> constantItems.computeIfAbsent(id, key -> new BedrockItemType(null, key, VanillaTypes.UNKNOWN, false)));
             // The base and the named variants belong to the type and have no id of their own: the type's link has it
-            BedrockItemVariant handle = variant.damage() == 0 ? type.variant() : type.named(variant.damage());
+            BedrockItemVariant handle = variant.damage() == 0 ? type.base() : type.named(variant.damage());
             if (handle == null) {
                 handle = new BedrockItemVariant(type, variant.damage(), i);
             }

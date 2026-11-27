@@ -194,7 +194,7 @@ public final class PaletteDataCodec {
             NbtMap fallback = (NbtMap) value;
             // Bundled data names the target type only: the base variant, aux 0
             BedrockItemType target = Access.vanilla().itemType(fallback.getString("target"));
-            itemFallbacks.put(name, fallback.getBoolean("force") ? ItemFallback.of(target.variant()).forced() : ItemFallback.of(target.variant()));
+            itemFallbacks.put(name, fallback.getBoolean("force") ? ItemFallback.of(target).forced() : ItemFallback.of(target));
         });
         Set<String> unmapped = new HashSet<>(fallbacksNbt.getList("unmapped", NbtType.STRING, List.of()));
 
@@ -355,7 +355,7 @@ public final class PaletteDataCodec {
             .build()));
         NbtMapBuilder itemFallbacks = NbtMap.builder();
         new TreeMap<>(data.fallbacks().items()).forEach((name, fallback) -> itemFallbacks.putCompound(name, NbtMap.builder()
-            .putString("target", fallback.target().identifier())
+            .putString("target", fallback.variant().type().identifier())
             .putBoolean("force", fallback.force())
             .build()));
         root.putCompound("fallbacks", NbtMap.builder()

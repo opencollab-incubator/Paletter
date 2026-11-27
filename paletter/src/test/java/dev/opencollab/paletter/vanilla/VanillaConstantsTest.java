@@ -269,7 +269,7 @@ class VanillaConstantsTest {
         assertFalse(removedItem.isAvailable());
         // No canonical id of its own: the palette resolves it by identifier, to the default fallback
         assertEquals(-1, Ids.item(PALETTER, removedItem));
-        ResolvedItem resolved = Access.palette().items(PALETTER.vanilla(PALETTER.latest())).resolve(removedItem.variant());
+        ResolvedItem resolved = Access.palette().items(PALETTER.vanilla(PALETTER.latest())).resolve(removedItem.base());
         assertTrue(resolved.fallback());
         assertEquals("minecraft:unknown", resolved.definition().getIdentifier());
     }

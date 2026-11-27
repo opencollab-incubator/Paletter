@@ -30,12 +30,12 @@ public static final class dev.opencollab.paletter.Fallbacks$Builder {
     public dev.opencollab.paletter.Fallbacks build()
     public dev.opencollab.paletter.Fallbacks$Builder defaultBlock(dev.opencollab.paletter.block.BlockFallback)
     public dev.opencollab.paletter.Fallbacks$Builder defaultItem(dev.opencollab.paletter.item.ItemFallback)
-    public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.data.DataVersion, dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
     public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.data.DataVersion, dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ItemFallback)
-    public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
-    public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.Fallbacks$Builder item(dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ItemFallback)
-    public dev.opencollab.paletter.Fallbacks$Builder item(java.lang.String, dev.opencollab.paletter.item.ItemFallback)
+    public dev.opencollab.paletter.Fallbacks$Builder itemType(dev.opencollab.paletter.data.DataVersion, dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
+    public dev.opencollab.paletter.Fallbacks$Builder itemType(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ItemFallback)
+    public dev.opencollab.paletter.Fallbacks$Builder itemType(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.vanilla.BedrockItemType)
+    public dev.opencollab.paletter.Fallbacks$Builder itemType(java.lang.String, dev.opencollab.paletter.item.ItemFallback)
 }
 
 @Experimental public record dev.opencollab.paletter.ItemExplanation {
@@ -96,6 +96,7 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(int)
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.block.RegisteredBlockState blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState, dev.opencollab.paletter.block.RegisteredBlockState)
+    public dev.opencollab.paletter.vanilla.BedrockBlockState blockOf(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState(int)
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState(java.lang.String, java.util.Map<java.lang.String, ?>, dev.opencollab.paletter.Lookup)
@@ -128,6 +129,8 @@ public final class dev.opencollab.paletter.Palette {
     public dev.opencollab.paletter.PaletteReport report()
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)
     public dev.opencollab.paletter.block.ResolvedBlock resolve(dev.opencollab.paletter.vanilla.BedrockBlockState, dev.opencollab.paletter.block.ResolvedBlock)
+    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemType)
+    public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemType, dev.opencollab.paletter.item.ResolvedItem)
     public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.item.ResolvedItem resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant, dev.opencollab.paletter.item.ResolvedItem)
     public dev.opencollab.paletter.block.ResolvedBlock resolveBlock(int)
@@ -249,7 +252,7 @@ public static final class dev.opencollab.paletter.Paletter$Builder {
     public dev.opencollab.paletter.Paletter$Builder fallbacks(dev.opencollab.paletter.Fallbacks)
     public dev.opencollab.paletter.Paletter$Builder layer(dev.opencollab.paletter.PaletteLayer)
     public dev.opencollab.paletter.Paletter$Builder previews(boolean)
-    public dev.opencollab.paletter.Paletter$Builder removeItems(dev.opencollab.paletter.vanilla.BedrockItemType...)
+    public dev.opencollab.paletter.Paletter$Builder removeItemTypes(dev.opencollab.paletter.vanilla.BedrockItemType...)
     public dev.opencollab.paletter.Paletter$Builder reports(java.util.function.Consumer<dev.opencollab.paletter.PaletteReport>)
     public dev.opencollab.paletter.Paletter$Builder versions(java.util.function.Predicate<dev.opencollab.paletter.data.DataVersion>)
 }
@@ -2533,6 +2536,7 @@ public final class dev.opencollab.paletter.item.BedrockItemStack {
     public int aux()
     public dev.opencollab.paletter.vanilla.BedrockBlockState blockState()
     public long blockingTicks()
+    public static dev.opencollab.paletter.item.BedrockItemStack$Builder builder(dev.opencollab.paletter.vanilla.BedrockItemType)
     public static dev.opencollab.paletter.item.BedrockItemStack$Builder builder(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public java.util.List<java.lang.String> canBreak()
     public java.util.List<java.lang.String> canPlace()
@@ -2540,6 +2544,8 @@ public final class dev.opencollab.paletter.item.BedrockItemStack {
     public boolean equals(java.lang.Object)
     public int hashCode()
     public org.cloudburstmc.nbt.NbtMap nbt()
+    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemType)
+    public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemType, int)
     public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public static dev.opencollab.paletter.item.BedrockItemStack of(dev.opencollab.paletter.vanilla.BedrockItemVariant, int)
     public dev.opencollab.paletter.item.BedrockItemStack$Builder toBuilder()
@@ -2601,8 +2607,8 @@ public final class dev.opencollab.paletter.item.ItemFallback {
     public boolean force()
     public dev.opencollab.paletter.item.ItemFallback forced()
     public int hashCode()
+    public static dev.opencollab.paletter.item.ItemFallback of(dev.opencollab.paletter.vanilla.BedrockItemType)
     public static dev.opencollab.paletter.item.ItemFallback of(dev.opencollab.paletter.vanilla.BedrockItemVariant)
-    public dev.opencollab.paletter.vanilla.BedrockItemType target()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
 }
@@ -4152,6 +4158,44 @@ public enum dev.opencollab.paletter.property.PropertyKind {
     public java.lang.String prefix()
     public static dev.opencollab.paletter.property.PropertyKind valueOf(java.lang.String)
     public static dev.opencollab.paletter.property.PropertyKind[] values()
+}
+
+public final class dev.opencollab.paletter.vanilla.BannerItemType extends dev.opencollab.paletter.vanilla.BedrockItemType {
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant black()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant blue()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant brown()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant cyan()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant gray()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant green()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant lightBlue()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant lime()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant magenta()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant orange()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant pink()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant purple()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant red()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant silver()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant white()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant yellow()
+}
+
+public final class dev.opencollab.paletter.vanilla.BedItemType extends dev.opencollab.paletter.vanilla.BedrockItemType {
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant black()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant blue()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant brown()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant cyan()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant gray()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant green()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant lightBlue()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant lime()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant magenta()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant orange()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant pink()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant purple()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant red()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant silver()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant white()
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant yellow()
 }
 
 public final class dev.opencollab.paletter.vanilla.BedrockBlockState {
@@ -5722,22 +5766,22 @@ public final class dev.opencollab.paletter.vanilla.BedrockExperiments {
     public static final java.lang.String Y_2026_DROP_4 = "y_2026_drop_4"
 }
 
-public final class dev.opencollab.paletter.vanilla.BedrockItemType {
+public class dev.opencollab.paletter.vanilla.BedrockItemType {
+    public final dev.opencollab.paletter.vanilla.BedrockItemVariant base()
     public static dev.opencollab.paletter.vanilla.BedrockItemType byIdentifier(java.lang.String)
-    public java.lang.String constantName()
-    public boolean equals(java.lang.Object)
-    public boolean hasVariant(int)
+    public final java.lang.String constantName()
+    public final boolean equals(java.lang.Object)
+    public final boolean hasVariant(int)
     public int hashCode()
-    public java.lang.String identifier()
-    public boolean isAvailable()
-    public boolean isCustom()
-    public boolean isEducation()
-    public dev.opencollab.paletter.vanilla.BedrockItemType resolved()
-    public java.lang.String toString()
+    public final java.lang.String identifier()
+    public final boolean isAvailable()
+    public final boolean isCustom()
+    public final boolean isEducation()
+    public final dev.opencollab.paletter.vanilla.BedrockItemType resolved()
+    public final java.lang.String toString()
     public static java.util.List<dev.opencollab.paletter.vanilla.BedrockItemType> vanillaTypes()
-    public dev.opencollab.paletter.vanilla.BedrockItemVariant variant()
-    public dev.opencollab.paletter.vanilla.BedrockItemVariant variant(int)
-    public java.util.List<dev.opencollab.paletter.vanilla.BedrockItemVariant> variants()
+    public final dev.opencollab.paletter.vanilla.BedrockItemVariant variant(int)
+    public final java.util.List<dev.opencollab.paletter.vanilla.BedrockItemVariant> variants()
 }
 
 public final class dev.opencollab.paletter.vanilla.BedrockItemVariant {
@@ -5747,232 +5791,6 @@ public final class dev.opencollab.paletter.vanilla.BedrockItemVariant {
     public int hashCode()
     public java.lang.String toString()
     public dev.opencollab.paletter.vanilla.BedrockItemType type()
-}
-
-public final class dev.opencollab.paletter.vanilla.BedrockItemVariants {
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_INFESTED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_LONG_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_OOZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_STRONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_WEAVING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_WIND_CHARGED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant ARROW_WITHER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_BLACK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_BLUE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_BROWN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_CYAN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_GRAY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_GREEN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_LIGHT_BLUE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_LIME
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_MAGENTA
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_ORANGE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_PINK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_PURPLE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_RED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_SILVER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_WHITE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BANNER_YELLOW
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_BLACK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_BLUE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_BROWN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_CYAN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_GRAY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_GREEN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_LIGHT_BLUE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_LIME
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_MAGENTA
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_ORANGE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_PINK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_PURPLE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_RED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_SILVER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_WHITE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant BED_YELLOW
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_AWKWARD
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_INFESTED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_LONG_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_OOZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_STRONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_THICK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WATER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WEAVING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WIND_CHARGED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant LINGERING_POTION_WITHER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_AWKWARD
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_INFESTED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_LONG_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_OOZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_STRONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_THICK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WATER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WEAVING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WIND_CHARGED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant POTION_WITHER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_AWKWARD
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_INFESTED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_FIRE_RESISTANCE
-    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_FREEZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_INVISIBILITY
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_LONG_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_MUNDANE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_NIGHTVISION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_OOZING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_SLOW_FALLING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_HARMING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_HEALING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_LEAPING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_POISON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_REGENERATION
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_SLOWNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_STRENGTH
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_STRONG_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_SWIFTNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_THICK
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_TURTLE_MASTER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WATER
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WATER_BREATHING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WEAKNESS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WEAVING
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WIND_CHARGED
-    public static final dev.opencollab.paletter.vanilla.BedrockItemVariant SPLASH_POTION_WITHER
 }
 
 public final class dev.opencollab.paletter.vanilla.BedrockItems {
@@ -6020,7 +5838,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ARMADILLO_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ARMOR_STAND
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ARMS_UP_POTTERY_SHERD
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType ARROW
+    public static final dev.opencollab.paletter.vanilla.PotionItemType ARROW
     public static final dev.opencollab.paletter.vanilla.BedrockItemType AXOLOTL_BUCKET
     public static final dev.opencollab.paletter.vanilla.BedrockItemType AXOLOTL_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType AZALEA
@@ -6053,14 +5871,14 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BAMBOO_STANDING_SIGN
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BAMBOO_TRAPDOOR
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BAMBOO_WALL_SIGN
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType BANNER
+    public static final dev.opencollab.paletter.vanilla.BannerItemType BANNER
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BANNER_PATTERN
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BARREL
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BARRIER
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BASALT
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BAT_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BEACON
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType BED
+    public static final dev.opencollab.paletter.vanilla.BedItemType BED
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BEDROCK
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BEEF
     public static final dev.opencollab.paletter.vanilla.BedrockItemType BEEHIVE
@@ -7113,7 +6931,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIME_WOOL_DOUBLE_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIME_WOOL_SLAB
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIME_WOOL_STAIRS
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType LINGERING_POTION
+    public static final dev.opencollab.paletter.vanilla.PotionItemType LINGERING_POTION
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIT_BLAST_FURNACE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIT_DEEPSLATE_REDSTONE_ORE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType LIT_FURNACE
@@ -7503,7 +7321,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POTATO
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POTATOES
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POTENT_SULFUR
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType POTION
+    public static final dev.opencollab.paletter.vanilla.PotionItemType POTION
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POWDER_SNOW
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POWDER_SNOW_BUCKET
     public static final dev.opencollab.paletter.vanilla.BedrockItemType POWERED_COMPARATOR
@@ -7728,7 +7546,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPIDER_EYE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPIDER_SPAWN_EGG
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
-    public static final dev.opencollab.paletter.vanilla.BedrockItemType SPLASH_POTION
+    public static final dev.opencollab.paletter.vanilla.PotionItemType SPLASH_POTION
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPONGE
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPORE_BLOSSOM
     public static final dev.opencollab.paletter.vanilla.BedrockItemType SPRUCE_BOAT
@@ -8088,6 +7906,65 @@ public final class dev.opencollab.paletter.vanilla.BedrockItems {
     public static final dev.opencollab.paletter.vanilla.BedrockItemType ZOMBIE_VILLAGER_SPAWN_EGG
 }
 
+public final class dev.opencollab.paletter.vanilla.BedrockPotionType {
+    public boolean equals(java.lang.Object)
+    public int hashCode()
+    public java.lang.String identifier()
+    public java.lang.String toString()
+}
+
+public final class dev.opencollab.paletter.vanilla.BedrockPotionTypes {
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType AWKWARD
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType FIRE_RESISTANCE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockPotionType FREEZING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType HARMING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType HEALING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType INFESTED
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType INVISIBILITY
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LEAPING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_FIRE_RESISTANCE
+    @SincePreview("26.70") public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_FREEZING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_INVISIBILITY
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_LEAPING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_MUNDANE
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_NIGHTVISION
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_POISON
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_REGENERATION
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_SLOWNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_SLOW_FALLING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_STRENGTH
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_SWIFTNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_TURTLE_MASTER
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_WATER_BREATHING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType LONG_WEAKNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType MUNDANE
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType NIGHTVISION
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType OOZING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType POISON
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType REGENERATION
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType SLOWNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType SLOW_FALLING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRENGTH
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_HARMING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_HEALING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_LEAPING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_POISON
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_REGENERATION
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_SLOWNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_STRENGTH
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_SWIFTNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType STRONG_TURTLE_MASTER
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType SWIFTNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType THICK
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType TURTLE_MASTER
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WATER
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WATER_BREATHING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WEAKNESS
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WEAVING
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WIND_CHARGED
+    public static final dev.opencollab.paletter.vanilla.BedrockPotionType WITHER
+}
+
 public sealed abstract class dev.opencollab.paletter.vanilla.BedrockState<T> permits dev.opencollab.paletter.vanilla.BoolState, dev.opencollab.paletter.vanilla.EnumState, dev.opencollab.paletter.vanilla.IntState, dev.opencollab.paletter.vanilla.StringState {
     public boolean equals(java.lang.Object)
     public int hashCode()
@@ -8246,6 +8123,10 @@ public final class dev.opencollab.paletter.vanilla.IntState extends dev.opencoll
     public static dev.opencollab.paletter.vanilla.IntState of(java.lang.String, int...)
     public static dev.opencollab.paletter.vanilla.IntState range(java.lang.String, int, int)
     public java.util.List<java.lang.Integer> values()
+}
+
+public final class dev.opencollab.paletter.vanilla.PotionItemType extends dev.opencollab.paletter.vanilla.BedrockItemType {
+    public dev.opencollab.paletter.vanilla.BedrockItemVariant withEffect(dev.opencollab.paletter.vanilla.BedrockPotionType)
 }
 
 public interface dev.opencollab.paletter.vanilla.StateValue {

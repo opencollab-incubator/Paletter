@@ -535,7 +535,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
     private @Nullable ResolvedItem defaultResolved() {
         ResolvedItem result = defaultResolved;
         if (result == null && defaultFallback != null) {
-            RegisteredItem fallback = getDefinition(defaultFallback.target().identifier());
+            RegisteredItem fallback = getDefinition(defaultFallback.variant().type().identifier());
             if (fallback != null) {
                 defaultResolved = result = ITEM.resolvedItem(fallback, defaultFallback.variant().aux(),
                     defaultBlockOf(fallback.getIdentifier()), ResolutionKind.DEFAULT, this);
@@ -561,7 +561,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         boolean fallback = false;
         int damage = variant.damage();
         if (item == null) {
-            item = target == null ? null : getDefinition(target.target().identifier());
+            item = target == null ? null : getDefinition(target.variant().type().identifier());
             if (item == null) {
                 return null;
             }
@@ -716,7 +716,7 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
         if (data.getDamage() != item(canonicalId).aux()) {
             // Only the item matched: its base variant stood in for an aux value no variant has (a legacy damage value, a
             // number nobody listed). Keep the value on the stack instead of losing it or making a variant for it
-            stack.variant(variant.type().variant()).aux(data.getDamage());
+            stack.variant(variant.type().base()).aux(data.getDamage());
         }
         return stack.count(Math.max(1, data.getCount()))
             .nbt(data.getTag())
@@ -842,10 +842,10 @@ public final class ItemRegistry implements DefinitionRegistry<ItemDefinition> {
                 unresolved.add(variant.identifier());
                 ItemFallback target = fallbackOf(variant);
                 if (target != null) {
-                    unresolved.add(target.target().identifier());
+                    unresolved.add(target.variant().type().identifier());
                 }
                 if (defaultFallback != null) {
-                    unresolved.add(defaultFallback.target().identifier());
+                    unresolved.add(defaultFallback.variant().type().identifier());
                 }
             }
         }

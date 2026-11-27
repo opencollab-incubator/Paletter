@@ -88,6 +88,44 @@ public final class BedrockItemStack {
     }
 
     /**
+     * Creates a stack of one item of the base variant of a type: {@code BedrockItemStack.of(BedrockItems.APPLE)}.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @return one item, without NBT or block state
+     * @throws NullPointerException if the type is null
+     * @since 1.0.0
+     */
+    public static @NonNull BedrockItemStack of(@NonNull BedrockItemType type) {
+        return of(Objects.requireNonNull(type, "type").base());
+    }
+
+    /**
+     * Creates a stack of several items of the base variant of a type.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @param count the stack size, at least 1
+     * @return a stack, without NBT or block state
+     * @throws NullPointerException if the type is null
+     * @throws IllegalArgumentException if the count is below 1
+     * @since 1.0.0
+     */
+    public static @NonNull BedrockItemStack of(@NonNull BedrockItemType type, int count) {
+        return of(Objects.requireNonNull(type, "type").base(), count);
+    }
+
+    /**
+     * Starts a stack of one item of the base variant of a type.
+     *
+     * @param type the item type, standing for its base variant (aux 0)
+     * @return a builder
+     * @throws NullPointerException if the type is null
+     * @since 1.0.0
+     */
+    public static @NonNull Builder builder(@NonNull BedrockItemType type) {
+        return builder(Objects.requireNonNull(type, "type").base());
+    }
+
+    /**
      * Starts a builder with every field of this stack.
      *
      * @return a builder

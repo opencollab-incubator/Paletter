@@ -20,11 +20,15 @@ import dev.opencollab.paletter.tools.codegen.constants.StateConstants.StateConst
 import dev.opencollab.paletter.tools.codegen.constants.StateConstants.StateModel;
 import dev.opencollab.paletter.tools.codegen.constants.VariantConstants.Variant;
 
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -51,6 +55,8 @@ public final class ConstantsSource {
     private static final ClassName BEDROCK_BLOCK_TYPE = vanilla("BedrockBlockType");
     private static final ClassName BEDROCK_ITEM_TYPE = vanilla("BedrockItemType");
     private static final ClassName BEDROCK_ITEM_VARIANT = vanilla("BedrockItemVariant");
+    private static final ClassName POTION_ITEM_TYPE = vanilla("PotionItemType");
+    private static final ClassName POTION_TYPE = vanilla("BedrockPotionType");
     private static final Modifier[] CONSTANT = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
 
     private ConstantsSource() {
@@ -238,17 +244,20 @@ public final class ConstantsSource {
             }
             type.addField(constantField(BEDROCK_BLOCK_TYPE, constant, memberDoc).initializer(value).build());
         }
-        addAliases(type, aliases, constants, BEDROCK_BLOCK_TYPE);
+        addAliases(type, aliases, constants, c -> BEDROCK_BLOCK_TYPE);
         type.addMethod(privateConstructor());
         return file(ConstantsGenerator.PACKAGE, type.build());
     }
 
-    static String items(List<Constant> constants, Map<String, Integer> variants, String version, String oldest) {
+    /**
+     * @param types item identifier to the class of its constant, for the items with named variants ({@link #variantTypes})
+     */
+    static String items(List<Constant> constants, Map<String, Integer> variants, Map<String, ClassName> types, String version, String oldest) {
         List<String> doc = new ArrayList<>(List.of(
             "Every item type of Bedrock " + version + ", the newest bundled release. The constants are resolved against",
             "the newest data of {@link dev.opencollab.paletter.Paletter#bundled()} on first use; referencing them loads nothing.",
-            "Variants that differ by aux are {@link BedrockItemType#variant(int)}; the named ones are the constants of",
-            "{@link BedrockItemVariants}.",
+            "Variants that differ by aux are {@link BedrockItemType#variant(int)}; the items with variants BDS names have a",
+            "constant of their own class with typed getters: {@code POTION.withEffect(BedrockPotionTypes.HEALING)}, {@code BED.lightBlue()}.",
             "<p>",
             "Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated: palettes",
             "that have the item send it, the others resolve it through their {@link dev.opencollab.paletter.Fallbacks}",
@@ -272,11 +281,15 @@ public final class ConstantsSource {
                 memberDoc.add("@deprecated " + (constant.preview() != null ? "a newer Bedrock preview dropped the item" : "Bedrock removed the item")
                     + "; palettes without it resolve it through their {@link dev.opencollab.paletter.Fallbacks}");
             }
-            type.addField(constantField(BEDROCK_ITEM_TYPE, constant, memberDoc)
-                .initializer("$T.$L($S, $S)", VANILLA_TYPES, constant.education() ? "educationItem" : "item", constant.name(),
-                    constant.identifier()).build());
+            ClassName own = types.get(constant.identifier());
+            if (own != null && constant.education()) {
+                throw new IllegalStateException(constant.identifier() + " is Education Edition content with named variants, which the constants do not support");
+            }
+            type.addField(constantField(own != null ? own : BEDROCK_ITEM_TYPE, constant, memberDoc)
+                .initializer(own != null ? CodeBlock.of("$T.item(new $T($S, $S))", VANILLA_TYPES, own, constant.name(), constant.identifier())
+                    : CodeBlock.of("$T.$L($S, $S)", VANILLA_TYPES, constant.education() ? "educationItem" : "item", constant.name(), constant.identifier())).build());
         }
-        addAliases(type, aliases, constants, BEDROCK_ITEM_TYPE);
+        addAliases(type, aliases, constants, c -> types.getOrDefault(c.identifier(), BEDROCK_ITEM_TYPE));
         type.addMethod(privateConstructor());
         return file(ConstantsGenerator.PACKAGE, type.build());
     }
@@ -311,78 +324,207 @@ public final class ConstantsSource {
         return file(ConstantsGenerator.PACKAGE, type.build());
     }
 
-    /**
-     * @param itemNames item identifier to the name of its {@code BedrockItems} constant
-     */
-    static String variants(List<Variant> variants, Map<String, String> itemNames, String version) {
-        List<String> doc = new ArrayList<>();
-        List<String> families = variants.stream().map(Variant::constant).filter(c -> c.replacement() == null && c.deprecated() == null)
-            .map(c -> "{@link BedrockItems#" + itemName(itemNames, c.identifier()) + "}").distinct().sorted().toList();
-        String intro = "The named aux variants of Bedrock " + version + ", the newest bundled release";
-        if (families.isEmpty()) {
-            doc.add(intro + ".");
-        } else {
-            // The items wrap by words: a line stays within 110 characters of the comment
-            doc.add(intro + ", of the items");
-            StringBuilder line = new StringBuilder(" *");
-            for (int i = 0; i < families.size(); i++) {
-                String word = families.get(i) + (i == families.size() - 1 ? "." : ",");
-                if (line.length() + word.length() > 110) {
-                    doc.add(line.substring(3));
-                    line = new StringBuilder(" *");
-                }
-                line.append(' ').append(word);
-            }
-            doc.add(line.substring(3));
-        }
-        doc.addAll(List.of(
-            "The names are BDS's own spellings, taken from the Script API (the potion effect id, the localization key of the",
-            "stack). Every constant is the very {@link BedrockItemVariant} of {@code type.variant(aux)}. Referencing them loads",
-            "nothing.",
-            "<p>",
-            "Constants are added when Bedrock adds variants (binary compatible). A variant Bedrock removes keeps its constant,",
-            "deprecated: {@code type.variant(aux)} is then a plain variant, equal to the constant. A name BDS changes stays as a deprecated alias of the new one.",
-            "<p>",
-            "{@code @since} is the Paletter version that added a constant, only written if newer than the class. The",
-            "names come from BDS dumps of the newest builds only, so a variant says nothing of the Bedrock release it is first in: it may be older than the dumps.",
-            "{@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview",
-            "has: the constants are linked to the newest release, so its type has no such variant and {@code type.variant(aux)}",
-            "is a plain variant and the constant stays a plain key. The mark goes when a release has it; the constant goes if a newer",
-            "preview drops it.",
-            "",
-            "@since " + CLASS_SINCE));
-        TypeSpec.Builder type = classType("BedrockItemVariants", doc);
-        List<Variant> aliases = new ArrayList<>();
+    /** The items with named variants: identifier to the class of its constant, a generated getter class or {@code PotionItemType}. */
+    static Map<String, ClassName> variantTypes(List<Variant> variants) {
+        Map<String, Boolean> potion = new TreeMap<>();
         for (Variant variant : variants) {
-            Constant constant = variant.constant();
-            if (constant.replacement() != null) {
-                aliases.add(variant);
+            if (variant.constant().replacement() != null) {
                 continue;
             }
+            String identifier = variant.constant().identifier();
+            Boolean old = potion.put(identifier, variant.potion() != null);
+            if (old != null && old != (variant.potion() != null)) {
+                throw new IllegalStateException(identifier + " has named variants with a potion type and without one; the constants support only one kind per item");
+            }
+        }
+        Map<String, ClassName> types = new TreeMap<>();
+        potion.forEach((identifier, isPotion) -> {
+            ClassName type = isPotion ? POTION_ITEM_TYPE : vanilla(itemTypeClass(identifier));
+            if (!isPotion && type.equals(POTION_ITEM_TYPE)) {
+                throw new IllegalStateException(identifier + " has named variants without a potion type, whose getter class would be the hand-written PotionItemType");
+            }
+            types.put(identifier, type);
+        });
+        return types;
+    }
+
+    /** The getter class of an item: {@code minecraft:bed} is {@code BedItemType}. */
+    static String itemTypeClass(String identifier) {
+        StringBuilder name = new StringBuilder();
+        for (String word : identifier.substring(identifier.indexOf(':') + 1).split("_")) {
+            name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+        }
+        return name + "ItemType";
+    }
+
+    /** What a getter must not be called: the methods of {@code BedrockItemType} and {@code Object}. */
+    private static final Set<String> TAKEN = Set.of("identifier", "constantName", "isCustom", "isEducation", "isAvailable", "resolved", "base", "variant",
+        "variants", "hasVariant", "equals", "hashCode", "toString", "getClass", "notify", "notifyAll", "wait", "clone", "finalize");
+
+    /** The getter of a named variant: its name without the item, {@code BED_LIGHT_BLUE} is {@code lightBlue()}. */
+    static String getter(Constant constant) {
+        String prefix = constant.identifier().substring(constant.identifier().indexOf(':') + 1).toUpperCase(Locale.ROOT) + "_";
+        if (!constant.name().startsWith(prefix) || constant.name().length() == prefix.length()) {
+            throw new IllegalStateException("The named variant " + constant.name() + " does not start with its item " + prefix);
+        }
+        StringBuilder name = new StringBuilder();
+        for (String word : constant.name().substring(prefix.length()).toLowerCase(Locale.ROOT).split("_")) {
+            name.append(name.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1));
+        }
+        String getter = name.toString();
+        if (TAKEN.contains(getter) || !SourceVersion.isName(getter)) {
+            throw new IllegalStateException("The named variant " + constant.name() + " would be the getter " + getter + "(), which is taken or not a Java name");
+        }
+        return getter;
+    }
+
+    /**
+     * The class of the constant of an item whose named variants are not potion types (beds, banners): one getter per
+     * variant, named by BDS.
+     *
+     * @param itemName the name of the item's {@code BedrockItems} constant
+     */
+    static String itemType(String identifier, String itemName, List<Variant> variants, String version) {
+        ClassName name = vanilla(itemTypeClass(identifier));
+        List<String> doc = List.of(
+            "The constant {@link BedrockItems#" + itemName + "}: {@code " + identifier + "}, with a getter per variant BDS names in Bedrock " + version + ",",
+            "the newest bundled release. The names are BDS's own (the localization key of the stack). As a type it is its base",
+            "variant, aux 0, like any type.",
+            "<p>",
+            "A variant Bedrock removes keeps its getter, deprecated; a name BDS changes stays as a deprecated alias of the new one.",
+            "{@link dev.opencollab.paletter.annotation.SincePreview @SincePreview} marks variants only the bundled Bedrock preview has.",
+            "",
+            "@since " + CLASS_SINCE);
+        TypeSpec.Builder type = TypeSpec.classBuilder(name).addModifiers(Modifier.PUBLIC, Modifier.FINAL).superclass(BEDROCK_ITEM_TYPE)
+            .addJavadoc(javadoc(doc));
+        MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
+            .addParameter(ParameterSpec.builder(String.class, "constantName").addAnnotation(NON_NULL).build())
+            .addParameter(ParameterSpec.builder(String.class, "identifier").addAnnotation(NON_NULL).build())
+            .addStatement("super(constantName, identifier, $T.UNKNOWN, false)", VANILLA_TYPES);
+        Map<String, String> getters = new TreeMap<>();
+        for (Variant variant : variants) {
+            Constant constant = variant.constant();
+            if (constant.replacement() == null) {
+                getters.put(constant.name(), getter(constant));
+            }
+        }
+        List<MethodSpec> aliases = new ArrayList<>();
+        for (Variant variant : variants) {
+            Constant constant = variant.constant();
             List<String> memberDoc = new ArrayList<>();
-            memberDoc.add("{@code " + constant.identifier() + "} with aux " + variant.aux() + (constant.deprecated() != null ? ", no longer in the bundled data." : "."));
+            if (constant.replacement() != null) {
+                memberDoc.add("{@code " + identifier + "} with aux " + variant.aux() + ".");
+                memberDoc.add("");
+                memberDoc.add("@return the variant");
+                since(memberDoc, constant.since());
+                memberDoc.add("@deprecated renamed to {@link #" + getters.get(constant.replacement()) + "()}");
+                aliases.add(MethodSpec.methodBuilder(getter(constant)).addModifiers(Modifier.PUBLIC).returns(BEDROCK_ITEM_VARIANT).addAnnotation(NON_NULL)
+                    .addAnnotation(deprecated(constant.deprecated())).addJavadoc(javadoc(memberDoc))
+                    .addStatement("return $L()", getters.get(constant.replacement())).build());
+                continue;
+            }
+            String getter = getters.get(constant.name());
+            memberDoc.add("{@code " + identifier + "} with aux " + variant.aux() + (constant.deprecated() != null ? ", no longer in the bundled data." : "."));
             if (constant.preview() != null) {
                 memberDoc.add("Only in the bundled preview " + constant.preview() + ".");
-            } else {
+            }
+            memberDoc.add("");
+            memberDoc.add("@return the variant");
+            if (constant.preview() == null) {
                 since(memberDoc, constant.since());
             }
             if (constant.deprecated() != null) {
                 memberDoc.add("@deprecated Bedrock removed the variant");
             }
-            type.addField(constantField(BEDROCK_ITEM_VARIANT, constant, memberDoc)
-                .initializer("$T.variant($T.$L, $L)", VANILLA_TYPES, BEDROCK_ITEMS, itemName(itemNames, constant.identifier()), variant.aux()).build());
+            type.addField(FieldSpec.builder(BEDROCK_ITEM_VARIANT, getter, Modifier.PRIVATE, Modifier.FINAL).build());
+            constructor.addStatement("this.$L = $T.variant(this, $L)", getter, VANILLA_TYPES, variant.aux());
+            MethodSpec.Builder method = MethodSpec.methodBuilder(getter).addModifiers(Modifier.PUBLIC).returns(BEDROCK_ITEM_VARIANT).addAnnotation(NON_NULL)
+                .addJavadoc(javadoc(memberDoc)).addStatement("return $L", getter);
+            if (constant.preview() != null) {
+                method.addAnnotation(sincePreview(constant.preview()));
+            }
+            if (constant.deprecated() != null) {
+                method.addAnnotation(deprecated(constant.deprecated()));
+            }
+            type.addMethod(method.build());
         }
-        // Aliases come last: a static final field cannot refer to one declared after it
-        for (Variant alias : aliases) {
-            Constant constant = alias.constant();
+        type.addMethods(aliases);
+        type.addMethod(constructor.build());
+        return file(ConstantsGenerator.PACKAGE, type.build());
+    }
+
+    /**
+     * {@code BedrockPotionTypes}: one constant per potion type BDS names on a potion or tipped arrow, with the aux of each
+     * item that has it.
+     *
+     * @param itemNames item identifier to the name of its {@code BedrockItems} constant
+     */
+    static String potionTypes(List<Variant> variants, Map<String, String> itemNames, String version) {
+        Map<String, List<Variant>> byPotion = new TreeMap<>();
+        for (Variant variant : variants) {
+            if (variant.potion() != null && variant.constant().replacement() == null) {
+                byPotion.computeIfAbsent(variant.potion(), p -> new ArrayList<>()).add(variant);
+            }
+        }
+        List<String> doc = List.of(
+            "The potion types of Bedrock " + version + ", the newest bundled release, as BDS names them on the potions and the tipped",
+            "arrow: {@code BedrockItems.POTION.withEffect(BedrockPotionTypes.HEALING)}. Each says which items have it, at which aux.",
+            "<p>",
+            "A potion type Bedrock removes keeps its constant, deprecated. {@link dev.opencollab.paletter.annotation.SincePreview @SincePreview}",
+            "marks potion types only the bundled Bedrock preview has.",
+            "",
+            "@since " + CLASS_SINCE);
+        TypeSpec.Builder type = classType("BedrockPotionTypes", doc);
+        Set<String> names = new TreeSet<>();
+        byPotion.forEach((potion, entries) -> {
+            String name = potion.substring(potion.indexOf(':') + 1).toUpperCase(Locale.ROOT);
+            if (!ConstantsGenerator.CONSTANT.matcher(name).matches() || !names.add(name)) {
+                throw new IllegalStateException("The potion type " + potion + " gives the constant " + name + ", which is not a Java constant or taken");
+            }
+            entries.sort(Comparator.comparing(v -> itemName(itemNames, v.constant().identifier())));
+            boolean preview = entries.stream().allMatch(v -> v.constant().preview() != null);
+            boolean removed = entries.stream().allMatch(v -> v.constant().deprecated() != null);
             List<String> memberDoc = new ArrayList<>();
-            memberDoc.add("{@code " + constant.identifier() + "} with aux " + alias.aux() + ".");
-            since(memberDoc, constant.since());
-            memberDoc.add("@deprecated renamed to {@link #" + constant.replacement() + "}");
-            type.addField(constantField(BEDROCK_ITEM_VARIANT, constant, memberDoc).initializer("$L", constant.replacement()).build());
-        }
+            memberDoc.add("{@code " + potion + "}" + (preview ? ", only in the bundled preview " + entries.getFirst().constant().preview() : "") + ":");
+            CodeBlock.Builder init = CodeBlock.builder().add("new $T($S)$>$>", POTION_TYPE, potion);
+            for (Variant entry : entries) {
+                Constant c = entry.constant();
+                String item = itemName(itemNames, c.identifier());
+                memberDoc.add("{@link BedrockItems#" + item + "} aux " + entry.aux()
+                    + (c.preview() != null && !preview ? " (only in the bundled preview " + c.preview() + ")"
+                        : c.deprecated() != null && !removed ? " (no longer in the bundled data)" : "")
+                    + (entry == entries.getLast() ? "." : ","));
+                init.add("\n.add($T.$L, $L)", BEDROCK_ITEMS, item, entry.aux());
+            }
+            init.add("$<$<");
+            if (!preview) {
+                entries.stream().map(v -> v.constant().since()).min(ConstantsSource::compareVersions).ifPresent(since -> since(memberDoc, since));
+            }
+            if (removed) {
+                memberDoc.add("@deprecated Bedrock removed the potion type");
+            }
+            FieldSpec.Builder field = FieldSpec.builder(POTION_TYPE, name, CONSTANT).addJavadoc(javadoc(memberDoc)).initializer(init.build());
+            if (preview) {
+                field.addAnnotation(sincePreview(entries.getFirst().constant().preview()));
+            }
+            if (removed) {
+                field.addAnnotation(deprecated(entries.getFirst().constant().deprecated()));
+            }
+            type.addField(field.build());
+        });
         type.addMethod(privateConstructor());
         return file(ConstantsGenerator.PACKAGE, type.build());
+    }
+
+    private static int compareVersions(String a, String b) {
+        String[] x = a.split("\\."), y = b.split("\\.");
+        for (int i = 0; i < Math.max(x.length, y.length); i++) {
+            int c = Integer.compare(i < x.length ? Integer.parseInt(x[i]) : 0, i < y.length ? Integer.parseInt(y[i]) : 0);
+            if (c != 0) {
+                return c;
+            }
+        }
+        return 0;
     }
 
     /** A block state value as a Java literal of its NBT type: {@code (byte) 1}, {@code 3} or {@code "north"}. */
@@ -490,7 +632,8 @@ public final class ConstantsSource {
     }
 
     /** Deprecated aliases come last: a static final field cannot refer to one declared after it. */
-    private static void addAliases(TypeSpec.Builder type, List<Constant> aliases, List<Constant> constants, ClassName fieldType) {
+    private static void addAliases(TypeSpec.Builder type, List<Constant> aliases, List<Constant> constants,
+                                   java.util.function.Function<Constant, ClassName> fieldType) {
         for (Constant alias : aliases) {
             Constant target = constants.stream().filter(c -> c.name().equals(alias.replacement())).findFirst().orElseThrow();
             List<String> doc = new ArrayList<>();
@@ -499,7 +642,7 @@ public final class ConstantsSource {
             doc.addAll(tags.subList(1, tags.size()));
             doc.add("@deprecated " + (alias.identifier().equals(target.identifier()) ? "renamed" : "Bedrock renamed it")
                 + " to {@link #" + alias.replacement() + "}");
-            type.addField(FieldSpec.builder(fieldType, alias.name(), CONSTANT).addJavadoc(javadoc(doc))
+            type.addField(FieldSpec.builder(fieldType.apply(target), alias.name(), CONSTANT).addJavadoc(javadoc(doc))
                 .addAnnotation(deprecated(alias.deprecated())).initializer("$L", alias.replacement()).build());
         }
     }

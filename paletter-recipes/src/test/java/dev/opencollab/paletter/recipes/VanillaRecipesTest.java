@@ -58,7 +58,7 @@ class VanillaRecipesTest {
         assertEquals(BedrockItems.STICK, stick.type());
         assertEquals(new Ingredient.Tag("minecraft:wooden_slabs", 1), barrel.ingredients().get(1));
         assertEquals(new Ingredient.Empty(), barrel.ingredients().get(4));
-        assertEquals(BedrockItems.BARREL.variant(), barrel.results().getFirst().item());
+        assertEquals(BedrockItems.BARREL.base(), barrel.results().getFirst().item());
         assertEquals("minecraft:barrel", barrel.results().getFirst().blockState().getString("name"));
     }
 
@@ -71,7 +71,7 @@ class VanillaRecipesTest {
     @Test
     void recipesCheckTheirOwnShape() {
         Ingredient stick = new Ingredient.AnyVariant(BedrockItems.STICK, 1);
-        Result result = Result.builder().item(BedrockItems.TORCH.variant()).count(4).build();
+        Result result = Result.builder().item(BedrockItems.TORCH.base()).count(4).build();
         Recipe.Shaped.Builder shaped = Recipe.Shaped.builder().id("x").ingredients(List.of(stick)).results(List.of(result))
             .station(RecipeStations.CRAFTING_TABLE).assumeSymmetry(true);
         assertThrows(IllegalArgumentException.class, () -> shaped.grid(1, 2).build());
@@ -80,12 +80,12 @@ class VanillaRecipesTest {
             .station(RecipeStations.CRAFTING_TABLE).build());
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.Tag("minecraft:planks", 0));
         assertThrows(IllegalArgumentException.class, () -> new Ingredient.AnyVariant(BedrockItems.STICK, 0));
-        assertThrows(IllegalArgumentException.class, () -> Result.builder().item(BedrockItems.TORCH.variant()).count(0).build());
+        assertThrows(IllegalArgumentException.class, () -> Result.builder().item(BedrockItems.TORCH.base()).count(0).build());
         // The builder convention: a missing required field fails build(), a null fails its setter at once
         assertThrows(IllegalStateException.class, () -> Result.builder().build());
         assertThrows(IllegalStateException.class, () -> Recipe.Shapeless.builder().id("x").build());
         assertThrows(IllegalStateException.class, () -> Recipe.SmithingTrim.builder().build());
-        assertThrows(NullPointerException.class, () -> Result.builder().item(null));
+        assertThrows(NullPointerException.class, () -> Result.builder().item((dev.opencollab.paletter.vanilla.BedrockItemVariant) null));
         assertThrows(NullPointerException.class, () -> shaped.station(null));
         Recipe.Shaped built = shaped.grid(1, 1).results(List.of(result)).build();
         assertEquals(built, built.toBuilder().build());

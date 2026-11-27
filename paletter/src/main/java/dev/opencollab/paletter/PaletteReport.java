@@ -283,7 +283,7 @@ public final class PaletteReport {
     /**
      * Lists the item variants this palette's version lacks and no specific fallback covers, so a missing aux variant is
      * exact. A default fallback ({@code Fallbacks.Builder#defaultItem}) does not count as covering them. Items behind a
-     * disabled experiment and items removed with {@code Paletter.Builder#removeItems} are included. Notes handed to the
+     * disabled experiment and items removed with {@code Paletter.Builder#removeItemTypes} are included. Notes handed to the
      * {@code reports} consumer have none.
      *
      * @return the item variants of the newest canonical set that are missing, in canonical order

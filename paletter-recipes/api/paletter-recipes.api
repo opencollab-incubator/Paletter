@@ -226,6 +226,7 @@ public static final class dev.opencollab.paletter.recipes.Result$Builder {
     public dev.opencollab.paletter.recipes.Result$Builder blockState(org.cloudburstmc.nbt.NbtMap)
     public dev.opencollab.paletter.recipes.Result build()
     public dev.opencollab.paletter.recipes.Result$Builder count(int)
+    public dev.opencollab.paletter.recipes.Result$Builder item(dev.opencollab.paletter.vanilla.BedrockItemType)
     public dev.opencollab.paletter.recipes.Result$Builder item(dev.opencollab.paletter.vanilla.BedrockItemVariant)
     public dev.opencollab.paletter.recipes.Result$Builder tag(org.cloudburstmc.nbt.NbtMap)
 }
