@@ -114,7 +114,7 @@ loadScripts(document, 'script');</script>
  <p>
  Null handling: everything is <code>@NonNull</code> unless marked; the builder methods throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link"><code>NullPointerException</code></a> for
  null. Problems with the content (a duplicate identifier, a hash collision) are not found here but when a palette
- compiles the layer: <a href="Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a> throws <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a>, <a href="Palette.html#extend(dev.opencollab.paletter.PaletteLayer)"><code>Palette.extend(dev.opencollab.paletter.PaletteLayer)</code></a> reports them. Content is
+ compiles the layer: <a href="Paletter.Builder.html#build()"><code>Paletter.Builder.build()</code></a> and <a href="Palette.html#extend(dev.opencollab.paletter.PaletteLayer)"><code>Palette.extend(dev.opencollab.paletter.PaletteLayer)</code></a> throw a <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a>. Content is
  named by keys, custom items and blocks create their own (see <a href="item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a>, <a href="block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>).</div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -136,11 +136,6 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><code><a href="PaletteLayer.Builder.html" class="type-name-link" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Collects the content of a <a href="PaletteLayer.html" title="class in dev.opencollab.paletter"><code>PaletteLayer</code></a>.</div>
-</div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="PaletteLayer.Override.html" class="type-name-link" title="class in dev.opencollab.paletter">PaletteLayer.Override</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">A change to a vanilla item, registered with <a href="PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>.</div>
 </div>
 </div>
 </section>
@@ -171,30 +166,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Tells whether compiling this layer changes block states.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;<a href="creative/CreativeEditor.html" title="class in dev.opencollab.paletter.creative">CreativeEditor</a>,<wbr><a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeEdits()" class="member-name-link">creativeEdits</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Lists the creative inventory edits of this layer, in registration order.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the name this layer was given, which reports and error messages use.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="item/CustomItem.html" title="class in dev.opencollab.paletter.item">CustomItem</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#items()" class="member-name-link">items</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="item/CustomItem.html" title="class in dev.opencollab.paletter.item">CustomItem</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#items()" class="member-name-link">items</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Lists the custom items of this layer, not the items of custom blocks (see <a href="block/CustomBlock.html#item()"><code>CustomBlock.item()</code></a>).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#minEngineVersion()" class="member-name-link">minEngineVersion</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the <code>min_engine_version</code> of the pack this layer stands for (<code>PaletteLayer.Builder.minEngineVersion</code>).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="PaletteLayer.Override.html" title="class in dev.opencollab.paletter">PaletteLayer.Override</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#overrides()" class="member-name-link">overrides</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#minEngineVersion()" class="member-name-link">minEngineVersion</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Lists the vanilla item overrides of this layer (experimental, see <a href="PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>).</div>
+<div class="block">Returns the <code>min_engine_version</code> of the pack this layer stands for (<code>PaletteLayer.Builder.minEngineVersion</code>).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tags()" class="member-name-link">tags</a>()</code></div>
@@ -204,14 +189,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;dev.opencollab.paletter.internal.item.ItemVariant&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variants()" class="member-name-link">variants</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="block/VoxelShape.html" title="class in dev.opencollab.paletter.block">VoxelShape</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the item variants this layer gives canonical ids to.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="block/VoxelShape.html" title="class in dev.opencollab.paletter.block">VoxelShape</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Lists the voxel shapes this layer defines.</div>
 </div>
 </div>
@@ -299,32 +279,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="overrides()">
-<h3>overrides</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PaletteLayer.Override.html" title="class in dev.opencollab.paletter">PaletteLayer.Override</a>&gt;</span>&nbsp;<span class="element-name">overrides</span>()</div>
-<div class="block">Lists the vanilla item overrides of this layer (experimental, see <a href="PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>).</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the overrides, in registration order, unmodifiable</dd>
-<dt>Since:</dt>
-<dd>1.0.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="creativeEdits()">
-<h3>creativeEdits</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;<a href="creative/CreativeEditor.html" title="class in dev.opencollab.paletter.creative">CreativeEditor</a>,<wbr><a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;&gt;</span>&nbsp;<span class="element-name">creativeEdits</span>()</div>
-<div class="block">Lists the creative inventory edits of this layer, in registration order.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the edits, unmodifiable</dd>
-<dt>Since:</dt>
-<dd>1.0.0</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="tags()">
 <h3>tags</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</span>&nbsp;<span class="element-name">tags</span>()</div>
@@ -334,18 +288,6 @@ loadScripts(document, 'script');</script>
 <dd>the identifiers of each tag, unmodifiable</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="variants()">
-<h3>variants</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;dev.opencollab.paletter.internal.item.ItemVariant&gt;</span>&nbsp;<span class="element-name">variants</span>()</div>
-<div class="block">Internal: the item variants this layer gives canonical ids to.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>item variants this layer gives canonical ids to, besides its custom items</dd>
 </dl>
 </section>
 </li>

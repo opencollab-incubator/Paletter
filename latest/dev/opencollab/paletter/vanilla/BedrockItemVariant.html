@@ -89,20 +89,16 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">dev.opencollab.paletter.vanilla.BedrockItemVariant</div>
 </div>
 <section class="class-description" id="class-description">
-<dl class="notes">
-<dt>All Implemented Interfaces:</dt>
-<dd><code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
-</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BedrockItemVariant</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></span></div>
-<div class="block">A variant of a <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux (damage) value. The block a stack places is not part of
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">A variant of a <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux value. Paletter says "aux" for the value that names a
+ variant (BDS's aux value, the <code>damage</code> field of Cloudburst's <code>ItemData</code>); "damage" is only an item's wear. The block a stack places is not part of
  the variant, it belongs to the stack (<a href="../item/BedrockItemStack.html#blockState()"><code>BedrockItemStack.blockState()</code></a>). Obtained from
- <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, or <a href="BedrockItemType.html#variant()"><code>BedrockItemType.variant()</code></a> for the base variant. It is an <a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla"><code>ItemKey</code></a>, as is a type (for its base variant).
+ <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> and <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, or <a href="BedrockItemType.html#base()"><code>BedrockItemType.base()</code></a> for the base variant.
  <p>
  Equality: as for <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>, <code>equals</code> always works. <code>==</code> works too for the variants of the
- vanilla constants (the types of <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a>, the named variants of <a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariants</code></a>) and for the base variant of registered custom content: <code>customItem.type().variant()</code> is the very
+ vanilla constants (the types of <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a>, the named variants their getters give) and for the base variant of registered custom content: <code>customItem.type().base()</code> is the very
  variant <a href="../Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> gives back. Variants made by
  <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a> for an aux value that is not one of <a href="BedrockItemType.html#variants()"><code>BedrockItemType.variants()</code></a>, and
  variants of types made for unknown identifiers, are new objects: compare those
@@ -136,35 +132,12 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Finds the vanilla variant of an identifier and aux value, without making a type for an unknown identifier.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalIn(dev.opencollab.paletter.internal.CanonicalItems)" class="member-name-link">canonicalIn</a><wbr>(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the canonical id of this variant in a palette's canonical items.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromCanonical(dev.opencollab.paletter.internal.CanonicalItems,int)" class="member-name-link">fromCanonical</a><wbr>(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical,
- int&nbsp;id)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: the handle of a canonical id, for <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromIdentifier(java.lang.String,int)" class="member-name-link">fromIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that
- became its own type).</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull dev.opencollab.paletter.internal.item.ItemVariant</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toItemVariant()" class="member-name-link">toItemVariant</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the variant as an <code>ItemVariant</code>.</div>
-</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -172,11 +145,6 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The type of the variant.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant()" class="member-name-link">variant</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The variant this key names.</div>
 </div>
 </div>
 </div>
@@ -196,22 +164,6 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="fromCanonical(dev.opencollab.paletter.internal.CanonicalItems,int)">
-<h3>fromCanonical</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">fromCanonical</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical,
- int&nbsp;id)</span></div>
-<div class="block">Internal: the handle of a canonical id, for <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>canonical</code> - the canonical items of a palette lineage</dd>
-<dd><code>id</code> - a canonical id</dd>
-<dt>Returns:</dt>
-<dd>the variant of a canonical id (not null for an id in range)</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="byIdentifier(java.lang.String,int)">
 <h3>byIdentifier</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">byIdentifier</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
@@ -221,7 +173,7 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>identifier</code> - an item identifier</dd>
-<dd><code>aux</code> - the aux (damage) value</dd>
+<dd><code>aux</code> - the aux value</dd>
 <dt>Returns:</dt>
 <dd>the variant of a vanilla constant, or null if the identifier (after splits and renames) is not an item of
          the newest bundled data and has no generated constant</dd>
@@ -233,46 +185,15 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 </section>
 </li>
 <li>
-<section class="detail" id="fromIdentifier(java.lang.String,int)">
-<h3>fromIdentifier</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">fromIdentifier</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- int&nbsp;aux)</span></div>
-<div class="block">Internal: the variant of an identifier and aux value, applying renames and splits (a legacy variant that
- became its own type). Loads the data. Use <a href="../Palette.html#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)"><code>Palette.itemVariant(java.lang.String, int, dev.opencollab.paletter.Lookup)</code></a> or <code>type.variant(aux)</code>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - an item identifier</dd>
-<dd><code>aux</code> - the aux (damage) value</dd>
-<dt>Returns:</dt>
-<dd>the variant, a plain value if Paletter does not know the identifier</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="variant()">
-<h3>variant</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ItemKey.html#variant()">ItemKey</a></code></span></div>
-<div class="block">The variant this key names.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="ItemKey.html#variant()">variant</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
-<dt>Returns:</dt>
-<dd>this variant</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="type()">
 <h3>type</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">type</span>()</div>
 <div class="block">The type of the variant.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="ItemKey.html#type()">type</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
 <dt>Returns:</dt>
 <dd>the type this is a variant of</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -283,36 +204,9 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <div class="block">The aux value of the variant.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the aux (damage) value</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="toItemVariant()">
-<h3>toItemVariant</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.item.ItemVariant</span>&nbsp;<span class="element-name">toItemVariant</span>()</div>
-<div class="block">Internal: the variant as an <code>ItemVariant</code>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the identifier and aux value of this variant</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="canonicalIn(dev.opencollab.paletter.internal.CanonicalItems)">
-<h3>canonicalIn</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">canonicalIn</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical)</span></div>
-<div class="block">Internal: the canonical id of this variant in a palette's canonical items. A variant of a type that is not
- <a href="BedrockItemType.html#isAvailable()"><code>available</code></a> is the palette's own item if the palette's newest version has it
- (an <a href="../annotation/SincePreview.html" title="annotation interface in dev.opencollab.paletter.annotation"><code>@SincePreview</code></a> item in a palette with previews), else it
- has no id: the palette resolves it by identifier, through the <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>canonical</code> - the canonical items of a palette</dd>
-<dt>Returns:</dt>
-<dd>the canonical id of this variant in a palette's canonical items, or -1</dd>
+<dd>the aux value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

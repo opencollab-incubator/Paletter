@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Selects creative stacks, e.g. as an anchor to insert after, or to remove. Matchers print readably, so a placement
  that found nothing can be reported as <code>after(minecraft:hopper_minecart) matched nothing</code>.
  <pre><code>
- ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.damage(2))
+ ItemMatcher.id("minecraft:empty_map").and(ItemMatcher.aux(2))
  </code></pre></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -122,19 +122,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Matches every stack of an item type, like <a href="#id(java.lang.String)"><code>id(String)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;blockState)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#aux(int)" class="member-name-link">aux</a><wbr>(int&nbsp;aux)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches stacks that carry this block state.</div>
+<div class="block">Matches the stacks whose variant has an aux value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;blockState)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches stacks that carry this block state, given as NBT; the NBT is normalized first.</div>
+<div class="block">Matches stacks that carry this block state.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#damage(int)" class="member-name-link">damage</a><wbr>(int&nbsp;damage)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches the stacks with a damage (aux) value.</div>
+<div class="block">Matches stacks that carry this block state, given as NBT; the NBT is normalized first.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#exact(dev.opencollab.paletter.item.BedrockItemStack)" class="member-name-link">exact</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
@@ -144,7 +144,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#id(java.lang.String)" class="member-name-link">id</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Matches every stack of an item, regardless of damage, block state or NBT.</div>
+<div class="block">Matches every stack of an item, regardless of aux, block state or NBT.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#matches(dev.opencollab.paletter.item.BedrockItemStack)" class="member-name-link">matches</a><wbr>(@NonNull <a href="../item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
@@ -162,7 +162,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Inverts this matcher.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(dev.opencollab.paletter.vanilla.ItemKey)" class="member-name-link">of</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">of</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Matches the stacks of exactly that variant (a type is its base variant; see <a href="#anyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)"><code>anyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)</code></a> for any
  variant).</div>
@@ -228,7 +228,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="id(java.lang.String)">
 <h3>id</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">id</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
-<div class="block">Matches every stack of an item, regardless of damage, block state or NBT.</div>
+<div class="block">Matches every stack of an item, regardless of aux, block state or NBT.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>identifier</code> - the item identifier, e.g. <code>minecraft:empty_map</code></dd>
@@ -253,14 +253,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="of(dev.opencollab.paletter.vanilla.ItemKey)">
+<section class="detail" id="of(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</span></div>
 <div class="block">Matches the stacks of exactly that variant (a type is its base variant; see <a href="#anyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)"><code>anyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)</code></a> for any
  variant).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>key</code> - a variant, or a type for its base variant</dd>
+<dd><code>key</code> - a variant</dd>
 <dt>Returns:</dt>
 <dd>the matcher</dd>
 <dt>Since:</dt>
@@ -269,13 +269,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="damage(int)">
-<h3>damage</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">damage</span><wbr><span class="parameters">(int&nbsp;damage)</span></div>
-<div class="block">Matches the stacks with a damage (aux) value.</div>
+<section class="detail" id="aux(int)">
+<h3>aux</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a></span>&nbsp;<span class="element-name">aux</span><wbr><span class="parameters">(int&nbsp;aux)</span></div>
+<div class="block">Matches the stacks whose variant has an aux value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>damage</code> - the damage value</dd>
+<dd><code>aux</code> - the aux value</dd>
 <dt>Returns:</dt>
 <dd>the matcher</dd>
 </dl>

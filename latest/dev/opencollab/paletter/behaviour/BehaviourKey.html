@@ -100,12 +100,13 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract sealed class </span><span class="element-name type-name-label">BehaviourKey&lt;T&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>
-<span class="permits">permits <a href="FloatKey.html" title="class in dev.opencollab.paletter.behaviour">FloatKey</a>, <a href="IntKey.html" title="class in dev.opencollab.paletter.behaviour">IntKey</a>, <a href="BooleanKey.html" title="class in dev.opencollab.paletter.behaviour">BooleanKey</a>, <a href="ObjectKey.html" title="class in dev.opencollab.paletter.behaviour">ObjectKey</a>&lt;T&gt;</span></div>
+<span class="permits">permits <a href="FloatKey.html" title="class in dev.opencollab.paletter.behaviour">FloatKey</a>&lt;O&gt;, <a href="IntKey.html" title="class in dev.opencollab.paletter.behaviour">IntKey</a>&lt;O&gt;, <a href="BooleanKey.html" title="class in dev.opencollab.paletter.behaviour">BooleanKey</a>&lt;O&gt;, <a href="ObjectKey.html" title="class in dev.opencollab.paletter.behaviour">ObjectKey</a>&lt;O,<wbr>T&gt;</span></div>
 <div class="block">A typed behaviour property of blocks or items: what Bedrock Dedicated Server knows about vanilla content but never
  sends to clients (friction, destroy time, collision shapes, attack damage, ...). The keys are the constants of
  <a href="BlockBehaviour.html" title="class in dev.opencollab.paletter.behaviour"><code>BlockBehaviour</code></a> and <a href="ItemBehaviour.html" title="class in dev.opencollab.paletter.behaviour"><code>ItemBehaviour</code></a>. Their type says what <code>get</code> returns: a <a href="FloatKey.html" title="class in dev.opencollab.paletter.behaviour"><code>FloatKey</code></a> a
  <code>float</code>, an <a href="IntKey.html" title="class in dev.opencollab.paletter.behaviour"><code>IntKey</code></a> an <code>int</code>, a <a href="BooleanKey.html" title="class in dev.opencollab.paletter.behaviour"><code>BooleanKey</code></a> a <code>boolean</code> (none of them boxed) and an
- <a href="ObjectKey.html" title="class in dev.opencollab.paletter.behaviour"><code>ObjectKey</code></a> its object.</div>
+ <a href="ObjectKey.html" title="class in dev.opencollab.paletter.behaviour"><code>ObjectKey</code></a> its object. Each of those is typed by the values it reads (<a href="BlockValues.html" title="class in dev.opencollab.paletter.behaviour"><code>BlockValues</code></a> or <a href="ItemValues.html" title="class in dev.opencollab.paletter.behaviour"><code>ItemValues</code></a>),
+ so <code>get</code> with a key of the other owner does not compile.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -146,22 +147,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The name of the key.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#ordinal()" class="member-name-link">ordinal</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BehaviourKey.Owner.html" title="enum class in dev.opencollab.paletter.behaviour">BehaviourKey.Owner</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#owner()" class="member-name-link">owner</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The position of the key, which is where its values are kept.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BehaviourKey.Owner.html" title="enum class in dev.opencollab.paletter.behaviour">BehaviourKey.Owner</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#owner()" class="member-name-link">owner</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whose property the key is.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;<a href="BehaviourKey.html" title="type parameter in BehaviourKey">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;<a href="BehaviourKey.html" title="type parameter in BehaviourKey">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The type of the values of the key.</div>
 </div>
 </div>
@@ -189,6 +185,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the name, unique per owner and the key of the bundled data, e.g. <code>friction</code></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -200,6 +198,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>whether this is a block or an item key</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -211,17 +211,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the class of the value type: <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link"><code>Float</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link"><code>Boolean</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> or <a href="BlockShape.html" title="class in dev.opencollab.paletter.behaviour"><code>BlockShape</code></a></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="ordinal()">
-<h3>ordinal</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">ordinal</span>()</div>
-<div class="block">The position of the key, which is where its values are kept.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the position of the key among every block and item key, <code>0</code> to their count - 1</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

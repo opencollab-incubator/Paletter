@@ -96,11 +96,13 @@ loadScripts(document, 'script');</script>
  <p>
  Equality: <code>equals</code> always works. <code>==</code> works too for the states of vanilla types (the constants) and of
  registered custom blocks: a <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> owns its <a href="../block/CustomBlock.html#type()"><code>type</code></a> and states, and a palette it is registered in hands back exactly
- those (<code>Palette#blockState(NbtMap, Lookup)</code>, ...). The states
+ those (<code>Palette#blockState(NbtMap, Lookup)</code>, ...). Two states are equal when their types are equal and they
+ have the same <a href="#values()"><code>values()</code></a>, whichever version or palette made them: a state a preview palette decodes for a block
+ the preview changed equals the constant's state with the same values (it is not <code>==</code> it). The states
  of a type made for an identifier the bundled data does not know are equal by value, not identical.
  Equal custom blocks registered by different layers each own their states; those are equal, not identical.
  <p>
- Canonical ids come from <a href="../Paletter.html#canonicalBlocks()"><code>Paletter.canonicalBlocks()</code></a> (vanilla states) and
+ Canonical ids come from the canonical block ids of the <code>Paletter</code> (vanilla states) and
  <a href="../Palette.html#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.runtimeId(BedrockBlockState)</code></a> (vanilla and custom states). For a vanilla
  state both are an addition, not a hash lookup: the first state of its block plus the sum of each value's index times
  the stride of its property, computed once (Bedrock enumerates every block's states as the full product of its values;
@@ -117,29 +119,15 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalIn(dev.opencollab.paletter.internal.CanonicalBlocks)" class="member-name-link">canonicalIn</a><wbr>(@NonNull dev.opencollab.paletter.internal.CanonicalBlocks&nbsp;canonical)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
- states of
- palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
- block's id in that lineage, else a hash lookup.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromCanonical(dev.opencollab.paletter.internal.CanonicalBlocks,int)" class="member-name-link">fromCanonical</a><wbr>(@NonNull dev.opencollab.paletter.internal.CanonicalBlocks&nbsp;canonical,
- int&nbsp;id)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: the handle of a canonical id, for <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;@NonNull T</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(dev.opencollab.paletter.vanilla.BedrockState)" class="member-name-link">get</a><wbr>(@NonNull <a href="BedrockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockState</a>&lt;T&gt;&nbsp;state)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -208,22 +196,6 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="fromCanonical(dev.opencollab.paletter.internal.CanonicalBlocks,int)">
-<h3>fromCanonical</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">fromCanonical</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.CanonicalBlocks&nbsp;canonical,
- int&nbsp;id)</span></div>
-<div class="block">Internal: the handle of a canonical id, for <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>canonical</code> - the canonical blocks of a palette</dd>
-<dd><code>id</code> - the canonical id</dd>
-<dt>Returns:</dt>
-<dd>the state of a canonical id of any palette lineage, or null if there is no such id</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="type()">
 <h3>type</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">type</span>()</div>
@@ -231,6 +203,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the block type this is a state of</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -250,6 +224,8 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block does not have the state</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the value has no constant in the state's enum (data newer than the constants);
          <a href="#raw(dev.opencollab.paletter.vanilla.BedrockState)"><code>raw(dev.opencollab.paletter.vanilla.BedrockState&lt;?&gt;)</code></a> reads such a value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -266,6 +242,8 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the value as in <a href="#values()"><code>values()</code></a> (<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link"><code>Boolean</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a> or <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a>), or null if the block
          does not have the state</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -285,6 +263,8 @@ loadScripts(document, 'script');</script>
 <dd>this state with one value changed</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block does not have the state or the value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -302,6 +282,8 @@ loadScripts(document, 'script');</script>
 <dd>this state with one value changed</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block does not have the state</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -319,6 +301,8 @@ loadScripts(document, 'script');</script>
 <dd>this state with one value changed</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block does not have the state or the value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -332,6 +316,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the values: <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link"><code>Boolean</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a> or <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a>; unmodifiable</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -343,23 +329,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the state as <code>{name, states}</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="canonicalIn(dev.opencollab.paletter.internal.CanonicalBlocks)">
-<h3>canonicalIn</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">canonicalIn</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.CanonicalBlocks&nbsp;canonical)</span></div>
-<div class="block">Internal: the canonical id of this state in a palette's canonical blocks: the precomputed vanilla id for vanilla
- states of
- palettes of the bundled newest version, an array lookup in the palette's own table for the others, the custom
- block's id in that lineage, else a hash lookup.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>canonical</code> - the canonical blocks of a palette</dd>
-<dt>Returns:</dt>
-<dd>the canonical id, or -1 if the state is not in it</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

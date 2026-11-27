@@ -105,10 +105,10 @@ loadScripts(document, 'script');</script>
  palette.blockState(state, Lookup.EXACT);    // exactly as this palette's version has it
  palette.blockState(state, Lookup.RENAMED);  // also as an older version had it, if this version renamed or changed it
  </code></pre>
- Custom content of the palette's layers is always accepted. What is returned is the palette's own handle.
+ Custom content of the palette's layers is always accepted. What is returned is a key: the same object a constant or a custom item or block hands out.
  <p>
  A palette sees exactly what it has: a lookup returns null for content newer than the palette's version, content
- removed with <code>Paletter.Builder#removeItems</code>, and content behind an experiment the palette does not enable. To get keys
+ removed with <code>Paletter.Builder#removeItemTypes</code>, and content behind an experiment the palette does not enable. To get keys
  that resolve through fallbacks on every version, look them up on the newest palette, with the experiments you need
  (<code>Paletter.Builder#allExperiments()</code>), or use the constants.</div>
 <dl class="notes">
@@ -201,7 +201,9 @@ the order they are declared.</div>
 <h3>RENAMED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a></span>&nbsp;<span class="element-name">RENAMED</span></div>
 <div class="block">Also accepts content of an older bundled version, mapped forward to what the palette's version has under a new
- name: renamed blocks and items, changed state keys. Only unchanged content is checked against the palette's version.</div>
+ name: renamed blocks and items, changed state keys. Only unchanged content is checked against the palette's version.
+ A key a block added gets its default and a removed one is dropped, but a value the block does not have for a key
+ it still has (or a combination it lacks) is no match: invalid input is not reset to defaults.</div>
 </section>
 </li>
 </ul>

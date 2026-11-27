@@ -94,14 +94,14 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-identifier">identifier</span></code> - the item identifier asked for</dd>
-<dd><code><span id="param-aux">aux</span></code> - the aux (damage) value asked for</dd>
+<dd><code><span id="param-aux">aux</span></code> - the aux value asked for</dd>
 <dd><code><span id="param-blockState">blockState</span></code> - the block state asked for, as <code>{name, states}</code>, or null</dd>
 <dd><code><span id="param-handle">handle</span></code> - its handle, or null if it has none in this palette</dd>
 <dd><code><span id="param-kind">kind</span></code> - how it was resolved for this palette's version (<code>ADAPTED</code> does not occur for items)</dd>
 <dd><code><span id="param-chain">chain</span></code> - the identifiers involved: the requested item, then the item it resolved to if that is another one</dd>
 <dd><code><span id="param-item">item</span></code> - the identifier of the item that is sent, or null if nothing fits</dd>
 <dd><code><span id="param-runtimeId">runtimeId</span></code> - the runtime id of the sent item definition, or -1</dd>
-<dd><code><span id="param-damage">damage</span></code> - the damage value that is sent</dd>
+<dd><code><span id="param-sentAux">sentAux</span></code> - the aux value that is sent</dd>
 <dd><code><span id="param-block">block</span></code> - the block sent with the item (its block item's block, or the default block), or null</dd>
 <dd><code><span id="param-blockRuntimeId">blockRuntimeId</span></code> - the runtime id of that block, or -1</dd>
 <dd><code><span id="param-creative">creative</span></code> - whether the variant is in the creative inventory</dd>
@@ -109,7 +109,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="annotation/Experimental.html" title="annotation interface in dev.opencollab.paletter.annotation">@Experimental</a>
-</span><span class="modifiers">public record </span><span class="element-name type-name-label">ItemExplanation</span>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier, int&nbsp;aux, @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;blockState, @Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;handle, @NonNull <a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a>&nbsp;kind, @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;chain, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;item, int&nbsp;runtimeId, int&nbsp;damage, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;block, int&nbsp;blockRuntimeId, boolean&nbsp;creative, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;creativeGroup)
+</span><span class="modifiers">public record </span><span class="element-name type-name-label">ItemExplanation</span>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier, int&nbsp;aux, @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;blockState, @Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;handle, @NonNull <a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a>&nbsp;kind, @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;chain, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;item, int&nbsp;runtimeId, int&nbsp;sentAux, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;block, int&nbsp;blockRuntimeId, boolean&nbsp;creative, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;creativeGroup)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">What a palette does with an item variant, for debugging: <a href="Palette.html#explain(java.lang.String,int,org.cloudburstmc.nbt.NbtMap)"><code>Palette.explain(String, int, NbtMap)</code></a>.</div>
 <dl class="notes">
@@ -135,7 +135,7 @@ loadScripts(document, 'script');</script>
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;chain,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;item,
  int&nbsp;runtimeId,
- int&nbsp;damage,
+ int&nbsp;sentAux,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;block,
  int&nbsp;blockRuntimeId,
  boolean&nbsp;creative,
@@ -192,45 +192,45 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-creativeGroup"><code>creativeGroup</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#damage()" class="member-name-link">damage</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-damage"><code>damage</code></a> record component.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handle()" class="member-name-link">handle</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handle()" class="member-name-link">handle</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-handle"><code>handle</code></a> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-identifier"><code>identifier</code></a> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#item()" class="member-name-link">item</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#item()" class="member-name-link">item</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-item"><code>item</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#kind()" class="member-name-link">kind</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#kind()" class="member-name-link">kind</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-kind"><code>kind</code></a> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeId()" class="member-name-link">runtimeId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runtimeId()" class="member-name-link">runtimeId</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-runtimeId"><code>runtimeId</code></a> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sentAux()" class="member-name-link">sentAux</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-sentAux"><code>sentAux</code></a> record component.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -265,7 +265,7 @@ loadScripts(document, 'script');</script>
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;chain,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;item,
  int&nbsp;runtimeId,
- int&nbsp;damage,
+ int&nbsp;sentAux,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;block,
  int&nbsp;blockRuntimeId,
  boolean&nbsp;creative,
@@ -281,7 +281,7 @@ loadScripts(document, 'script');</script>
 <dd><code>chain</code> - the value for the <a href="#param-chain"><code>chain</code></a> record component</dd>
 <dd><code>item</code> - the value for the <a href="#param-item"><code>item</code></a> record component</dd>
 <dd><code>runtimeId</code> - the value for the <a href="#param-runtimeId"><code>runtimeId</code></a> record component</dd>
-<dd><code>damage</code> - the value for the <a href="#param-damage"><code>damage</code></a> record component</dd>
+<dd><code>sentAux</code> - the value for the <a href="#param-sentAux"><code>sentAux</code></a> record component</dd>
 <dd><code>block</code> - the value for the <a href="#param-block"><code>block</code></a> record component</dd>
 <dd><code>blockRuntimeId</code> - the value for the <a href="#param-blockRuntimeId"><code>blockRuntimeId</code></a> record component</dd>
 <dd><code>creative</code> - the value for the <a href="#param-creative"><code>creative</code></a> record component</dd>
@@ -427,13 +427,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="damage()">
-<h3>damage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">damage</span>()</div>
-<div class="block">Returns the value of the <a href="#param-damage"><code>damage</code></a> record component.</div>
+<section class="detail" id="sentAux()">
+<h3>sentAux</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">sentAux</span>()</div>
+<div class="block">Returns the value of the <a href="#param-sentAux"><code>sentAux</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the value of the <a href="#param-damage"><code>damage</code></a> record component</dd>
+<dd>the value of the <a href="#param-sentAux"><code>sentAux</code></a> record component</dd>
 </dl>
 </section>
 </li>

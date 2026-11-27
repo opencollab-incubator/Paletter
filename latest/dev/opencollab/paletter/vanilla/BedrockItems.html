@@ -94,11 +94,12 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Every item type of Bedrock 26.60, the newest bundled release. The constants are resolved against
  the newest data of <a href="../Paletter.html#bundled()"><code>Paletter.bundled()</code></a> on first use; referencing them loads nothing.
- Variants that differ by damage are <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>; the named ones are the constants of
- <a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariants</code></a>.
+ Variants that differ by aux are <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>; the items with variants BDS names have a
+ constant of their own class with typed getters: <code>POTION.withEffect(BedrockPotionTypes.HEALING)</code>, <code>BED.lightBlue()</code>.
  <p>
- Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated, and
- resolve to <code>minecraft:unknown</code>; renamed items keep their old constant, deprecated, as an alias of the new one.
+ Constants are added when Bedrock adds items (binary compatible). Items Bedrock removes stay, deprecated: palettes
+ that have the item send it, the others resolve it through their <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>
+ (<code>minecraft:unknown</code> by default). Renamed items keep their old constant, deprecated, as an alias of the new one.
  <p>
  <code>@since</code> is the Paletter version that added a constant, and only written if newer than the class. The line
  <code>First in Bedrock</code> is the bundled Bedrock release it first appears in, without an experiment toggle (decided from
@@ -108,7 +109,8 @@ loadScripts(document, 'script');</script>
  Edition features, which <code>isEducation()</code> of the type answers at runtime.
  <a href="../annotation/SincePreview.html" title="annotation interface in dev.opencollab.paletter.annotation"><code>@SincePreview</code></a> marks content only the bundled Bedrock preview
  has. The constants are linked to the newest release, so it is never <code>isAvailable()</code>; what a palette sends for
- it, with previews and without, is told by the annotation. The mark goes when a release has it; the constant goes if a newer preview drops it.</div>
+ it, with previews and without, is told by the annotation. The mark goes when a release has it. A constant a newer
+ preview drops stays, deprecated and still marked, like removed content: code compiled against it keeps linking.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -345,10 +347,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block"><code>minecraft:arms_up_pottery_sherd</code>.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#ARROW" class="member-name-link">ARROW</a></code></div>
 <div class="col-last even-row-color">
-<div class="block"><code>minecraft:arrow</code>: 42 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:arrow</code>: 42 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#AXOLOTL_BUCKET" class="member-name-link">AXOLOTL_BUCKET</a></code></div>
@@ -510,10 +512,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block"><code>minecraft:bamboo_wall_sign</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="BannerItemType.html" title="class in dev.opencollab.paletter.vanilla">BannerItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#BANNER" class="member-name-link">BANNER</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:banner</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:banner</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#BANNER_PATTERN" class="member-name-link">BANNER_PATTERN</a></code></div>
@@ -545,10 +547,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block"><code>minecraft:beacon</code>.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="BedItemType.html" title="class in dev.opencollab.paletter.vanilla">BedItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#BED" class="member-name-link">BED</a></code></div>
 <div class="col-last even-row-color">
-<div class="block"><code>minecraft:bed</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:bed</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#BEDROCK" class="member-name-link">BEDROCK</a></code></div>
@@ -3733,7 +3735,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#EMPTY_MAP" class="member-name-link">EMPTY_MAP</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:empty_map</code>: 1 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:empty_map</code>: 1 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#ENCHANTED_BOOK" class="member-name-link">ENCHANTED_BOOK</a></code></div>
@@ -4018,7 +4020,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#FIREWORK_STAR" class="member-name-link">FIREWORK_STAR</a></code></div>
 <div class="col-last even-row-color">
-<div class="block"><code>minecraft:firework_star</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:firework_star</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#FISHING_ROD" class="member-name-link">FISHING_ROD</a></code></div>
@@ -4208,7 +4210,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#GOAT_HORN" class="member-name-link">GOAT_HORN</a></code></div>
 <div class="col-last even-row-color">
-<div class="block"><code>minecraft:goat_horn</code>: 7 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:goat_horn</code>: 7 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#GOAT_SPAWN_EGG" class="member-name-link">GOAT_SPAWN_EGG</a></code></div>
@@ -5810,10 +5812,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block"><code>minecraft:lime_wool_stairs</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#LINGERING_POTION" class="member-name-link">LINGERING_POTION</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:lingering_potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:lingering_potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#LIT_BLAST_FURNACE" class="member-name-link">LIT_BLAST_FURNACE</a></code></div>
@@ -6713,7 +6715,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#OMINOUS_BOTTLE" class="member-name-link">OMINOUS_BOTTLE</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:ominous_bottle</code>: 4 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:ominous_bottle</code>: 4 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#OMINOUS_TRIAL_KEY" class="member-name-link">OMINOUS_TRIAL_KEY</a></code></div>
@@ -7760,10 +7762,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block"><code>minecraft:potent_sulfur</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#POTION" class="member-name-link">POTION</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#POWDER_SNOW" class="member-name-link">POWDER_SNOW</a></code></div>
@@ -8885,10 +8887,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block"><code>minecraft:spire_armor_trim_smithing_template</code>.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#SPLASH_POTION" class="member-name-link">SPLASH_POTION</a></code></div>
 <div class="col-last even-row-color">
-<div class="block"><code>minecraft:splash_potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:splash_potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#SPONGE" class="member-name-link">SPONGE</a></code></div>
@@ -9413,7 +9415,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#SUSPICIOUS_STEW" class="member-name-link">SUSPICIOUS_STEW</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block"><code>minecraft:suspicious_stew</code>: 12 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:suspicious_stew</code>: 12 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color"><code><a href="#SWEET_BERRIES" class="member-name-link">SWEET_BERRIES</a></code></div>
@@ -11007,8 +11009,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="ARROW">
 <h3>ARROW</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">ARROW</span></div>
-<div class="block"><code>minecraft:arrow</code>: 42 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></span>&nbsp;<span class="element-name">ARROW</span></div>
+<div class="block"><code>minecraft:arrow</code>: 42 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -11240,8 +11242,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="BANNER">
 <h3>BANNER</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">BANNER</span></div>
-<div class="block"><code>minecraft:banner</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BannerItemType.html" title="class in dev.opencollab.paletter.vanilla">BannerItemType</a></span>&nbsp;<span class="element-name">BANNER</span></div>
+<div class="block"><code>minecraft:banner</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -11289,8 +11291,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="BED">
 <h3>BED</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">BED</span></div>
-<div class="block"><code>minecraft:bed</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedItemType.html" title="class in dev.opencollab.paletter.vanilla">BedItemType</a></span>&nbsp;<span class="element-name">BED</span></div>
+<div class="block"><code>minecraft:bed</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -16054,7 +16056,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="EMPTY_MAP">
 <h3>EMPTY_MAP</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">EMPTY_MAP</span></div>
-<div class="block"><code>minecraft:empty_map</code>: 1 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:empty_map</code>: 1 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -16418,7 +16420,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="FIREWORK_STAR">
 <h3>FIREWORK_STAR</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">FIREWORK_STAR</span></div>
-<div class="block"><code>minecraft:firework_star</code>: 15 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:firework_star</code>: 15 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -16723,7 +16725,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="GOAT_HORN">
 <h3>GOAT_HORN</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">GOAT_HORN</span></div>
-<div class="block"><code>minecraft:goat_horn</code>: 7 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:goat_horn</code>: 7 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -19088,8 +19090,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="LINGERING_POTION">
 <h3>LINGERING_POTION</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">LINGERING_POTION</span></div>
-<div class="block"><code>minecraft:lingering_potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></span>&nbsp;<span class="element-name">LINGERING_POTION</span></div>
+<div class="block"><code>minecraft:lingering_potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -20364,7 +20366,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="OMINOUS_BOTTLE">
 <h3>OMINOUS_BOTTLE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">OMINOUS_BOTTLE</span></div>
-<div class="block"><code>minecraft:ominous_bottle</code>: 4 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:ominous_bottle</code>: 4 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -21920,8 +21922,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="POTION">
 <h3>POTION</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">POTION</span></div>
-<div class="block"><code>minecraft:potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></span>&nbsp;<span class="element-name">POTION</span></div>
+<div class="block"><code>minecraft:potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -23529,8 +23531,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="SPLASH_POTION">
 <h3>SPLASH_POTION</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">SPLASH_POTION</span></div>
-<div class="block"><code>minecraft:splash_potion</code>: 46 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></span>&nbsp;<span class="element-name">SPLASH_POTION</span></div>
+<div class="block"><code>minecraft:splash_potion</code>: 46 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -24272,7 +24274,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SUSPICIOUS_STEW">
 <h3>SUSPICIOUS_STEW</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">SUSPICIOUS_STEW</span></div>
-<div class="block"><code>minecraft:suspicious_stew</code>: 12 more variants by damage, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<div class="block"><code>minecraft:suspicious_stew</code>: 12 more variants by aux, see <a href="BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
 </section>
 </li>
 <li>

@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
  layer.overrideItem("minecraft:apple", item -&gt; item.replaceComponents(MaxStackSize.of(3)));
  // Make the firework rocket data driven and merge onto its current data; whether that stops the client's
  // own firework boosting is unverified on a client
- layer.overrideItem("minecraft:firework_rocket", item -&gt; item.version(ItemVersion.DATA_DRIVEN).modifyComponents(MaxStackSize.of(64)));
+ layer.overrideItem("minecraft:firework_rocket", item -&gt; item.dataDriven().modifyComponents(MaxStackSize.of(64)));
  </code></pre>
  <p>
  <b>Experimental.</b> BDS overrides of a vanilla data driven item (such as <code>minecraft:apple</code>, format 1.26.60)
@@ -131,7 +131,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#block(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">block</a><wbr>(@Nullable org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#block(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">block</a><wbr>(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the block this item is sent with.</div>
 </div>
@@ -139,6 +139,16 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#componentBased(boolean)" class="member-name-link">componentBased</a><wbr>(boolean&nbsp;componentBased)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether the item is sent as component based.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataDriven()" class="member-name-link">dataDriven</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sends the item as a data driven item (item version <code>DATA_DRIVEN</code>), as BDS registers an add-on item.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#legacy()" class="member-name-link">legacy</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sends the item as a legacy item (item version <code>LEGACY</code>), as BDS made the feather overridden at format 1.10.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#modifyComponents(dev.opencollab.paletter.item.component.ItemComponent...)" class="member-name-link">modifyComponents</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
@@ -161,11 +171,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Replaces the item's components with only these (the custom item defaults underneath), like a BDS add-on that
  overrides a vanilla data driven item.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)" class="member-name-link">version</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion&nbsp;version)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the item version of the definition, e.g.</div>
 </div>
 </div>
 </div>
@@ -192,19 +197,34 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the definition before this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="version(org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion)">
-<h3>version</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">version</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemVersion&nbsp;version)</span></div>
-<div class="block">Sets the item version of the definition, e.g. <code>ItemVersion.DATA_DRIVEN</code>.</div>
+<section class="detail" id="dataDriven()">
+<h3>dataDriven</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">dataDriven</span>()</div>
+<div class="block">Sends the item as a data driven item (item version <code>DATA_DRIVEN</code>), as BDS registers an add-on item.</div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>version</code> - the version to send</dd>
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="legacy()">
+<h3>legacy</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">legacy</span>()</div>
+<div class="block">Sends the item as a legacy item (item version <code>LEGACY</code>), as BDS made the feather overridden at format 1.10.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -219,6 +239,8 @@ loadScripts(document, 'script');</script>
 <dd><code>componentBased</code> - true to send the item as component based</dd>
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -236,6 +258,8 @@ loadScripts(document, 'script');</script>
 <dd><code>components</code> - the components to merge; a later component replaces an earlier one of the same name</dd>
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -257,19 +281,26 @@ loadScripts(document, 'script');</script>
 <dd><code>components</code> - the only components the item has, apart from the custom item defaults</dd>
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="block(org.cloudburstmc.nbt.NbtMap)">
+<section class="detail" id="block(dev.opencollab.paletter.vanilla.BedrockBlockState)">
 <h3>block</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">block</span><wbr><span class="parameters">(@Nullable org.cloudburstmc.nbt.NbtMap&nbsp;state)</span></div>
-<div class="block">Sets the block this item is sent with. By default, the block is derived from the creative inventory and the palette.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="ItemOverride.html" title="class in dev.opencollab.paletter.item">ItemOverride</a></span>&nbsp;<span class="element-name">block</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</span></div>
+<div class="block">Sets the block this item is sent with. By default, the block is derived from the creative inventory and the palette.
+ A state the palette does not have leaves the block as it was, with a report warning.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>state</code> - the block state, or null to send the item without a block</dd>
+<dd><code>state</code> - the block state</dd>
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the state is null; <a href="#noBlock()"><code>noBlock()</code></a> sends the item without a block</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -281,6 +312,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>this override</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

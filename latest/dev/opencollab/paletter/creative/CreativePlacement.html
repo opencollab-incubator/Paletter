@@ -88,19 +88,21 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="CreativePlacement.After.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.After</a></code></dd>
+<dd><code><a href="CreativePlacement.After.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.After</a></code>, <code><a href="CreativePlacement.Before.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.Before</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">CreativePlacement</span>
-<span class="permits">permits <a href="CreativePlacement.After.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.After</a> <span class="permits-note">(not exhaustive)</span></span></div>
+<span class="permits">permits <a href="CreativePlacement.After.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.After</a>, <a href="CreativePlacement.Before.html" title="class in dev.opencollab.paletter.creative">CreativePlacement.Before</a> <span class="permits-note">(not exhaustive)</span></span></div>
 <div class="block">Where a custom item or block item goes in the creative inventory <i>within</i> its category and group: the position
  adjustment of the layer. Whether it is in the creative inventory at all, and its category and group, are decided by the
  <code>menu_category</code> of the item or block alone, as in BDS (absent or <code>none</code>: not in it).
  <ul>
      <li><a href="#DEFAULT"><code>DEFAULT</code></a>: where the layer's <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative"><code>CreativeOrdering</code></a> puts it (by default exactly like BDS, see
      <a href="CreativeOrdering.html#BDS"><code>CreativeOrdering.BDS</code></a>);</li>
-     <li><a href="#after(dev.opencollab.paletter.creative.ItemMatcher)"><code>after(ItemMatcher)</code></a>: right after the first stack that matches, under every ordering. An anchor that
-     matches nothing falls back to the default position, and the compile reports it.</li>
+     <li><a href="#FIRST"><code>FIRST</code></a>: at the start of its group (or, without a group, of the loose stacks of its category);</li>
+     <li><a href="#after(dev.opencollab.paletter.creative.ItemMatcher)"><code>after(ItemMatcher)</code></a> and <a href="#before(dev.opencollab.paletter.creative.ItemMatcher)"><code>before(ItemMatcher)</code></a>: right after or before the first stack that matches,
+     under every ordering. An anchor that matches nothing falls back to the default position, and the compile reports
+     it.</li>
  </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -123,6 +125,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A placement right after an anchor.</div>
 </div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="CreativePlacement.Before.html" class="type-name-link" title="class in dev.opencollab.paletter.creative">CreativePlacement.Before</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">A placement right before an anchor.</div>
+</div>
 </div>
 </section>
 </li>
@@ -139,6 +146,12 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><code><a href="#DEFAULT" class="member-name-link">DEFAULT</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The position the layer's <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative"><code>CreativeOrdering</code></a> gives: what an item or block has by default.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#FIRST" class="member-name-link">FIRST</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The start of its group in its category (created like the default if missing), or, without a group, the start of its
+ category: before what the ordering would put first there.</div>
 </div>
 </div>
 </section>
@@ -159,7 +172,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Places right after the stacks an anchor matches.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#after(dev.opencollab.paletter.vanilla.ItemKey)" class="member-name-link">after</a><wbr>(@NonNull <a href="../vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;anchor)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#after(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">after</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;anchor)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Places right after exactly one variant, if present.</div>
 </div>
@@ -167,6 +180,21 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#afterAnyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">afterAnyVariantOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Places right after the stacks of any variant of an item type, if present.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#before(dev.opencollab.paletter.creative.ItemMatcher)" class="member-name-link">before</a><wbr>(@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a>&nbsp;anchor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Places right before the stacks an anchor matches.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#before(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">before</a><wbr>(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;anchor)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Places right before exactly one variant, if present.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#beforeAnyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">beforeAnyVariantOf</a><wbr>(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Places right before the stacks of any variant of an item type, if present.</div>
 </div>
 </div>
 </div>
@@ -186,6 +214,18 @@ loadScripts(document, 'script');</script>
 <h3>DEFAULT</h3>
 <div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">DEFAULT</span></div>
 <div class="block">The position the layer's <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative"><code>CreativeOrdering</code></a> gives: what an item or block has by default.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="FIRST">
+<h3>FIRST</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">FIRST</span></div>
+<div class="block">The start of its group in its category (created like the default if missing), or, without a group, the start of its
+ category: before what the ordering would put first there.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -218,13 +258,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="after(dev.opencollab.paletter.vanilla.ItemKey)">
+<section class="detail" id="after(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
 <h3>after</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">after</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;anchor)</span></div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">after</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;anchor)</span></div>
 <div class="block">Places right after exactly one variant, if present.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>anchor</code> - the variant to insert after, or a type for its base variant</dd>
+<dd><code>anchor</code> - the variant to insert after</dd>
 <dt>Returns:</dt>
 <dd>the placement</dd>
 <dt>Throws:</dt>
@@ -242,6 +282,57 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>anchor</code> - the item type to insert after</dd>
+<dt>Returns:</dt>
+<dd>the placement</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the anchor is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="before(dev.opencollab.paletter.creative.ItemMatcher)">
+<h3>before</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">before</span><wbr><span class="parameters">(@NonNull <a href="ItemMatcher.html" title="interface in dev.opencollab.paletter.creative">ItemMatcher</a>&nbsp;anchor)</span></div>
+<div class="block">Places right before the stacks an anchor matches.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>anchor</code> - the stacks to insert before</dd>
+<dt>Returns:</dt>
+<dd>the placement</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the anchor is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="before(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
+<h3>before</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">before</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;anchor)</span></div>
+<div class="block">Places right before exactly one variant, if present.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>anchor</code> - the variant to insert before</dd>
+<dt>Returns:</dt>
+<dd>the placement</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the anchor is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="beforeAnyVariantOf(dev.opencollab.paletter.vanilla.BedrockItemType)">
+<h3>beforeAnyVariantOf</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">@NonNull <a href="CreativePlacement.html" title="interface in dev.opencollab.paletter.creative">CreativePlacement</a></span>&nbsp;<span class="element-name">beforeAnyVariantOf</span><wbr><span class="parameters">(@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;anchor)</span></div>
+<div class="block">Places right before the stacks of any variant of an item type, if present.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>anchor</code> - the item type to insert before</dd>
 <dt>Returns:</dt>
 <dd>the placement</dd>
 <dt>Throws:</dt>

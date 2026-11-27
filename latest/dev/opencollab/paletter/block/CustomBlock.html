@@ -125,20 +125,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="CustomBlock.BlockItem.html" class="type-name-link" title="enum class in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></code></div>
+<div class="col-first even-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="CustomBlock.BlockItem.html" class="type-name-link" title="interface in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">How the item of a custom block is registered.</div>
+<div class="block">How the item of a custom block is registered: <a href="CustomBlock.BlockItem.html#NONE"><code>CustomBlock.BlockItem.NONE</code></a>, <a href="CustomBlock.BlockItem.html#SIMPLE"><code>CustomBlock.BlockItem.SIMPLE</code></a> (the default) or
+ <a href="CustomBlock.BlockItem.html#custom(java.util.function.UnaryOperator)"><code>custom</code></a>, an item of its own that the block owns.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final class&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="CustomBlock.Builder.html" class="type-name-link" title="class in dev.opencollab.paletter.block">CustomBlock.Builder</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Builder of a <a href="CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>.</div>
 </div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="CustomBlock.Permutation.html" class="type-name-link" title="class in dev.opencollab.paletter.block">CustomBlock.Permutation</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">An entry of <code>permutations</code>.</div>
+<div class="block">An entry of <code>permutations</code>: components applied when a Molang condition on the state holds.</div>
 </div>
 </div>
 </section>
@@ -195,7 +196,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block identifier.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomBlock.BlockItem.html" title="enum class in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomBlock.BlockItem.html" title="interface in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#item()" class="member-name-link">item</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The registration of the block item.</div>
@@ -240,19 +241,24 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tags()" class="member-name-link">tags</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The block tags.</div>
+<div class="block">The block tags: the <a href="component/BlockTags.html" title="class in dev.opencollab.paletter.block.component"><code>BlockTags</code></a> component's, which <a href="CustomBlock.Builder.html#tag(java.lang.String)"><code>CustomBlock.Builder.tag(java.lang.String)</code></a> adds to.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="component/BlockTrait.html" title="interface in dev.opencollab.paletter.block.component">BlockTrait</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#traits()" class="member-name-link">traits</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomBlock.Builder.html" title="class in dev.opencollab.paletter.block">CustomBlock.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toBuilder()" class="member-name-link">toBuilder</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Starts a builder with everything of this block, to make a changed copy.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="component/BlockTrait.html" title="interface in dev.opencollab.paletter.block.component">BlockTrait</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#traits()" class="member-name-link">traits</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The traits of the block.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The type of the block, to use it like a vanilla <a href="../vanilla/BedrockBlocks.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlocks</code></a> constant.</div>
 </div>
 </div>
@@ -280,6 +286,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the block identifier (description <code>identifier</code>)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -291,6 +299,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the state properties (description <code>states</code>), in declaration order</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -302,6 +312,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the traits (description <code>traits</code>); the states they add are part of <a href="#states()"><code>states()</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -313,6 +325,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the base components (one per component name)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -324,6 +338,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>components applied when a Molang condition on the state holds</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -336,17 +352,21 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the menu category; null or category <code>none</code>: the block item is not in the creative inventory</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="item()">
 <h3>item</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomBlock.BlockItem.html" title="enum class in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></span>&nbsp;<span class="element-name">item</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomBlock.BlockItem.html" title="interface in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></span>&nbsp;<span class="element-name">item</span>()</div>
 <div class="block">The registration of the block item.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>how the block item is registered</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -358,6 +378,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the placement, <a href="../creative/CreativePlacement.html#DEFAULT"><code>CreativePlacement.DEFAULT</code></a> if not set</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -369,6 +391,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>state values of the default state; properties not listed use their first value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -376,10 +400,25 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="tags()">
 <h3>tags</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">tags</span>()</div>
-<div class="block">The block tags.</div>
+<div class="block">The block tags: the <a href="component/BlockTags.html" title="class in dev.opencollab.paletter.block.component"><code>BlockTags</code></a> component's, which <a href="CustomBlock.Builder.html#tag(java.lang.String)"><code>CustomBlock.Builder.tag(java.lang.String)</code></a> adds to.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>block tags, queryable with Molang (sent as the block's <code>blockTags</code>)</dd>
+<dd>block tags, queryable with Molang (sent as the block's <code>blockTags</code>); empty without the component</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toBuilder()">
+<h3>toBuilder</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomBlock.Builder.html" title="class in dev.opencollab.paletter.block">CustomBlock.Builder</a></span>&nbsp;<span class="element-name">toBuilder</span>()</div>
+<div class="block">Starts a builder with everything of this block, to make a changed copy. The copy has types of its own.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a builder with this block's definition</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -395,6 +434,9 @@ loadScripts(document, 'script');</script>
 <dd>a builder with the <a href="CustomBlock.BlockItem.html#SIMPLE"><code>simple</code></a> block item and no creative placement</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>identifier</code> is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if it is not <code>namespace:name</code></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -410,6 +452,8 @@ loadScripts(document, 'script');</script>
 <dd><code>type</code> - the component class</dd>
 <dt>Returns:</dt>
 <dd>the component of a type among the base components, or null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -422,6 +466,8 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the properties that make up the block's states: <a href="#properties()"><code>properties()</code></a>, then the states its traits add
          (e.g. <code>minecraft:cardinal_direction</code> of <code>minecraft:placement_direction</code>)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -433,6 +479,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the amount of states: the product of the values of <a href="#stateProperties()"><code>stateProperties()</code></a>, at most 2^24</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -444,6 +492,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>all states, in the order Bedrock enumerates them: the first property changes fastest</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -474,8 +524,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">itemType</span>()</div>
 <div class="block">The type of the block item, owned by the block like <a href="#type()"><code>type()</code></a>: a palette hands back this type and its base
  variant for the block item. A palette has the item if it is registered: with the block unless <a href="#item()"><code>item()</code></a> is
- <a href="CustomBlock.BlockItem.html#NONE"><code>CustomBlock.BlockItem.NONE</code></a>. When a custom item of the layer replaces the block item, the palette's item has that item's type
- instead, not this one: <a href="../Palette.html#itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)"><code>Palette.itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)</code></a> always gives the right one.</div>
+ <a href="CustomBlock.BlockItem.html#NONE"><code>CustomBlock.BlockItem.NONE</code></a>. For a <a href="CustomBlock.BlockItem.html#custom(java.util.function.UnaryOperator)"><code>custom</code></a> item it is that item's type. When a separate custom item
+ of the layer replaces the block item, the palette's item has that item's type instead, not this one:
+ <a href="../Palette.html#itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)"><code>Palette.itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)</code></a> always gives the right one.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the type of the block item</dd>
@@ -492,6 +543,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the state with the <a href="#defaultStates()"><code>defaultStates()</code></a> values and the first value of every other property</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -503,7 +556,7 @@ loadScripts(document, 'script');</script>
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 <dt>Returns:</dt>
-<dd>true for a block with the same identifier and definition; its types are not compared</dd>
+<dd>true for a block with the same identifier and definition (components in any order); its types are not compared</dd>
 </dl>
 </section>
 </li>

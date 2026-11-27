@@ -90,25 +90,29 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
-<dt>All Implemented Interfaces:</dt>
-<dd><code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
+<dt>Direct Known Subclasses:</dt>
+<dd><code><a href="BannerItemType.html" title="class in dev.opencollab.paletter.vanilla">BannerItemType</a></code>, <code><a href="BedItemType.html" title="class in dev.opencollab.paletter.vanilla">BedItemType</a></code>, <code><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BedrockItemType</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></span></div>
+<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">BedrockItemType</span>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">A Bedrock item type. Vanilla types are the constants of <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a>; a <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> (and the item of a
  <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>) has one too, so both are used alike:
  <pre><code>
- ItemData apple = palette.item(BedrockItems.APPLE).toItemData().count(3).build();
- ItemData potion = palette.item(BedrockItems.POTION.variant(5)).toItemData().build();
+ ItemData apples = palette.encode(BedrockItemStack.of(BedrockItems.APPLE, 3));
+ ItemData potion = palette.encode(BedrockItemStack.of(BedrockItems.POTION.withEffect(BedrockPotionTypes.HEALING)));
+ ItemData banner = palette.encode(BedrockItemStack.of(BedrockItems.BANNER.blue()));
  </code></pre>
- A type is an <a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla"><code>ItemKey</code></a> for its base variant, so it can be passed to the methods that take a variant. Items whose
- variants differ by damage (potions, banners, goat horns, ...) expose them with <a href="#variant(int)"><code>variant(int)</code></a>.
- The potions, tipped arrows, beds and banners have constants for them in <a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariants</code></a>.
+ A method that means one item takes a type or a <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariant</code></a>; the type stands for its <a href="#base()"><code>base
+ variant</code></a>, aux 0. A method that could mean the whole type takes only a variant, and has a separately named method for
+ the whole type (<code>itemType</code>, <code>anyVariantOf</code>). Variants that differ by aux value are <a href="#variant(int)"><code>variant(int)</code></a>;
+ the ones BDS names have typed getters on the constant: <a href="PotionItemType.html#withEffect(dev.opencollab.paletter.vanilla.BedrockPotionType)"><code>PotionItemType.withEffect(dev.opencollab.paletter.vanilla.BedrockPotionType)</code></a> for potions and tipped
+ arrows, and a getter per colour for beds and banners (<code>BedrockItems.BED.lightBlue()</code>).
+ <p>
+ Only Paletter subclasses this class: the constants of the items with named variants.
  <p>
  Equality: <code>equals</code> always works, and types are map keys. <code>==</code> works too for vanilla types, which are
- singletons (the constants), for their <a href="#variant()"><code>base variant</code></a> and for registered custom content: a <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> owns its <a href="../item/CustomItem.html#type()"><code>type</code></a> (a <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> its <a href="../block/CustomBlock.html#itemType()"><code>item type</code></a>), and a palette it is registered in hands back exactly that type. Custom types made for an
+ singletons (the constants), for their <a href="#base()"><code>base variant</code></a> and for registered custom content: a <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> owns its <a href="../item/CustomItem.html#type()"><code>type</code></a> (a <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> its <a href="../block/CustomBlock.html#itemType()"><code>item type</code></a>), and a palette it is registered in hands back exactly that type. Custom types made for an
  identifier that is not vanilla are not interned: equal to each other and to the custom item's type, not identical.
  Nothing is kept for identifiers Paletter does not know, so untrusted identifiers cannot grow memory: what is kept is
  bounded by the registered content. Equal custom items registered by different layers each own their type; those
@@ -137,104 +141,76 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#byIdentifier(java.lang.String)" class="member-name-link">byIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#base()" class="member-name-link">base</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The base variant of the type: what the type stands for where one item is meant.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#byIdentifier(java.lang.String)" class="member-name-link">byIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Finds the vanilla type of an identifier, without making a type for an unknown identifier.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalIn(dev.opencollab.paletter.internal.CanonicalItems)" class="member-name-link">canonicalIn</a><wbr>(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the canonical id of the base variant in a palette's canonical items.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#constantName()" class="member-name-link">constantName</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The name of the generated constant of <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a> (or the preview items) that holds this type, preferring
  one that is not deprecated.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#custom(java.lang.String)" class="member-name-link">custom</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: plumbing of <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> and <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>, which create their
- type once and own it: use <a href="../item/CustomItem.html#type()"><code>CustomItem.type()</code></a> and <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromIdentifier(java.lang.String)" class="member-name-link">fromIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
- newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
- so unknown identifiers never accumulate; equal, not identical, for equal identifiers).</div>
-</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasVariant(int)" class="member-name-link">hasVariant</a><wbr>(int&nbsp;damage)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasVariant(int)" class="member-name-link">hasVariant</a><wbr>(int&nbsp;aux)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether the bundled data names a variant with a damage value.</div>
+<div class="block">Whether the bundled data names a variant with an aux value.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#identifier()" class="member-name-link">identifier</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The item identifier.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAvailable()" class="member-name-link">isAvailable</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether the newest bundled release has this type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCustom()" class="member-name-link">isCustom</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether this is a custom type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEducation()" class="member-name-link">isEducation</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether BDS only offers this item to worlds with Education Edition features (the same content the generated
  constant carries <a href="../annotation/Education.html" title="annotation interface in dev.opencollab.paletter.annotation"><code>@Education</code></a> for).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolved()" class="member-name-link">resolved</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The type the newest bundled release links this type to.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull dev.opencollab.paletter.internal.item.ItemVariant</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toItemVariant()" class="member-name-link">toItemVariant</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the base variant as an <code>ItemVariant</code>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The type this key names.</div>
-</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vanillaTypes()" class="member-name-link">vanillaTypes</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The vanilla item types.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant()" class="member-name-link">variant</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant(int)" class="member-name-link">variant</a><wbr>(int&nbsp;aux)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The base variant of the type.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant(int)" class="member-name-link">variant</a><wbr>(int&nbsp;damage)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The variant of this type with a damage value, never null, and always of this type (also for a type that is not
+<div class="block">The variant of this type with an aux value, never null, and always of this type (also for a type that is not
  <a href="#isAvailable()"><code>available</code></a>: it resolves like any variant of it).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variants()" class="member-name-link">variants</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variants()" class="member-name-link">variants</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The variants of the type that have a canonical id.</div>
 </div>
 </div>
@@ -254,24 +230,6 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="fromIdentifier(java.lang.String)">
-<h3>fromIdentifier</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">fromIdentifier</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
-<div class="block">Internal: the type of an identifier: the vanilla constant if the identifier (after renames) is vanilla in the
- newest bundled data or has a generated constant, else a custom type known by its identifier only (not interned,
- so unknown identifiers never accumulate; equal, not identical, for equal identifiers). Loads the data. Use
- <a href="#byIdentifier(java.lang.String)"><code>byIdentifier(String)</code></a>, <a href="../Palette.html#itemType(java.lang.String,dev.opencollab.paletter.Lookup)"><code>Palette.itemType(java.lang.String, dev.opencollab.paletter.Lookup)</code></a> or the constants of
- <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - an item identifier</dd>
-<dt>Returns:</dt>
-<dd>the type of the identifier</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="byIdentifier(java.lang.String)">
 <h3>byIdentifier</h3>
@@ -293,21 +251,6 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 </section>
 </li>
 <li>
-<section class="detail" id="custom(java.lang.String)">
-<h3>custom</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">custom</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
-<div class="block">Internal: plumbing of <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> and <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>, which create their
- type once and own it: use <a href="../item/CustomItem.html#type()"><code>CustomItem.type()</code></a> and <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - the item identifier</dd>
-<dt>Returns:</dt>
-<dd>a new custom type of an identifier, with its base variant. Loads no data</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="vanillaTypes()">
 <h3>vanillaTypes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&gt;</span>&nbsp;<span class="element-name">vanillaTypes</span>()</div>
@@ -315,24 +258,28 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>every vanilla item type of the newest bundled data, in runtime id order. Loads the data</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="identifier()">
 <h3>identifier</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">identifier</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">identifier</span>()</div>
 <div class="block">The item identifier.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the item identifier, e.g. <code>minecraft:apple</code></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="constantName()">
 <h3>constantName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">constantName</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">constantName</span>()</div>
 <div class="block">The name of the generated constant of <a href="BedrockItems.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItems</code></a> (or the preview items) that holds this type, preferring
  one that is not deprecated. Loads no data.</div>
 <dl class="notes">
@@ -346,19 +293,21 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <li>
 <section class="detail" id="isCustom()">
 <h3>isCustom</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isCustom</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isCustom</span>()</div>
 <div class="block">Whether this is a custom type.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true for the type of a <a href="../item/CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> or of a custom block's item, and for a type made for an
          identifier the bundled data does not know</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isEducation()">
 <h3>isEducation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEducation</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEducation</span>()</div>
 <div class="block">Whether BDS only offers this item to worlds with Education Edition features (the same content the generated
  constant carries <a href="../annotation/Education.html" title="annotation interface in dev.opencollab.paletter.annotation"><code>@Education</code></a> for). Decided from BDS captures when
  the constants were generated; always false for custom items and for types made for an unknown identifier.</div>
@@ -373,83 +322,77 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <li>
 <section class="detail" id="isAvailable()">
 <h3>isAvailable</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAvailable</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAvailable</span>()</div>
 <div class="block">Whether the newest bundled release has this type. Says nothing about one palette: a palette whose newest version
  has the item (a preview item in a Paletter with previews) sends it although it is not available.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>false for a vanilla constant the newest bundled release does not have: palettes without the item resolve
          it through their <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="resolved()">
 <h3>resolved</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">resolved</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">resolved</span>()</div>
 <div class="block">The type the newest bundled release links this type to. Palettes resolve a type that is not available through
  their <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>, not through this.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>this type, or for a type that is not <a href="#isAvailable()"><code>available</code></a> its fallback type</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="variant()">
-<h3>variant</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span>()</div>
-<div class="block">The base variant of the type.</div>
+<section class="detail" id="base()">
+<h3>base</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">base</span>()</div>
+<div class="block">The base variant of the type: what the type stands for where one item is meant.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="ItemKey.html#variant()">variant</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
 <dt>Returns:</dt>
-<dd>the base variant: damage 0, no block state. Loads no data</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="type()">
-<h3>type</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">type</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="ItemKey.html#type()">ItemKey</a></code></span></div>
-<div class="block">The type this key names.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="ItemKey.html#type()">type</a></code>&nbsp;in interface&nbsp;<code><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></code></dd>
-<dt>Returns:</dt>
-<dd>the type of this key: itself for a type, the type of the variant for a variant</dd>
+<dd>the base variant: aux 0, no block state. Loads no data</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="variant(int)">
 <h3>variant</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(int&nbsp;damage)</span></div>
-<div class="block">The variant of this type with a damage value, never null, and always of this type (also for a type that is not
- <a href="#isAvailable()"><code>available</code></a>: it resolves like any variant of it). The named constants of
- <a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariants</code></a> and the variants the bundled data lists are the same instance every time, so <code>==</code>
- holds for them whenever the key was made. An aux nobody named gives a new variant without a canonical id (a layer can
- give it one with <a href="../PaletteLayer.Builder.html#variant(dev.opencollab.paletter.vanilla.ItemKey)"><code>PaletteLayer.Builder.variant(ItemKey)</code></a>); those are not kept, so
- arbitrary auxes cannot grow memory. Loads no bundled data: only the constants of <a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariants</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(int&nbsp;aux)</span></div>
+<div class="block">The variant of this type with an aux value, never null, and always of this type (also for a type that is not
+ <a href="#isAvailable()"><code>available</code></a>: it resolves like any variant of it). The base variant and the named variants
+ (the typed getters of the constants) are the same instance every time, so <code>==</code> holds for them whenever the key was
+ made. Any other aux gives a new variant until the bundled data is loaded; after that, the other variants the data
+ lists are its instances. Compare those with <code>equals</code>, which always works. An aux nobody named gives a new
+ variant without a canonical id (a layer can give it one with
+ <a href="../PaletteLayer.Builder.html#variant(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>PaletteLayer.Builder.variant(BedrockItemVariant)</code></a>); those are not kept, so arbitrary auxes cannot
+ grow memory. Loads no bundled data: only the named variants.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>damage</code> - the aux (damage) value</dd>
+<dd><code>aux</code> - the aux value</dd>
 <dt>Returns:</dt>
 <dd>the variant of this type with this aux value</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="hasVariant(int)">
 <h3>hasVariant</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasVariant</span><wbr><span class="parameters">(int&nbsp;damage)</span></div>
-<div class="block">Whether the bundled data names a variant with a damage value.</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasVariant</span><wbr><span class="parameters">(int&nbsp;aux)</span></div>
+<div class="block">Whether the bundled data names a variant with an aux value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>damage</code> - the aux (damage) value</dd>
+<dd><code>aux</code> - the aux value</dd>
 <dt>Returns:</dt>
-<dd>whether the newest bundled data names a variant with this damage value, i.e. it is one of
+<dd>whether the newest bundled data names a variant with this aux value, i.e. it is one of
          <a href="#variants()"><code>variants()</code></a>. Loads the data</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -459,44 +402,20 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <li>
 <section class="detail" id="variants()">
 <h3>variants</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</span>&nbsp;<span class="element-name">variants</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</span>&nbsp;<span class="element-name">variants</span>()</div>
 <div class="block">The variants of the type that have a canonical id.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the variants with a canonical id: the base variant first, then the creative inventory's other variants</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="toItemVariant()">
-<h3>toItemVariant</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.item.ItemVariant</span>&nbsp;<span class="element-name">toItemVariant</span>()</div>
-<div class="block">Internal: the base variant as an <code>ItemVariant</code>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the base variant as an <code>ItemVariant</code> (of the <a href="#resolved()"><code>resolved()</code></a> type)</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="canonicalIn(dev.opencollab.paletter.internal.CanonicalItems)">
-<h3>canonicalIn</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">canonicalIn</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.CanonicalItems&nbsp;canonical)</span></div>
-<div class="block">Internal: the canonical id of the base variant in a palette's canonical items.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>canonical</code> - the canonical items of a palette</dd>
-<dt>Returns:</dt>
-<dd>the canonical id of the base variant in a palette's canonical items, or -1</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="equals(java.lang.Object)">
 <h3>equals</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</span></div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
@@ -516,7 +435,7 @@ implements <a href="ItemKey.html" title="interface in dev.opencollab.paletter.va
 <li>
 <section class="detail" id="toString()">
 <h3>toString</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span>()</div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span>()</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>

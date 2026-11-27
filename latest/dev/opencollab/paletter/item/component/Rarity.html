@@ -129,6 +129,11 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <div class="col-last even-row-color">
 <div class="block">Builds <a href="Rarity.html" title="class in dev.opencollab.paletter.item.component"><code>Rarity</code></a>: defaults applied, required fields and ranges checked by <a href="Rarity.Builder.html#build()"><code>Rarity.Builder.build()</code></a>.</div>
 </div>
+<div class="col-first odd-row-color"><code>static final class&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="Rarity.Value.html" class="type-name-link" title="class in dev.opencollab.paletter.item.component">Rarity.Value</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">A value of an add-on JSON string: a constant per documented value, <a href="Rarity.Value.html#of(java.lang.String)"><code>Rarity.Value.of(java.lang.String)</code></a> for any other.</div>
+</div>
 </div>
 </section>
 </li>
@@ -177,7 +182,7 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <div class="block">Returns the component name in add-on JSON.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="Rarity.html" title="class in dev.opencollab.paletter.item.component">Rarity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(dev.opencollab.paletter.item.component.Rarity.Value)" class="member-name-link">of</a><wbr>(@NonNull <a href="Rarity.Value.html" title="class in dev.opencollab.paletter.item.component">Rarity.Value</a>&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The string shorthand: sets <code>value</code>.</div>
 </div>
@@ -189,7 +194,7 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Rarity.Value.html" title="class in dev.opencollab.paletter.item.component">Rarity.Value</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#value()" class="member-name-link">value</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the base rarity of the item.</div>
@@ -237,11 +242,10 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <li>
 <section class="detail" id="value()">
 <h3>value</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">value</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Rarity.Value.html" title="class in dev.opencollab.paletter.item.component">Rarity.Value</a></span>&nbsp;<span class="element-name">value</span>()</div>
 <div class="block">Sets the base rarity of the item. The rarity of an item automatically increases when enchanted, either to Rare
  when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Add-on JSON <code>value</code>.
- Optional (null: not set). Documented values: <code>common</code>, <code>uncommon</code>, <code>rare</code>, <code>epic</code>; BDS
- takes other strings too.</div>
+ Default: <code>"common"</code>. The docs give no default; this is what BDS sends when the field is omitted.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>
@@ -293,9 +297,9 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 </section>
 </li>
 <li>
-<section class="detail" id="of(java.lang.String)">
+<section class="detail" id="of(dev.opencollab.paletter.item.component.Rarity.Value)">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="Rarity.html" title="class in dev.opencollab.paletter.item.component">Rarity</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="Rarity.html" title="class in dev.opencollab.paletter.item.component">Rarity</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="Rarity.Value.html" title="class in dev.opencollab.paletter.item.component">Rarity.Value</a>&nbsp;value)</span></div>
 <div class="block">The string shorthand: sets <code>value</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

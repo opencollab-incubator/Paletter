@@ -126,7 +126,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds a component, replacing one of the same name.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#components(dev.opencollab.paletter.item.component.ItemComponent...)" class="member-name-link">components</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a>...&nbsp;components)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#components(dev.opencollab.paletter.item.component.ItemComponent,dev.opencollab.paletter.item.component.ItemComponent...)" class="member-name-link">components</a><wbr>(@NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a>&nbsp;first,
+ @NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a> @NonNull ...&nbsp;rest)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds components, replacing those of the same names.</div>
 </div>
@@ -157,6 +158,22 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the description's <code>menu_category</code>: the category, group and <code>is_hidden_in_commands</code> the add-on
  JSON gives.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tag(java.lang.String)" class="member-name-link">tag</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tag)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds one item tag, see <a href="#tags(java.lang.String,java.lang.String...)"><code>tags(String, String...)</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tags(java.lang.String,java.lang.String...)" class="member-name-link">tags</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;first,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> @NonNull ...&nbsp;rest)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds item tags to the item's <a href="component/Tags.html" title="class in dev.opencollab.paletter.item.component"><code>Tags</code></a> component (<code>minecraft:tags</code>, created if there is none).</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tags(java.util.List)" class="member-name-link">tags</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;tags)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds item tags, see <a href="#tags(java.lang.String,java.lang.String...)"><code>tags(String, String...)</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -186,21 +203,82 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the component is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="components(dev.opencollab.paletter.item.component.ItemComponent...)">
+<section class="detail" id="components(dev.opencollab.paletter.item.component.ItemComponent,dev.opencollab.paletter.item.component.ItemComponent...)">
 <h3>components</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></span>&nbsp;<span class="element-name">components</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a>...&nbsp;components)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></span>&nbsp;<span class="element-name">components</span><wbr><span class="parameters">(@NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a>&nbsp;first,
+ @NonNull <a href="component/ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a> @NonNull ...&nbsp;rest)</span></div>
 <div class="block">Adds components, replacing those of the same names.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>components</code> - the components</dd>
+<dd><code>first</code> - the first component</dd>
+<dd><code>rest</code> - the other components</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if a component is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tags(java.lang.String,java.lang.String...)">
+<h3>tags</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></span>&nbsp;<span class="element-name">tags</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;first,
+ @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> @NonNull ...&nbsp;rest)</span></div>
+<div class="block">Adds item tags to the item's <a href="component/Tags.html" title="class in dev.opencollab.paletter.item.component"><code>Tags</code></a> component (<code>minecraft:tags</code>, created if there is none). Tags it
+ has already are skipped. This and <a href="#component(dev.opencollab.paletter.item.component.ItemComponent)"><code>component(Tags)</code></a> are one mechanism: the
+ component holds the tags.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>first</code> - the first tag, e.g. <code>minecraft:is_food</code></dd>
+<dd><code>rest</code> - the other tags</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if a tag is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tags(java.util.List)">
+<h3>tags</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></span>&nbsp;<span class="element-name">tags</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;tags)</span></div>
+<div class="block">Adds item tags, see <a href="#tags(java.lang.String,java.lang.String...)"><code>tags(String, String...)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tags</code> - the tags</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if a tag is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tag(java.lang.String)">
+<h3>tag</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="CustomItem.Builder.html" title="class in dev.opencollab.paletter.item">CustomItem.Builder</a></span>&nbsp;<span class="element-name">tag</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tag)</span></div>
+<div class="block">Adds one item tag, see <a href="#tags(java.lang.String,java.lang.String...)"><code>tags(String, String...)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tag</code> - the tag</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the tag is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -216,6 +294,8 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if a component is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -231,6 +311,8 @@ loadScripts(document, 'script');</script>
 <dd><code>menuCategory</code> - the menu category, or null for none</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -246,6 +328,8 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the category is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -263,6 +347,8 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the category is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -278,6 +364,8 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the placement is null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -289,6 +377,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the custom item</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

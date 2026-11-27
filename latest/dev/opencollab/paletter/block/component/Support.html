@@ -95,7 +95,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="../../annotation/BedrockFormat.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockFormat</a>("1.21.130")
-<a href="../../annotation/BedrockExperiment.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockExperiment</a>("upcoming_creator_features")
 </span><span class="modifiers">public final class </span><span class="element-name type-name-label">Support</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="BlockComponent.html" title="interface in dev.opencollab.paletter.block.component">BlockComponent</a></span></div>
@@ -107,7 +106,8 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
  <p>
  Add-on JSON: <code>"minecraft:support"</code>.
  The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
- BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.</div>
+ BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ Not <code>@BedrockExperiment</code>: every bundled version takes it without the experiment.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -188,19 +188,24 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the component name in add-on JSON.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Support.Shape.html" title="class in dev.opencollab.paletter.block.component">Support.Shape</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shape()" class="member-name-link">shape</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="Support.html" title="class in dev.opencollab.paletter.block.component">Support</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(dev.opencollab.paletter.block.component.Support.Shape)" class="member-name-link">of</a><wbr>(@NonNull <a href="Support.Shape.html" title="class in dev.opencollab.paletter.block.component">Support.Shape</a>&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates the component with <code>shape</code> set.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Support.Shape.html" title="class in dev.opencollab.paletter.block.component">Support.Shape</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shape()" class="member-name-link">shape</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Required field.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Support.Builder.html" title="class in dev.opencollab.paletter.block.component">Support.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toBuilder()" class="member-name-link">toBuilder</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Support.Builder.html" title="class in dev.opencollab.paletter.block.component">Support.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toBuilder()" class="member-name-link">toBuilder</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a builder holding this value's fields, to change some of them.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -293,6 +298,19 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <dd><code><a href="BlockComponent.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="BlockComponent.html" title="interface in dev.opencollab.paletter.block.component">BlockComponent</a></code></dd>
 <dt>Returns:</dt>
 <dd>the name, e.g. <code>minecraft:durability</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="of(dev.opencollab.paletter.block.component.Support.Shape)">
+<h3>of</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="Support.html" title="class in dev.opencollab.paletter.block.component">Support</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="Support.Shape.html" title="class in dev.opencollab.paletter.block.component">Support.Shape</a>&nbsp;value)</span></div>
+<div class="block">Creates the component with <code>shape</code> set.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - the value of that field</dd>
+<dt>Returns:</dt>
+<dd>the component</dd>
 </dl>
 </section>
 </li>

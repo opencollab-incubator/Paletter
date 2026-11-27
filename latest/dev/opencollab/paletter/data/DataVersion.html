@@ -5,7 +5,7 @@
 <title>DataVersion (paletter 1.0.0-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="description" content="declaration: package: dev.opencollab.paletter.data, record: DataVersion">
+<meta name="description" content="declaration: package: dev.opencollab.paletter.data, class: DataVersion">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -40,7 +40,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li>Nested</li>
 <li>Field</li>
-<li><a href="#constructor-summary">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 </li>
@@ -48,7 +48,7 @@ loadScripts(document, 'script');</script>
 <p>Detail:</p>
 <ul>
 <li>Field</li>
-<li><a href="#constructor-detail">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </li>
@@ -60,13 +60,13 @@ loadScripts(document, 'script');</script>
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -83,37 +83,27 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">dev.opencollab.paletter.data</a></div>
-<h1 title="Record Class DataVersion" class="title">Record Class DataVersion</h1>
+<h1 title="Class DataVersion" class="title">Class DataVersion</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">java.lang.Record</a>
 <div class="inheritance">dev.opencollab.paletter.data.DataVersion</div>
 </div>
-</div>
 <section class="class-description" id="class-description">
-<dl class="notes">
-<dt>Record Components:</dt>
-<dd><code><span id="param-name">name</span></code> - the version name, e.g. <code>26.60</code></dd>
-<dd><code><span id="param-protocolVersion">protocolVersion</span></code> - the first protocol version this data is valid for</dd>
-<dd><code><span id="param-preview">preview</span></code> - whether this is the data of a Bedrock preview build, which only a <a href="../Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a>
-                built with <a href="../Paletter.Builder.html#previews(boolean)"><code>previews</code></a> serves; it does not
-                take part in <code>equals</code>, a version is identified by its name and protocol</dd>
-<dd><code><span id="param-codecProtocol">codecProtocol</span></code> - the protocol of the codec that decoded the captures this data was built from, if that was the
-                      codec of another protocol (a preview newer than every codec of the protocol library), else null;
-                      it does not take part in <code>equals</code></dd>
-</dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">DataVersion</span>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name, int&nbsp;protocolVersion, boolean&nbsp;preview, @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;codecProtocol)
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
+<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">DataVersion</span>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;</span></div>
 <div class="block">A version of bundled vanilla Bedrock data.
  <p>
  One data version usually serves several protocol versions (hotfixes rarely change palettes), so lookups by
- protocol version resolve to the newest data version whose protocol is not newer than the requested one.</div>
+ protocol version resolve to the newest data version whose protocol is not newer than the requested one.
+ <p>
+ A version is identified by its name and protocol: <code>equals</code>, <code>hashCode</code> and <code>compareTo</code> use those two
+ (ordered by protocol, then name), not whether it is a preview or which codec decoded it.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -121,41 +111,12 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<li>
-<section class="constructor-summary" id="constructor-summary">
-<h2>Constructor Summary</h2>
-<div class="caption"><span>Constructors</span></div>
-<div class="summary-table two-column-summary">
-<div class="table-header col-first">Constructor</div>
-<div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,int)" class="member-name-link">DataVersion</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Creates a release version.</div>
-</div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,int,boolean)" class="member-name-link">DataVersion</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion,
- boolean&nbsp;preview)</code></div>
-<div class="col-last odd-row-color">
-<div class="block">Creates a version whose data was decoded with its own protocol's codec.</div>
-</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,int,boolean,java.lang.Integer)" class="member-name-link">DataVersion</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion,
- boolean&nbsp;preview,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;codecProtocol)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Creates an instance of a <code>DataVersion</code> record class.</div>
-</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -172,14 +133,10 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;other)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a hash code value for this object.</div>
-</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isPreview()" class="member-name-link">isPreview</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -188,22 +145,33 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#name()" class="member-name-link">name</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-name"><code>name</code></a> record component.</div>
+<div class="block">The name of the version.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#preview()" class="member-name-link">preview</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String,int)" class="member-name-link">of</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ int&nbsp;protocolVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a release version whose data was decoded with its own protocol's codec.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preview(java.lang.String,int)" class="member-name-link">preview</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ int&nbsp;protocolVersion)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates the version of a Bedrock preview build, which only a <a href="../Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a> built with
+ <a href="../Paletter.Builder.html#previews(boolean)"><code>previews</code></a> serves.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#protocolVersion()" class="member-name-link">protocolVersion</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-preview"><code>preview</code></a> record component.</div>
+<div class="block">The first protocol version this data is valid for.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#protocolVersion()" class="member-name-link">protocolVersion</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-protocolVersion"><code>protocolVersion</code></a> record component.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCodecProtocol(java.lang.Integer)" class="member-name-link">withCodecProtocol</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;codecProtocol)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a string representation of this record class.</div>
+<div class="block">Returns this version with the protocol of the codec that decoded its captures.</div>
 </div>
 </div>
 </div>
@@ -217,64 +185,88 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<li>
-<section class="constructor-details" id="constructor-detail">
-<h2>Constructor Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,int)">
-<h3>DataVersion</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DataVersion</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion)</span></div>
-<div class="block">Creates a release version.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>name</code> - the version name, e.g. <code>26.60</code></dd>
-<dd><code>protocolVersion</code> - the first protocol version this data is valid for</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,int,boolean)">
-<h3>DataVersion</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DataVersion</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion,
- boolean&nbsp;preview)</span></div>
-<div class="block">Creates a version whose data was decoded with its own protocol's codec.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>name</code> - the version name, e.g. <code>26.60</code></dd>
-<dd><code>protocolVersion</code> - the first protocol version this data is valid for</dd>
-<dd><code>preview</code> - whether this is the data of a preview build</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,int,boolean,java.lang.Integer)">
-<h3>DataVersion</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DataVersion</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- int&nbsp;protocolVersion,
- boolean&nbsp;preview,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;codecProtocol)</span></div>
-<div class="block">Creates an instance of a <code>DataVersion</code> record class.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>name</code> - the value for the <a href="#param-name"><code>name</code></a> record component</dd>
-<dd><code>protocolVersion</code> - the value for the <a href="#param-protocolVersion"><code>protocolVersion</code></a> record component</dd>
-<dd><code>preview</code> - the value for the <a href="#param-preview"><code>preview</code></a> record component</dd>
-<dd><code>codecProtocol</code> - the value for the <a href="#param-codecProtocol"><code>codecProtocol</code></a> record component</dd>
-</dl>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="of(java.lang.String,int)">
+<h3>of</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ int&nbsp;protocolVersion)</span></div>
+<div class="block">Creates a release version whose data was decoded with its own protocol's codec.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the version name, e.g. <code>26.60</code></dd>
+<dd><code>protocolVersion</code> - the first protocol version this data is valid for</dd>
+<dt>Returns:</dt>
+<dd>the version</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="preview(java.lang.String,int)">
+<h3>preview</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></span>&nbsp;<span class="element-name">preview</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ int&nbsp;protocolVersion)</span></div>
+<div class="block">Creates the version of a Bedrock preview build, which only a <a href="../Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a> built with
+ <a href="../Paletter.Builder.html#previews(boolean)"><code>previews</code></a> serves.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the version name, e.g. <code>26.70</code></dd>
+<dd><code>protocolVersion</code> - the first protocol version this data is valid for</dd>
+<dt>Returns:</dt>
+<dd>the version</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="withCodecProtocol(java.lang.Integer)">
+<h3>withCodecProtocol</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></span>&nbsp;<span class="element-name">withCodecProtocol</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;codecProtocol)</span></div>
+<div class="block">Returns this version with the protocol of the codec that decoded its captures.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>codecProtocol</code> - the protocol of the codec, if that was the codec of another protocol (a preview newer than
+                      every codec of the protocol library), else null</dd>
+<dt>Returns:</dt>
+<dd>a version equal to this one, with that codec protocol</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="name()">
+<h3>name</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
+<div class="block">The name of the version.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the version name, e.g. <code>26.60</code></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="protocolVersion()">
+<h3>protocolVersion</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">protocolVersion</span>()</div>
+<div class="block">The first protocol version this data is valid for.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the protocol version</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="codecProtocol()">
 <h3>codecProtocol</h3>
@@ -298,6 +290,8 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>whether this is the data of a preview build</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -305,14 +299,9 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="equals(java.lang.Object)">
 <h3>equals</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;other)</span></div>
-<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects::equals(Object,Object)</code></a>; primitive components are compared with '=='.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></code></dd>
-<dt>Parameters:</dt>
-<dd><code>other</code> - the object with which to compare</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this object is the same as the <code>other</code> argument; <code>false</code> otherwise.</dd>
+<dt>Overrides:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 </dl>
 </section>
 </li>
@@ -320,12 +309,9 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="hashCode()">
 <h3>hashCode</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">hashCode</span>()</div>
-<div class="block">Returns a hash code value for this object. The value is derived from the hash code of each of the record components.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></code></dd>
-<dt>Returns:</dt>
-<dd>a hash code value for this object</dd>
+<dt>Overrides:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 </dl>
 </section>
 </li>
@@ -343,45 +329,9 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <section class="detail" id="toString()">
 <h3>toString</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span>()</div>
-<div class="block">Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></code></dd>
-<dt>Returns:</dt>
-<dd>a string representation of this object</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="name()">
-<h3>name</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
-<div class="block">Returns the value of the <a href="#param-name"><code>name</code></a> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-name"><code>name</code></a> record component</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="protocolVersion()">
-<h3>protocolVersion</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">protocolVersion</span>()</div>
-<div class="block">Returns the value of the <a href="#param-protocolVersion"><code>protocolVersion</code></a> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-protocolVersion"><code>protocolVersion</code></a> record component</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="preview()">
-<h3>preview</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">preview</span>()</div>
-<div class="block">Returns the value of the <a href="#param-preview"><code>preview</code></a> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-preview"><code>preview</code></a> record component</dd>
+<dt>Overrides:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 </dl>
 </section>
 </li>

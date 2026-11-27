@@ -166,19 +166,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds item identifiers to an item tag, creating the tag if it is new.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant(dev.opencollab.paletter.internal.item.ItemVariant)" class="member-name-link">variant</a><wbr>(@NonNull dev.opencollab.paletter.internal.item.ItemVariant&nbsp;variant)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">variant</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: gives an item variant a canonical id, so that <a href="Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> recognizes it.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variant(dev.opencollab.paletter.vanilla.ItemKey)" class="member-name-link">variant</a><wbr>(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gives a variant a canonical id, so that <a href="Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> recognizes it.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#variants(java.util.Collection)" class="member-name-link">variants</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;dev.opencollab.paletter.internal.item.ItemVariant&gt;&nbsp;variants)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: gives several variants canonical ids, as <a href="#variant(dev.opencollab.paletter.internal.item.ItemVariant)"><code>variant(ItemVariant)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShape(java.lang.String,dev.opencollab.paletter.block.VoxelShape)" class="member-name-link">voxelShape</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
@@ -245,7 +235,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="block(dev.opencollab.paletter.block.CustomBlock)">
 <h3>block</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">block</span><wbr><span class="parameters">(@NonNull <a href="block/CustomBlock.html" title="class in dev.opencollab.paletter.block">CustomBlock</a>&nbsp;block)</span></div>
-<div class="block">Registers a custom block. Its item follows the block's <a href="block/CustomBlock.BlockItem.html" title="enum class in dev.opencollab.paletter.block"><code>CustomBlock.BlockItem</code></a>.</div>
+<div class="block">Registers a custom block. Its item follows the block's <a href="block/CustomBlock.BlockItem.html" title="interface in dev.opencollab.paletter.block"><code>CustomBlock.BlockItem</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>block</code> - the custom block</dd>
@@ -331,27 +321,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="variant(dev.opencollab.paletter.internal.item.ItemVariant)">
+<section class="detail" id="variant(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
 <h3>variant</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(@NonNull dev.opencollab.paletter.internal.item.ItemVariant&nbsp;variant)</span></div>
-<div class="block">Internal: gives an item variant a canonical id, so that <a href="Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> recognizes it. Needed for
- variants of the newest version that are neither an item's base variant nor in the creative inventory, e.g. a
- damage value or block state a consumer maps to. Ids are appended after the custom items of this layer, in
- call order; variants that already have one keep it. Like every canonical id they are the same in every
- version.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>variant</code> - the variant</dd>
-<dt>Returns:</dt>
-<dd>this builder</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="variant(dev.opencollab.paletter.vanilla.ItemKey)">
-<h3>variant</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">variant</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</span></div>
 <div class="block">Gives a variant a canonical id, so that <a href="Palette.html#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>Palette.decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> recognizes it. Needed for variants of the newest version that are
  neither an item's base variant nor in the creative inventory. A palette hands back a variant equal to this one,
  not necessarily this object: compare it with <code>equals</code>.</div>
@@ -362,20 +334,6 @@ loadScripts(document, 'script');</script>
 <dd>this builder</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="variants(java.util.Collection)">
-<h3>variants</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="PaletteLayer.Builder.html" title="class in dev.opencollab.paletter">PaletteLayer.Builder</a></span>&nbsp;<span class="element-name">variants</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;dev.opencollab.paletter.internal.item.ItemVariant&gt;&nbsp;variants)</span></div>
-<div class="block">Internal: gives several variants canonical ids, as <a href="#variant(dev.opencollab.paletter.internal.item.ItemVariant)"><code>variant(ItemVariant)</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>variants</code> - the variants</dd>
-<dt>Returns:</dt>
-<dd>this builder</dd>
 </dl>
 </section>
 </li>

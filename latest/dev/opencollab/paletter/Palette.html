@@ -98,11 +98,13 @@ loadScripts(document, 'script');</script>
  Thread safety: a palette is immutable and safe to share between threads and sessions. Its lazily built caches
  (behaviour, version indexes) and <a href="#extend(dev.opencollab.paletter.PaletteLayer)"><code>extend(PaletteLayer)</code></a> synchronize internally; no method needs external locking.
  <p>
- Null handling: parameters and return values are <code>@NonNull</code> unless the signature says <code>@Nullable</code>.
- Lookups by identifier, NBT or runtime id return null where nothing matches. Methods that take a key
- (<code>blockDefinition</code>, <code>runtimeId</code>, <code>resolve</code>) throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> for a key this
- palette does not contain (e.g. a custom block of a layer it lacks); their <code>orElse</code> overloads return the default
- instead. Nothing throws for data a client sent.
+ Null handling: parameters and return values are <code>@NonNull</code> unless the signature says <code>@Nullable</code>. Methods
+ that take a key (<code>resolve</code>, <code>blockDefinition(BedrockBlockState)</code>, <code>runtimeId</code>) answer what is sent for
+ it, fallbacks applied, and throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a> where nothing can be sent (e.g. a custom block of a
+ layer the palette lacks); their <code>orElse</code> overloads return the default instead. Lookups by identifier, NBT, state
+ values or runtime id answer what the palette itself has, never a fallback, and return null where nothing matches.
+ Relations (<code>blockOf</code>, <code>itemOf</code>, <code>experimentOf</code>) return null where there is none. Nothing throws for
+ data a client sent.
  <p>
  Vocabulary: keys (<a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>, <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariant</code></a>, ...) identify content independent of any version;
  definitions (<a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block"><code>RegisteredBlockState</code></a>, <a href="item/RegisteredItem.html" title="class in dev.opencollab.paletter.item"><code>RegisteredItem</code></a>) are what the palette sends to the client; resolutions
@@ -117,11 +119,12 @@ loadScripts(document, 'script');</script>
  session.sendPacket(palette.itemComponentPacket());
  session.sendPacket(palette.creativeContentPacket());
  </code></pre>
- Translating content uses handles, version independent and interned objects (<a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>,
- <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariant</code></a>): <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a> and <a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a> find them once, then
- <a href="#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a> and <a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a> for blocks, <a href="#resolve(dev.opencollab.paletter.vanilla.ItemKey)"><code>resolve(ItemKey)</code></a>
- for items. <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a> and <a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> translate whole stacks at the protocol boundary. They are field reads and array lookups that do not allocate. The ids behind
- the handles are not API.</div>
+ Translating content uses keys, version independent objects (<a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>, <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariant</code></a>):
+ <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a> and <a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a> find them once, then
+ <a href="#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>runtimeId(BedrockBlockState)</code></a> and <a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a> for blocks, <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a>
+ for items: field reads and array lookups that do not allocate. <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a> and <a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> translate whole
+ stacks at the protocol boundary; <code>encode</code> builds the <code>ItemData</code> it returns. The ids behind the keys are not
+ API.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -157,158 +160,147 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
  <code>blockNetworkIdsHashed</code>: block runtime ids are always hashed.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull dev.opencollab.paletter.internal.behaviour.Behaviour</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviour()" class="member-name-link">behaviour</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(int)" class="member-name-link">blockDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: returns the behaviour values of this palette, behind <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>resolve(BedrockBlockState)</code></a> and
- <a href="item/ResolvedItem.html#behaviour()"><code>ResolvedItem.behaviour()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(int)" class="member-name-link">blockDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the definition of the block with a runtime id.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the definition (what is sent to the client) of a block state in this palette.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState,dev.opencollab.paletter.block.RegisteredBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState,dev.opencollab.paletter.block.RegisteredBlockState)" class="member-name-link">blockDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
  @Nullable <a href="block/RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a>&nbsp;orElse)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the definition of a block state like <a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>, but returns a default
  where that throws.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><a href="#blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>blockOf(BedrockItemVariant)</code></a> of the base variant of a type.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(dev.opencollab.paletter.vanilla.ItemKey)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">blockOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The block an item variant is sent with in this palette's version, in its default state, as a key: a
  <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/BlockRegistry.html" title="class in dev.opencollab.paletter.block">BlockRegistry</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blocks()" class="member-name-link">blocks</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(int)" class="member-name-link">blockState</a><wbr>(int&nbsp;runtimeId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the block registry.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(int)" class="member-name-link">blockState</a><wbr>(int&nbsp;runtimeId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the key of the block with a runtime id.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(java.lang.String,java.util.Map,dev.opencollab.paletter.Lookup)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(java.lang.String,java.util.Map,dev.opencollab.paletter.Lookup)" class="member-name-link">blockState</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>?&gt;&nbsp;values,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The same as <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>, without NBT: for the state of a Java block, e.g.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
- @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Finds the key of a block state, the handle used for everything else about blocks.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition&nbsp;definition)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Finds the key of a block state, which everything else about blocks takes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)" class="member-name-link">blockState</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition&nbsp;definition)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The key of a block this palette sends: its exact state, else the first state that resolves to it (several states
  may share a fallback).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockType(java.lang.String,dev.opencollab.paletter.Lookup)" class="member-name-link">blockType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockType(java.lang.String,dev.opencollab.paletter.Lookup)" class="member-name-link">blockType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Finds the key of a vanilla block type.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeContent.html" title="class in dev.opencollab.paletter.creative">CreativeContent</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creative()" class="member-name-link">creative</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Finds the key of a block type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeContent.html" title="class in dev.opencollab.paletter.creative">CreativeContent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creative()" class="member-name-link">creative</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the creative inventory as compiled for this version.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeContentPacket()" class="member-name-link">creativeContentPacket</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.CreativeContentPacket</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeContentPacket()" class="member-name-link">creativeContentPacket</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds the creative content packet from <a href="#creative()"><code>creative()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeLayout.html" title="class in dev.opencollab.paletter.creative">CreativeLayout</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeLayout()" class="member-name-link">creativeLayout</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="creative/CreativeLayout.html" title="class in dev.opencollab.paletter.creative">CreativeLayout</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#creativeLayout()" class="member-name-link">creativeLayout</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the creative layout, version independent, after all layers.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)" class="member-name-link">decode</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;data)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)" class="member-name-link">decode</a><wbr>(@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData&nbsp;data)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Decodes a stack the client sent.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)" class="member-name-link">encode</a><wbr>(@NonNull <a href="item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.data.inventory.ItemData</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)" class="member-name-link">encode</a><wbr>(@NonNull <a href="item/BedrockItemStack.html" title="class in dev.opencollab.paletter.item">BedrockItemStack</a>&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Encodes a stack for this palette's version: the item with the aux value, count and NBT, and the block the stack
  places (its own block state if it has one and the item places blocks, else the item's default block).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(dev.opencollab.paletter.vanilla.BedrockBlockType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(dev.opencollab.paletter.vanilla.BedrockBlockType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the experiment a block needs in this palette.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experimentOf(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">experimentOf</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the experiment an item needs in this palette.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments()" class="member-name-link">experiments</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#experiments()" class="member-name-link">experiments</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The experiment toggles this palette needs, because the Paletter enabled them (<code>experiments(...)</code>)
  and this version has content behind them: <a href="#applyTo(org.cloudburstmc.protocol.bedrock.packet.StartGamePacket)"><code>applyTo(StartGamePacket)</code></a> sends them.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemExplanation.html" title="class in dev.opencollab.paletter">ItemExplanation</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(java.lang.String,int,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="ItemExplanation.html" title="class in dev.opencollab.paletter">ItemExplanation</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(java.lang.String,int,org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux,
  @Nullable org.cloudburstmc.nbt.NbtMap&nbsp;blockState)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Explains what this palette does with an item: canonical and runtime id, how it was resolved for this
  version, the block it is sent with and its place in the creative inventory.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BlockExplanation.html" title="class in dev.opencollab.paletter">BlockExplanation</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BlockExplanation.html" title="class in dev.opencollab.paletter">BlockExplanation</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explain(org.cloudburstmc.nbt.NbtMap)" class="member-name-link">explain</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Explains what this palette does with a block state: canonical, runtime and hashed id, how it was resolved for
  this version and which state is sent.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(java.lang.String,int,dev.opencollab.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(java.lang.String,int,dev.opencollab.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Explains why an item variant has no handle, for logs and error messages.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
- @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Explains why a block state has no handle, for logs and error messages.</div>
+<div class="block">Explains why an item variant has no key, for logs and error messages.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Palette.html" title="class in dev.opencollab.paletter">Palette</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(dev.opencollab.paletter.PaletteLayer)" class="member-name-link">extend</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)" class="member-name-link">explainUnknown</a><wbr>(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
+ @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Explains why a block state has no key, for logs and error messages.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Palette.html" title="class in dev.opencollab.paletter">Palette</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extend(dev.opencollab.paletter.PaletteLayer)" class="member-name-link">extend</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Compiles one more layer on top of this palette, e.g.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemComponentPacket()" class="member-name-link">itemComponentPacket</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.ItemComponentPacket</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemComponentPacket()" class="member-name-link">itemComponentPacket</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds the item component packet: the data driven components of the custom items and vanilla overrides.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/RegisteredItem.html" title="class in dev.opencollab.paletter.item">RegisteredItem</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemDefinition(int)" class="member-name-link">itemDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Finds the definition of the item with a runtime id.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/RegisteredItem.html" title="class in dev.opencollab.paletter.item">RegisteredItem</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemDefinition(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">itemDefinition</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemDefinition(int)" class="member-name-link">itemDefinition</a><wbr>(int&nbsp;runtimeId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the definition of an item type in this palette.</div>
+<div class="block">Finds the definition of the item with a runtime id.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/RegisteredItem.html" title="class in dev.opencollab.paletter.item">RegisteredItem</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemDefinition(java.lang.String)" class="member-name-link">itemDefinition</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
@@ -327,62 +319,74 @@ loadScripts(document, 'script');</script>
  with the block, see <a href="block/CustomBlock.html#item()"><code>CustomBlock.item()</code></a>, or the item that replaces it), else the item
  of the bundled block to item relation of the data.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="item/ItemRegistry.html" title="class in dev.opencollab.paletter.item">ItemRegistry</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#items()" class="member-name-link">items</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemTags()" class="member-name-link">itemTags</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: the item registry.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemTags()" class="member-name-link">itemTags</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Lists the item tags of this palette.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemType(java.lang.String,dev.opencollab.paletter.Lookup)" class="member-name-link">itemType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemType(java.lang.String,dev.opencollab.paletter.Lookup)" class="member-name-link">itemType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the key of an item type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)" class="member-name-link">itemVariant</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)" class="member-name-link">itemVariant</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Finds the key of an item variant (an item type and its aux value).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariants()" class="member-name-link">itemVariants</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#itemVariants()" class="member-name-link">itemVariants</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Lists every item variant this palette knows.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#layers()" class="member-name-link">layers</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#layers()" class="member-name-link">layers</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Lists the layers this palette was compiled from.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#report()" class="member-name-link">report</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#report()" class="member-name-link">report</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the report of the compilation: warnings and errors about the content.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">What this palette sends for a block state and what that does: the definition (fallbacks applied, as
  <a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>), whether a fallback was used, and its behaviour values (friction,
  destroy time, collision shape, light, ...): <code>palette.resolve(state).behaviour().get(BlockBehaviour.FRICTION)</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState,dev.opencollab.paletter.block.ResolvedBlock)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState,dev.opencollab.paletter.block.ResolvedBlock)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&nbsp;state,
  @Nullable <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a>&nbsp;orElse)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resolves a block state like <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>resolve(BedrockBlockState)</code></a>, but returns a default where that throws.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemType)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a> of the base variant of a type: <code>resolve(BedrockItems.APPLE)</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.ItemKey)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemType,dev.opencollab.paletter.item.ResolvedItem)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type,
+ @Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a>&nbsp;orElse)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">What this palette sends for an item variant, without building an <code>ItemData</code>: the item definition, damage
+<div class="block"><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant,dev.opencollab.paletter.item.ResolvedItem)"><code>resolve(BedrockItemVariant, ResolvedItem)</code></a> of the base variant of a type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">What this palette sends for an item variant, without building an <code>ItemData</code>: the item definition, aux value
  and block of <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a> (fallbacks applied), as one cached record.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant,dev.opencollab.paletter.item.ResolvedItem)" class="member-name-link">resolve</a><wbr>(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key,
+ @Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a>&nbsp;orElse)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Resolves an item like <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a>, but returns a default where that throws.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolveBlock(int)" class="member-name-link">resolveBlock</a><wbr>(int&nbsp;runtimeId)</code></div>
@@ -412,24 +416,19 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull dev.opencollab.paletter.internal.data.VanillaData</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vanillaData()" class="member-name-link">vanillaData</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#version()" class="member-name-link">version</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Internal: returns the bundled vanilla data of this palette's version.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#version()" class="member-name-link">version</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the Bedrock data version of this palette: the clients it is for.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/VoxelShapes.html" title="class in dev.opencollab.paletter.block">VoxelShapes</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="block/VoxelShapes.html" title="class in dev.opencollab.paletter.block">VoxelShapes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the voxel shapes of this palette.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapesPacket()" class="member-name-link">voxelShapesPacket</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull org.cloudburstmc.protocol.bedrock.packet.VoxelShapesPacket</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#voxelShapesPacket()" class="member-name-link">voxelShapesPacket</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">BDS sends this packet to every client, before start game, also when the world has no custom shapes.</div>
 </div>
 </div>
@@ -449,19 +448,6 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="behaviour()">
-<h3>behaviour</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.behaviour.Behaviour</span>&nbsp;<span class="element-name">behaviour</span>()</div>
-<div class="block">Internal: returns the behaviour values of this palette, behind <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>resolve(BedrockBlockState)</code></a> and
- <a href="item/ResolvedItem.html#behaviour()"><code>ResolvedItem.behaviour()</code></a>. Built on first use.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the behaviour values</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)">
 <h3>resolve</h3>
@@ -535,18 +521,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="vanillaData()">
-<h3>vanillaData</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.data.VanillaData</span>&nbsp;<span class="element-name">vanillaData</span>()</div>
-<div class="block">Internal: returns the bundled vanilla data of this palette's version.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the vanilla data</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="layers()">
 <h3>layers</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&gt;</span>&nbsp;<span class="element-name">layers</span>()</div>
@@ -560,45 +534,21 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="blocks()">
-<h3>blocks</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="block/BlockRegistry.html" title="class in dev.opencollab.paletter.block">BlockRegistry</a></span>&nbsp;<span class="element-name">blocks</span>()</div>
-<div class="block">Internal: the block registry. Use <a href="#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>blockDefinition(BedrockBlockState)</code></a>,
- <a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>blockState(BlockDefinition)</code></a> and the other methods of this class.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the block registry</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="items()">
-<h3>items</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="item/ItemRegistry.html" title="class in dev.opencollab.paletter.item">ItemRegistry</a></span>&nbsp;<span class="element-name">items</span>()</div>
-<div class="block">Internal: the item registry. Use <a href="#itemDefinition(java.lang.String)"><code>itemDefinition(String)</code></a>, <a href="#itemDefinitions()"><code>itemDefinitions()</code></a>, <a href="#itemTags()"><code>itemTags()</code></a>
- and the other methods of this class.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the item registry</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)">
 <h3>blockState</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockState</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</span></div>
-<div class="block">Finds the key of a block state, the handle used for everything else about blocks.</div>
+<div class="block">Finds the key of a block state, which everything else about blocks takes.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>state</code> - a block state as <code>{name, states}</code>; extra keys are ignored</dd>
 <dd><code>lookup</code> - whether the state must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in dev.opencollab.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
-<dd>its handle, or null if the lookup does not accept the state: it is newer than this palette's version,
+<dd>its key, or null if the lookup does not accept the state: it is newer than this palette's version,
          removed, or behind an experiment this palette does not enable (see <a href="#explainUnknown(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>explainUnknown(NbtMap, Lookup)</code></a>).
-         Custom blocks of the palette's layers are always accepted</dd>
+         Custom blocks of the palette's layers are always accepted. With <a href="Lookup.html#EXACT"><code>Lookup.EXACT</code></a> the key round trips:
+         <code>blockDefinition(key)</code> is the state's own block (null if no key is sent as it, e.g. a state whose
+         block the newest data renamed)</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -621,7 +571,7 @@ loadScripts(document, 'script');</script>
                match</dd>
 <dd><code>lookup</code> - whether the state must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in dev.opencollab.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
-<dd>its handle, or null if there is no such state or the lookup does not accept it</dd>
+<dd>its key, or null if there is no such state or the lookup does not accept it</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -637,11 +587,14 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>identifier</code> - the item identifier such as <code>minecraft:stick</code></dd>
-<dd><code>aux</code> - the aux value (damage); 0 is the base variant</dd>
+<dd><code>aux</code> - the aux value; 0 is the base variant</dd>
 <dd><code>lookup</code> - whether the variant must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in dev.opencollab.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
-<dd>its handle, or null if the lookup does not accept the variant, for the reasons of
-         <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>. Aux 0 is the base variant, which every item has</dd>
+<dd>its key, or null if the lookup does not accept the variant, for the reasons of
+         <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>. Aux 0 is the base variant, which every item has. An aux that names no
+         variant of the item here (a legacy damage value, a number nobody listed) is no variant either, so
+         untrusted input never makes keys: send such a value as a stack's aux
+         (<code>BedrockItemStack.builder(type).aux(aux)</code>), as <a href="#decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)"><code>decode(org.cloudburstmc.protocol.bedrock.data.inventory.ItemData)</code></a> gives it</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -669,14 +622,15 @@ loadScripts(document, 'script');</script>
 <h3>blockType</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">blockType</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</span></div>
-<div class="block">Finds the key of a vanilla block type.</div>
+<div class="block">Finds the key of a block type.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>identifier</code> - a block identifier of a vanilla block</dd>
+<dd><code>identifier</code> - a block identifier</dd>
 <dd><code>lookup</code> - whether the block must exist as is in this palette's version, see <a href="Lookup.html" title="enum class in dev.opencollab.paletter"><code>Lookup</code></a></dd>
 <dt>Returns:</dt>
 <dd>the block type, or null if the lookup does not accept the identifier. <a href="Lookup.html#RENAMED"><code>Lookup.RENAMED</code></a> also finds
-         a block under the name an older version gave it. For a custom block use its <code>type()</code></dd>
+         a vanilla block under the name an older version gave it. A custom block of the palette's layers is always
+         found: the <code>type()</code> of the <code>CustomBlock</code></dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -687,13 +641,13 @@ loadScripts(document, 'script');</script>
 <h3>explainUnknown</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">explainUnknown</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.nbt.NbtMap&nbsp;state,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</span></div>
-<div class="block">Explains why a block state has no handle, for logs and error messages.</div>
+<div class="block">Explains why a block state has no key, for logs and error messages.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>state</code> - the block state, as for <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a></dd>
 <dd><code>lookup</code> - the lookup that refused it</dd>
 <dt>Returns:</dt>
-<dd>why a block state has no handle under a lookup (see <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>), or null if it has one</dd>
+<dd>why a block state has no key under a lookup (see <a href="#blockState(org.cloudburstmc.nbt.NbtMap,dev.opencollab.paletter.Lookup)"><code>blockState(NbtMap, Lookup)</code></a>), or null if it has one</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -705,14 +659,14 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">explainUnknown</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
  int&nbsp;aux,
  @NonNull <a href="Lookup.html" title="enum class in dev.opencollab.paletter">Lookup</a>&nbsp;lookup)</span></div>
-<div class="block">Explains why an item variant has no handle, for logs and error messages.</div>
+<div class="block">Explains why an item variant has no key, for logs and error messages.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>identifier</code> - the item identifier</dd>
 <dd><code>aux</code> - the aux value</dd>
 <dd><code>lookup</code> - the lookup that refused it</dd>
 <dt>Returns:</dt>
-<dd>why an item has no handle under a lookup (see <a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a>), or null if it has one</dd>
+<dd>why an item has no key under a lookup (see <a href="#itemVariant(java.lang.String,int,dev.opencollab.paletter.Lookup)"><code>itemVariant(String, int, Lookup)</code></a>), or null if it has one</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -810,9 +764,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="blockOf(dev.opencollab.paletter.vanilla.ItemKey)">
+<section class="detail" id="blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
 <h3>blockOf</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</span></div>
 <div class="block">The block an item variant is sent with in this palette's version, in its default state, as a key: a
  <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>, for every kind of variant (vanilla, extra, custom block items, fallbacks). Paletter alone
  decides it. A stack may carry a block state of its own, see <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a>.
@@ -822,12 +776,27 @@ loadScripts(document, 'script');</script>
  runtime id here.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>key</code> - the item type or variant</dd>
+<dd><code>key</code> - the item variant</dd>
 <dt>Returns:</dt>
 <dd>the block's key, or null if the item is not a block item here (or no state of the newest data
          resolves to the block, see <a href="#blockState(org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition)"><code>blockState(BlockDefinition)</code></a>). Null too for an item that places a block
          but that BDS sends without one, as its captured creative stacks show (doors, signs, beds, seeds, ...): this
          is the block sent with the item, not the block it places (<a href="#itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)"><code>itemOf(dev.opencollab.paletter.vanilla.BedrockBlockType)</code></a> is the other direction)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="blockOf(dev.opencollab.paletter.vanilla.BedrockItemType)">
+<h3>blockOf</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="vanilla/BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">blockOf</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</span></div>
+<div class="block"><a href="#blockOf(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>blockOf(BedrockItemVariant)</code></a> of the base variant of a type.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the item type, standing for its base variant (aux 0)</dd>
+<dt>Returns:</dt>
+<dd>the block's key, or null if the item is not a block item here</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -853,37 +822,77 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="resolve(dev.opencollab.paletter.vanilla.ItemKey)">
+<section class="detail" id="resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)">
 <h3>resolve</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="vanilla/ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a>&nbsp;key)</span></div>
-<div class="block">What this palette sends for an item variant, without building an <code>ItemData</code>: the item definition, damage
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key)</span></div>
+<div class="block">What this palette sends for an item variant, without building an <code>ItemData</code>: the item definition, aux value
  and block of <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a> (fallbacks applied), as one cached record. For the variants of the newest version it
- is a field read and an array load, it does not allocate. Use it to read the definition or damage of many items;
- a stack's own block state, count and NBT are not part of it. <a href="item/ResolvedItem.html#fallback()"><code>ResolvedItem.fallback()</code></a> tells whether the
- variant is sent as another item, <a href="item/ResolvedItem.html#variant()"><code>ResolvedItem.variant()</code></a> which.</div>
+ is a field read and an array load, it does not allocate. Use it to read the definition or aux value of many items;
+ a stack's own block state, count and NBT are not part of it. <a href="item/ResolvedItem.html#kind()"><code>ResolvedItem.kind()</code></a> tells whether the
+ variant is sent as another item, <a href="item/ResolvedItem.html#variant()"><code>ResolvedItem.variant()</code></a> which. Whether this version registers an item
+ itself is <a href="#itemDefinition(java.lang.String)"><code>itemDefinition(String)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>key</code> - the item type or variant</dd>
+<dd><code>key</code> - the item variant</dd>
 <dt>Returns:</dt>
-<dd>the resolution, or null if the item does not exist in this version and has no fallback</dd>
+<dd>the resolution</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if nothing is sent for the item: this version does not have it, and neither it
+         nor the <a href="Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a> default has a fallback (<a href="Fallbacks.html#NONE"><code>Fallbacks.NONE</code></a>). Use
+         <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant,dev.opencollab.paletter.item.ResolvedItem)"><code>resolve(BedrockItemVariant, ResolvedItem)</code></a> where that may happen</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="itemDefinition(dev.opencollab.paletter.vanilla.BedrockItemType)">
-<h3>itemDefinition</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="item/RegisteredItem.html" title="class in dev.opencollab.paletter.item">RegisteredItem</a></span>&nbsp;<span class="element-name">itemDefinition</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</span></div>
-<div class="block">Returns the definition of an item type in this palette.</div>
+<section class="detail" id="resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant,dev.opencollab.paletter.item.ResolvedItem)">
+<h3>resolve</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&nbsp;key,
+ @Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a>&nbsp;orElse)</span></div>
+<div class="block">Resolves an item like <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a>, but returns a default where that throws.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>type</code> - the item type, a key</dd>
+<dd><code>key</code> - the item variant</dd>
+<dd><code>orElse</code> - what to return where <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a> throws, may be null</dd>
 <dt>Returns:</dt>
-<dd>the item of a type as registered in this palette, or null if it has none (an item of a layer this palette
-         does not have, or one that does not exist in this version; fallbacks are not applied, see <a href="#encode(dev.opencollab.paletter.item.BedrockItemStack)"><code>encode(dev.opencollab.paletter.item.BedrockItemStack)</code></a>).
-         Null too for an item behind a disabled experiment toggle, which counts as missing although it is registered
-         (see <a href="#itemDefinitions()"><code>itemDefinitions()</code></a>)</dd>
+<dd>the resolution, or <code>orElse</code> if nothing is sent for the item</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resolve(dev.opencollab.paletter.vanilla.BedrockItemType)">
+<h3>resolve</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type)</span></div>
+<div class="block"><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a> of the base variant of a type: <code>resolve(BedrockItems.APPLE)</code>. For a type
+ with variants it is aux 0 (the water bottle, the white bed); name another one with its getter or
+ <a href="vanilla/BedrockItemType.html#variant(int)"><code>BedrockItemType.variant(int)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the item type, standing for its base variant (aux 0)</dd>
+<dt>Returns:</dt>
+<dd>the resolution</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if nothing is sent for the item, see <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant)"><code>resolve(BedrockItemVariant)</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resolve(dev.opencollab.paletter.vanilla.BedrockItemType,dev.opencollab.paletter.item.ResolvedItem)">
+<h3>resolve</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>&nbsp;type,
+ @Nullable <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item">ResolvedItem</a>&nbsp;orElse)</span></div>
+<div class="block"><a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemVariant,dev.opencollab.paletter.item.ResolvedItem)"><code>resolve(BedrockItemVariant, ResolvedItem)</code></a> of the base variant of a type.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>type</code> - the item type, standing for its base variant (aux 0)</dd>
+<dd><code>orElse</code> - what to return where <a href="#resolve(dev.opencollab.paletter.vanilla.BedrockItemType)"><code>resolve(BedrockItemType)</code></a> throws, may be null</dd>
+<dt>Returns:</dt>
+<dd>the resolution, or <code>orElse</code> if nothing is sent for the item</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
 </dl>
@@ -1146,8 +1155,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="extend(dev.opencollab.paletter.PaletteLayer)">
 <h3>extend</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Palette.html" title="class in dev.opencollab.paletter">Palette</a></span>&nbsp;<span class="element-name">extend</span><wbr><span class="parameters">(@NonNull <a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&nbsp;layer)</span></div>
-<div class="block">Compiles one more layer on top of this palette, e.g. for one session. Concurrent calls for one layer return the
- same palette, though each may compile it. The result is cached while it is reachable.
+<div class="block">Compiles one more layer on top of this palette, e.g. for one session. The result is cached while it is reachable.
+ The layer is compiled once: concurrent calls for it wait for the first and return the same palette, while calls
+ for other layers compile at the same time.
  <p>
  A layer that cannot be compiled (a duplicate identifier or runtime id, across or within layers, a block hash
  collision, an exception from a component encoder or a callback) throws a <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a> naming the layer
@@ -1160,6 +1170,8 @@ loadScripts(document, 'script');</script>
 <dd>the palette with the layer</dd>
 <dt>Throws:</dt>
 <dd><code><a href="PaletteException.html" title="class in dev.opencollab.paletter">PaletteException</a></code> - if the layer cannot be compiled</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -1181,8 +1193,9 @@ loadScripts(document, 'script');</script>
 <h3>applyTo</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">applyTo</span><wbr><span class="parameters">(@NonNull org.cloudburstmc.protocol.bedrock.packet.StartGamePacket&nbsp;packet)</span></div>
 <div class="block">Adds the block properties (vanilla data driven and custom blocks) to a start game packet, and sets
- <code>blockNetworkIdsHashed</code>: block runtime ids are always hashed. Applying a palette again to the same packet
- changes nothing.</div>
+ <code>blockNetworkIdsHashed</code>: block runtime ids are always hashed. The packet keeps one entry per block name: an
+ entry it already has for a block of this palette (from another palette, say) is replaced by this palette's, in
+ place. Applying a palette again to the same packet changes nothing.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>packet</code> - the start game packet to send; it is modified</dd>

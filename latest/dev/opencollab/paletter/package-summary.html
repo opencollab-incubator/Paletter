@@ -140,7 +140,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab5"><a href="PaletteException.html" title="class in dev.opencollab.paletter">PaletteException</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab5">
-<div class="block">Thrown when a palette cannot be compiled, e.g.</div>
+<div class="block">Thrown when a palette cannot be compiled: content of a layer that cannot be (a duplicate identifier, a block network id
+ hash collision, a callback that throws), or data of the data source that cannot be (no vanilla voxel shapes for a
+ version).</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -151,35 +153,37 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Collects the content of a <a href="PaletteLayer.html" title="class in dev.opencollab.paletter"><code>PaletteLayer</code></a>.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="PaletteLayer.Override.html" title="class in dev.opencollab.paletter">PaletteLayer.Override</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
-<div class="block">A change to a vanilla item, registered with <a href="PaletteLayer.Builder.html#overrideItem(java.lang.String,java.util.function.Consumer)"><code>PaletteLayer.Builder.overrideItem(String, Consumer)</code></a>.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Paletter.html" title="class in dev.opencollab.paletter">Paletter</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Paletter.html" title="class in dev.opencollab.paletter">Paletter</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Entry point: vanilla Bedrock data for every supported version, and the palettes compiled from it.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Configures the global policy of a <a href="Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a>: everything that is the same for every palette it compiles.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Everything noteworthy that happened while compiling a palette: content left out for a version, anchors that
  matched nothing, fallbacks that were used.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">One thing that happened while compiling.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab3"><a href="PaletteReport.Level.html" title="enum class in dev.opencollab.paletter">PaletteReport.Level</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="PaletteReport.Level.html" title="enum class in dev.opencollab.paletter">PaletteReport.Level</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
 <div class="block">How serious an <a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter"><code>PaletteReport.Entry</code></a> is.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab3">
-<div class="block">How a <a href="Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a> resolved a block state or an item for its version, see <a href="BlockExplanation.html" title="class in dev.opencollab.paletter"><code>BlockExplanation</code></a> and
- <a href="ItemExplanation.html" title="class in dev.opencollab.paletter"><code>ItemExplanation</code></a>.</div>
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="block">How a <a href="Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a> resolved a block state or an item for its version: <code>kind()</code> of
+ <a href="block/ResolvedBlock.html" title="class in dev.opencollab.paletter.block"><code>ResolvedBlock</code></a> and <a href="item/ResolvedItem.html" title="class in dev.opencollab.paletter.item"><code>ResolvedItem</code></a>, and of
+ <a href="BlockExplanation.html" title="class in dev.opencollab.paletter"><code>BlockExplanation</code></a> and <a href="ItemExplanation.html" title="class in dev.opencollab.paletter"><code>ItemExplanation</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="Vec3.html" title="class in dev.opencollab.paletter">Vec3</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">An add-on JSON vector <code>[x, y, z]</code>, shared by every component field that takes one (<code>CollisionBox</code>,
+ <code>SelectionBox</code>, <code>Transformation</code>, <code>Leashable</code>, <code>RenderOffsets</code>).</div>
 </div>
 </div>
 </div>

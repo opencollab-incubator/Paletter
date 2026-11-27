@@ -159,34 +159,40 @@ loadScripts(document, 'script');</script>
 <div class="block">Enables experiment toggles (e.g.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fallbacks(dev.opencollab.paletter.Fallbacks)" class="member-name-link">fallbacks</a><wbr>(@NonNull <a href="Fallbacks.html" title="class in dev.opencollab.paletter">Fallbacks</a>&nbsp;fallbacks)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#failOn(java.util.function.Predicate)" class="member-name-link">failOn</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a>&gt;&nbsp;failOn)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Makes report entries fatal: <a href="#build()"><code>build()</code></a> throws a <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a> for a palette whose report has an
+ entry the predicate accepts, after the <a href="#reports(java.util.function.Consumer)"><code>reports</code></a> consumer got the report.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fallbacks(dev.opencollab.paletter.Fallbacks)" class="member-name-link">fallbacks</a><wbr>(@NonNull <a href="Fallbacks.html" title="class in dev.opencollab.paletter">Fallbacks</a>&nbsp;fallbacks)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets what content a version lacks becomes.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#layer(dev.opencollab.paletter.PaletteLayer)" class="member-name-link">layer</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#layer(dev.opencollab.paletter.PaletteLayer)" class="member-name-link">layer</a><wbr>(@NonNull <a href="PaletteLayer.html" title="class in dev.opencollab.paletter">PaletteLayer</a>&nbsp;layer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds content applied to every palette, after the layers added before it.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#previews(boolean)" class="member-name-link">previews</a><wbr>(boolean&nbsp;previews)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#previews(boolean)" class="member-name-link">previews</a><wbr>(boolean&nbsp;previews)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Serves the data of Bedrock preview builds as well, or not.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeItems(dev.opencollab.paletter.vanilla.BedrockItemType...)" class="member-name-link">removeItems</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>...&nbsp;items)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeItemTypes(dev.opencollab.paletter.vanilla.BedrockItemType...)" class="member-name-link">removeItemTypes</a><wbr>(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>...&nbsp;items)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Does not register these vanilla items: they have no definition and no creative entry, and resolve through the
  <a href="Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reports(java.util.function.Consumer)" class="member-name-link">reports</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a>&gt;&nbsp;reports)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reports(java.util.function.Consumer)" class="member-name-link">reports</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="PaletteReport.html" title="class in dev.opencollab.paletter">PaletteReport</a>&gt;&nbsp;reports)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets where the compilation reports go.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#versions(java.util.function.Predicate)" class="member-name-link">versions</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;&nbsp;versions)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#versions(java.util.function.Predicate)" class="member-name-link">versions</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;&nbsp;versions)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Restricts the data versions served.</div>
 </div>
 </div>
@@ -216,6 +222,8 @@ loadScripts(document, 'script');</script>
 <dd><code>source</code> - where the vanilla data comes from; default the data bundled in the library</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -223,12 +231,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="versions(java.util.function.Predicate)">
 <h3>versions</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></span>&nbsp;<span class="element-name">versions</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&gt;&nbsp;versions)</span></div>
-<div class="block">Restricts the data versions served.</div>
+<div class="block">Restricts the data versions served. A client whose protocol needs a version left out is not served an older
+ one instead: <a href="Paletter.html#version(int)"><code>Paletter.version(int)</code></a> and <a href="Paletter.html#palette(int)"><code>Paletter.palette(int)</code></a> throw for it, and
+ <a href="Paletter.html#supports(int)"><code>Paletter.supports(int)</code></a> is false.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>versions</code> - which data versions are served; default all</dd>
+<dd><code>versions</code> - which data versions are served; default all. It must accept at least one, or <a href="#build()"><code>build()</code></a>
+                 throws <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a></dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -245,6 +258,8 @@ loadScripts(document, 'script');</script>
 <dd><code>previews</code> - whether preview data is served; default <code>false</code></dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -258,6 +273,8 @@ loadScripts(document, 'script');</script>
 <dd><code>fallbacks</code> - the fallbacks; default <a href="Fallbacks.html#UNKNOWN"><code>Fallbacks.UNKNOWN</code></a></dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -280,6 +297,8 @@ loadScripts(document, 'script');</script>
 <dd><code>toggles</code> - the toggle ids, as BDS names them</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -289,7 +308,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></span>&nbsp;<span class="element-name">experiments</span><wbr><span class="parameters">(@NonNull <a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;toggles)</span></div>
 <div class="block">Enables experiment toggles in one version only, in addition to those of <a href="#experiments(java.lang.String...)"><code>experiments(String...)</code></a>.
- The version must be one this instance serves, or <a href="#build()"><code>build()</code></a> throws a <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a>.
+ The version must be one this instance serves, or <a href="#build()"><code>build()</code></a> throws an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link"><code>IllegalArgumentException</code></a>.
  Every call adds to the toggles of the earlier ones. Toggles that gate nothing in a version are ignored there; for
  a toggle enabled for one version the palette's report says so.</div>
 <dl class="notes">
@@ -298,6 +317,8 @@ loadScripts(document, 'script');</script>
 <dd><code>toggles</code> - the toggle ids, as BDS names them</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -313,13 +334,15 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="removeItems(dev.opencollab.paletter.vanilla.BedrockItemType...)">
-<h3>removeItems</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></span>&nbsp;<span class="element-name">removeItems</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>...&nbsp;items)</span></div>
+<section class="detail" id="removeItemTypes(dev.opencollab.paletter.vanilla.BedrockItemType...)">
+<h3>removeItemTypes</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></span>&nbsp;<span class="element-name">removeItemTypes</span><wbr><span class="parameters">(@NonNull <a href="vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a>...&nbsp;items)</span></div>
 <div class="block">Does not register these vanilla items: they have no definition and no creative entry, and resolve through the
  <a href="Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>. Blocks are never removed, the client's block palette has to match.</div>
 <dl class="notes">
@@ -327,6 +350,8 @@ loadScripts(document, 'script');</script>
 <dd><code>items</code> - the vanilla item types to remove</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -342,6 +367,8 @@ loadScripts(document, 'script');</script>
                  add-on content</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -353,11 +380,33 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>reports</code> - called once for each palette compiled (with this instance's layers applied), with its report, and
-                once with a one entry report for a palette served for a protocol newer than the newest data (that
-                note has no <code>unknownBlocks</code> or <code>unknownItems</code>).
-                Called outside any internal lock: it may use this Paletter</dd>
+                once with a one entry report for the first palette served for a protocol newer than the newest
+                data (<a href="PaletteReport.html#NEWER_PROTOCOL"><code>PaletteReport.NEWER_PROTOCOL</code></a>; that note has no <code>unknownBlocks</code> or
+                <code>unknownItems</code>). Called outside any internal lock: it may use this Paletter. The default
+                logs each entry to the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/System.Logger.html" title="class or interface in java.lang" class="external-link"><code>System.Logger</code></a> <code>dev.opencollab.paletter</code>: warnings at
+                <code>WARNING</code>, the rest at <code>DEBUG</code></dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="failOn(java.util.function.Predicate)">
+<h3>failOn</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="Paletter.Builder.html" title="class in dev.opencollab.paletter">Paletter.Builder</a></span>&nbsp;<span class="element-name">failOn</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a>&gt;&nbsp;failOn)</span></div>
+<div class="block">Makes report entries fatal: <a href="#build()"><code>build()</code></a> throws a <a href="PaletteException.html" title="class in dev.opencollab.paletter"><code>PaletteException</code></a> for a palette whose report has an
+ entry the predicate accepts, after the <a href="#reports(java.util.function.Consumer)"><code>reports</code></a> consumer got the report. For example
+ <code>failOn(entry -&gt; entry.level() == PaletteReport.Level.WARNING)</code> fails on every warning. It applies to
+ the palettes this instance compiles; the report of <a href="Palette.html#extend(dev.opencollab.paletter.PaletteLayer)"><code>Palette.extend(dev.opencollab.paletter.PaletteLayer)</code></a> is the caller's to check.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>failOn</code> - which entries are fatal; default none</dd>
+<dt>Returns:</dt>
+<dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -371,6 +420,8 @@ loadScripts(document, 'script');</script>
 <dd><code>layer</code> - the layer to add</dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -387,6 +438,8 @@ loadScripts(document, 'script');</script>
 <dd><code>behaviour</code> - whether behaviour values are loaded; default <code>true</code></dd>
 <dt>Returns:</dt>
 <dd>this builder</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -404,9 +457,14 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the Paletter</dd>
 <dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <a href="#versions(java.util.function.Predicate)"><code>versions(Predicate)</code></a> accepts no data version, or experiments are
+                                  enabled for a version it does not accept</dd>
+<dd><code><a href="PaletteException.html" title="class in dev.opencollab.paletter">PaletteException</a></code> - if a report has an entry <a href="#failOn(java.util.function.Predicate)"><code>failOn(Predicate)</code></a> accepts</dd>
 <dd><code><a href="PaletteException.html" title="class in dev.opencollab.paletter">PaletteException</a></code> - if a layer cannot be compiled: the first version's failure, after the palettes that
                           compiled were reported</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/UncheckedIOException.html" title="class or interface in java.io" class="external-link">UncheckedIOException</a></code> - if the data source cannot be read</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

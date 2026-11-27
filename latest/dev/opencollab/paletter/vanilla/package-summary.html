@@ -91,6 +91,16 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BannerItemType.html" title="class in dev.opencollab.paletter.vanilla">BannerItemType</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The constant <a href="BedrockItems.html#BANNER"><code>BedrockItems.BANNER</code></a>: <code>minecraft:banner</code>, with a getter per variant BDS names in Bedrock 26.60,
+ the newest bundled release.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BedItemType.html" title="class in dev.opencollab.paletter.vanilla">BedItemType</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">The constant <a href="BedrockItems.html#BED"><code>BedrockItems.BED</code></a>: <code>minecraft:bed</code>, with a getter per variant BDS names in Bedrock 26.60,
+ the newest bundled release.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="BedrockBlocks.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlocks</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Every block type of Bedrock 26.60, the newest bundled release.</div>
@@ -122,49 +132,52 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">A variant of a <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux (damage) value.</div>
+<div class="block">A variant of a <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>: the type and its aux value.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BedrockItemVariants.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariants</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BedrockPotionType.html" title="class in dev.opencollab.paletter.vanilla">BedrockPotionType</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The named aux variants of Bedrock 26.60, the newest bundled release, of the items
- <a href="BedrockItems.html#ARROW"><code>BedrockItems.ARROW</code></a>, <a href="BedrockItems.html#BANNER"><code>BedrockItems.BANNER</code></a>, <a href="BedrockItems.html#BED"><code>BedrockItems.BED</code></a>,
- <a href="BedrockItems.html#LINGERING_POTION"><code>BedrockItems.LINGERING_POTION</code></a>, <a href="BedrockItems.html#POTION"><code>BedrockItems.POTION</code></a>, <a href="BedrockItems.html#SPLASH_POTION"><code>BedrockItems.SPLASH_POTION</code></a>.</div>
+<div class="block">A Bedrock potion type, e.g.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BedrockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockState</a>&lt;T&gt;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BedrockPotionTypes.html" title="class in dev.opencollab.paletter.vanilla">BedrockPotionTypes</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">The potion types of Bedrock 26.60, the newest bundled release, as BDS names them on the potions and the tipped
+ arrow: <code>BedrockItems.POTION.withEffect(BedrockPotionTypes.HEALING)</code>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BedrockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockState</a>&lt;T&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A block state property, typed: <a href="BoolState.html" title="class in dev.opencollab.paletter.vanilla"><code>BoolState</code></a> (stored as a byte 0 or 1), <a href="IntState.html" title="class in dev.opencollab.paletter.vanilla"><code>IntState</code></a>, <a href="EnumState.html" title="class in dev.opencollab.paletter.vanilla"><code>EnumState</code></a>
  (a string state with a generated enum) or <a href="StringState.html" title="class in dev.opencollab.paletter.vanilla"><code>StringState</code></a> (a string state without one, e.g.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BedrockStates.html" title="class in dev.opencollab.paletter.vanilla">BedrockStates</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BedrockStates.html" title="class in dev.opencollab.paletter.vanilla">BedrockStates</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Every block state name of Bedrock 26.60, the newest bundled release, typed: <a href="BoolState.html" title="class in dev.opencollab.paletter.vanilla"><code>BoolState</code></a> for byte
  0/1 states, <a href="IntState.html" title="class in dev.opencollab.paletter.vanilla"><code>IntState</code></a> for integers, <a href="EnumState.html" title="class in dev.opencollab.paletter.vanilla"><code>EnumState</code></a> for strings, with an enum in
  <code>dev.opencollab.paletter.vanilla.state</code> per distinct value set (states with the same values share one).</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BoolState.html" title="class in dev.opencollab.paletter.vanilla">BoolState</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BoolState.html" title="class in dev.opencollab.paletter.vanilla">BoolState</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A boolean block state: a byte 0 or 1 in the block state NBT, e.g.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EnumState.html" title="class in dev.opencollab.paletter.vanilla">EnumState</a>&lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt; &amp; <a href="StateValue.html" title="interface in dev.opencollab.paletter.vanilla">StateValue</a>&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EnumState.html" title="class in dev.opencollab.paletter.vanilla">EnumState</a>&lt;E extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;E&gt; &amp; <a href="StateValue.html" title="interface in dev.opencollab.paletter.vanilla">StateValue</a>&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A string block state with an enum of its values, e.g.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="IntState.html" title="class in dev.opencollab.paletter.vanilla">IntState</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="IntState.html" title="class in dev.opencollab.paletter.vanilla">IntState</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">An integer block state, e.g.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="ItemKey.html" title="interface in dev.opencollab.paletter.vanilla">ItemKey</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">What names an item for the methods that take a variant: a <a href="BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemVariant</code></a>, or a <a href="BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockItemType</code></a>,
- which stands for its base variant (aux 0).</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PotionItemType.html" title="class in dev.opencollab.paletter.vanilla">PotionItemType</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An item whose variants are potion types: the potions and the tipped arrow (<a href="BedrockItems.html#POTION"><code>BedrockItems.POTION</code></a>,
+ <a href="BedrockItems.html#SPLASH_POTION"><code>BedrockItems.SPLASH_POTION</code></a>, <a href="BedrockItems.html#LINGERING_POTION"><code>BedrockItems.LINGERING_POTION</code></a>, <a href="BedrockItems.html#ARROW"><code>BedrockItems.ARROW</code></a>).</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="StateValue.html" title="interface in dev.opencollab.paletter.vanilla">StateValue</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="StateValue.html" title="interface in dev.opencollab.paletter.vanilla">StateValue</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A value of an <a href="EnumState.html" title="class in dev.opencollab.paletter.vanilla"><code>EnumState</code></a>: implemented by the generated enums in <code>dev.opencollab.paletter.vanilla.state</code>
  and by enums of your own for custom string states.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="StringState.html" title="class in dev.opencollab.paletter.vanilla">StringState</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="StringState.html" title="class in dev.opencollab.paletter.vanilla">StringState</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A string block state without an enum: string properties of custom blocks, and vanilla string states that are newer
  than the generated <a href="BedrockStates.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockStates</code></a> (e.g.</div>
 </div>

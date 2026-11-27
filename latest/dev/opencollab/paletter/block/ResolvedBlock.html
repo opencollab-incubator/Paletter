@@ -40,7 +40,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li>Nested</li>
 <li>Field</li>
-<li><a href="#constructor-summary">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 </li>
@@ -48,7 +48,7 @@ loadScripts(document, 'script');</script>
 <p>Detail:</p>
 <ul>
 <li>Field</li>
-<li><a href="#constructor-detail">Constr</a></li>
+<li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </li>
@@ -60,13 +60,13 @@ loadScripts(document, 'script');</script>
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -93,11 +93,11 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ResolvedBlock</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">A block state resolved against one palette: what it sends for it and what that does, see
- <a href="../Palette.html#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a>. A resolution is made
- on each call, with its <a href="../behaviour/BlockValues.html" title="class in dev.opencollab.paletter.behaviour"><code>BlockValues</code></a> handle: do not compare resolutions with <code>==</code>. Use
- <a href="../Palette.html#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a> where only the id is
- needed. Resolutions are equal if they have the same definition, fallback and behaviour (a handle of the same state
- in the same palette).</div>
+ <a href="../Palette.html#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a>. A palette makes a
+ resolution once per state and keeps it, with its <a href="../behaviour/BlockValues.html" title="class in dev.opencollab.paletter.behaviour"><code>BlockValues</code></a> handle; states that resolve alike may share one.
+ Use <a href="../Palette.html#runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.runtimeId(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a> where only the
+ id is needed. Resolutions are equal if they have the same definition, kind and behaviour (a handle of the same block in
+ the same palette); compare them with <code>equals</code>.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -105,23 +105,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<li>
-<section class="constructor-summary" id="constructor-summary">
-<h2>Constructor Summary</h2>
-<div class="caption"><span>Constructors</span></div>
-<div class="summary-table two-column-summary">
-<div class="table-header col-first">Constructor</div>
-<div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(dev.opencollab.paletter.block.RegisteredBlockState,boolean,dev.opencollab.paletter.behaviour.BlockValues)" class="member-name-link">ResolvedBlock</a><wbr>(@NonNull <a href="RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a>&nbsp;definition,
- boolean&nbsp;fallback,
- @NonNull <a href="../behaviour/BlockValues.html" title="class in dev.opencollab.paletter.behaviour">BlockValues</a>&nbsp;behaviour)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Internal: plumbing of the palette's <code>resolve</code>, not part of the API.</div>
-</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -154,9 +137,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#kind()" class="member-name-link">kind</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">How the palette resolved the state for its version.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -169,30 +157,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<li>
-<section class="constructor-details" id="constructor-detail">
-<h2>Constructor Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="&lt;init&gt;(dev.opencollab.paletter.block.RegisteredBlockState,boolean,dev.opencollab.paletter.behaviour.BlockValues)">
-<h3>ResolvedBlock</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="element-name">ResolvedBlock</span><wbr><span class="parameters">(@NonNull <a href="RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a>&nbsp;definition,
- boolean&nbsp;fallback,
- @NonNull <a href="../behaviour/BlockValues.html" title="class in dev.opencollab.paletter.behaviour">BlockValues</a>&nbsp;behaviour)</span></div>
-<div class="block">Internal: plumbing of the palette's <code>resolve</code>, not part of the API.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>definition</code> - the block to send</dd>
-<dd><code>fallback</code> - whether a fallback was used, see <a href="#fallback()"><code>fallback()</code></a></dd>
-<dd><code>behaviour</code> - the behaviour values of <code>definition</code></dd>
-</dl>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -206,6 +170,24 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the block to send, with its fallbacks applied, see <a href="../Palette.html#blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.blockDefinition(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="kind()">
+<h3>kind</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../ResolutionKind.html" title="enum class in dev.opencollab.paletter">ResolutionKind</a></span>&nbsp;<span class="element-name">kind</span>()</div>
+<div class="block">How the palette resolved the state for its version.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><a href="../ResolutionKind.html#EXACT"><code>ResolutionKind.EXACT</code></a> (also for a block asked for by runtime id), <a href="../ResolutionKind.html#ADAPTED"><code>ResolutionKind.ADAPTED</code></a>
+         (the same block with state values fitted to the version), <a href="../ResolutionKind.html#FALLBACK"><code>ResolutionKind.FALLBACK</code></a> (a
+         <code>BlockFallback</code>, also a forced one), <a href="../ResolutionKind.html#DEFAULT"><code>ResolutionKind.DEFAULT</code></a> (the default fallback block) or
+         <a href="../ResolutionKind.html#MISSING"><code>ResolutionKind.MISSING</code></a> (no fallback at all: air is sent)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -216,9 +198,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the block sent is a replacement.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>true if a <code>BlockFallback</code> or the default fallback block was used: the state has no block of its own
-         in this version, or is forcibly replaced. Not for a state that is only adapted to this version's state
-         values. False for a block asked for by runtime id</dd>
+<dd>true if the state has no block of its own in this version, or is forcibly replaced: <a href="#kind()"><code>kind()</code></a> is
+         <code>FALLBACK</code>, <code>DEFAULT</code> or <code>MISSING</code>. Not for a state that is only adapted to this
+         version's state values</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -230,6 +214,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the behaviour values (friction, destroy time, collision shape, ...) of <a href="#definition()"><code>definition()</code></a> in the palette that resolved it</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

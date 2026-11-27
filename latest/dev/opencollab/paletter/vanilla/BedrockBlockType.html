@@ -104,16 +104,18 @@ loadScripts(document, 'script');</script>
  Referencing a type loads nothing; its states are resolved against the newest data of <a href="../Paletter.html#bundled()"><code>Paletter.bundled()</code></a> on first use. A vanilla constant the newest bundled release does not have
  (deprecated because Bedrock removed the block, or a
  <a href="../annotation/SincePreview.html" title="annotation interface in dev.opencollab.paletter.annotation"><code>@SincePreview</code></a> block) is not <a href="#isAvailable()"><code>available</code></a>,
- but has states of its own, like an item constant: a preview block those of the preview, written into the constant
- when it was generated (no preview data is loaded for them), a removed block one state without properties. A palette
- whose newest version has the block (a preview block in a Paletter with previews) sends the block itself; any other
- palette resolves its states through its <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>, <code>minecraft:unknown</code> by
- default.
+ but has states of its own, written into the constant when it was generated (no data is loaded for them): a preview
+ block those of the preview, a removed block those it last had in a bundled release (one state without properties if
+ none could be written). A palette that has the block (a preview block in a Paletter with previews, a removed one in
+ an older version) sends the block itself; any other palette resolves its states through its
+ <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a>, <code>minecraft:unknown</code> by default.
  <p>
  Equality: like its states (see <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlockState</code></a>), <code>equals</code> always works, and <code>==</code> works for the
- vanilla constants, the preview's blocks among them, and for the type a registered <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> owns. Not in a
- Paletter with previews, for the blocks of the release the preview changed: those have types of their own, equal to the
- constant if the states are the same.</div>
+ vanilla constants, the preview's blocks among them, and for the type a registered <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> owns. A vanilla
+ type is equal to another by identifier, so equality never depends on the version or on
+ <a href="../Paletter.Builder.html#previews(boolean)"><code>previews</code></a>, and never loads data: in a Paletter with
+ previews, a block of the release that the preview changed has a type of its own (not <code>==</code> the constant), which
+ equals the constant. A custom type is equal to one with the same identifier and properties.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -160,29 +162,14 @@ loadScripts(document, 'script');</script>
 <div class="block">The name of the generated constant of <a href="BedrockBlocks.html" title="class in dev.opencollab.paletter.vanilla"><code>BedrockBlocks</code></a> (or the preview blocks) that holds this type, preferring
  one that is not deprecated.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#custom(java.lang.String,java.util.List,java.util.Map)" class="member-name-link">custom</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../block/BlockProperty.html" title="class in dev.opencollab.paletter.block">BlockProperty</a>&lt;?&gt;&gt;&nbsp;properties,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;defaultStates)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: plumbing of <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>, which creates its type once and owns it: use
- <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultState()" class="member-name-link">defaultState</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultState()" class="member-name-link">defaultState</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The default state of the type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromIdentifier(java.lang.String)" class="member-name-link">fromIdentifier</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Internal: the key of an identifier: the vanilla constant if the identifier (after renames) is a vanilla block of
- the newest bundled data or has a generated constant, else a custom type known by its identifier only (no
- states).</div>
-</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -235,7 +222,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stateOf(java.util.Map)" class="member-name-link">stateOf</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>?&gt;&nbsp;values)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Plumbing of <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
+<div class="block">Finds a state of this type by its values, without a palette: the inverse of <a href="BedrockBlockState.html#values()"><code>BedrockBlockState.values()</code></a>,
+ so <code>type.stateOf(state.values())</code> is <code>state</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#states()" class="member-name-link">states</a>()</code></div>
@@ -250,14 +238,9 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The values of a state property that this block accepts.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vanillaType(java.lang.String)" class="member-name-link">vanillaType</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vanillaTypes()" class="member-name-link">vanillaTypes</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Plumbing of <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vanillaTypes()" class="member-name-link">vanillaTypes</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Lists the vanilla block types of the newest bundled data.</div>
 </div>
 </div>
@@ -277,43 +260,6 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="custom(java.lang.String,java.util.List,java.util.Map)">
-<h3>custom</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">custom</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../block/BlockProperty.html" title="class in dev.opencollab.paletter.block">BlockProperty</a>&lt;?&gt;&gt;&nbsp;properties,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;defaultStates)</span></div>
-<div class="block">Internal: plumbing of <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>, which creates its type once and owns it: use
- <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - the block identifier</dd>
-<dd><code>properties</code> - the state properties, in declaration order (<a href="../block/CustomBlock.html#stateProperties()"><code>CustomBlock.stateProperties()</code></a>)</dd>
-<dd><code>defaultStates</code> - the values of the default state; properties not listed use their first value</dd>
-<dt>Returns:</dt>
-<dd>a new custom type. Loads no data</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="fromIdentifier(java.lang.String)">
-<h3>fromIdentifier</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">fromIdentifier</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
-<div class="block">Internal: the key of an identifier: the vanilla constant if the identifier (after renames) is a vanilla block of
- the newest bundled data or has a generated constant, else a custom type known by its identifier only (no
- states). Such types are not interned: equal for equal identifiers, not identical, so compare them with
- <code>equals</code>, and unknown identifiers never accumulate. Use <a href="#byIdentifier(java.lang.String)"><code>byIdentifier(String)</code></a>. The type of a
- <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> is <a href="../block/CustomBlock.html#type()"><code>CustomBlock.type()</code></a>. Loads the data.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - a block identifier</dd>
-<dt>Returns:</dt>
-<dd>the type of the identifier</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="byIdentifier(java.lang.String)">
 <h3>byIdentifier</h3>
@@ -335,20 +281,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="vanillaType(java.lang.String)">
-<h3>vanillaType</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a></span>&nbsp;<span class="element-name">vanillaType</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;identifier)</span></div>
-<div class="block">Plumbing of <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>identifier</code> - the block identifier</dd>
-<dt>Returns:</dt>
-<dd>the vanilla type of the newest bundled data with an identifier, or null</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="vanillaTypes()">
 <h3>vanillaTypes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&gt;</span>&nbsp;<span class="element-name">vanillaTypes</span>()</div>
@@ -356,21 +288,29 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>every vanilla block type, in palette order</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="stateOf(java.util.Map)">
 <h3>stateOf</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">stateOf</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>?&gt;&nbsp;values)</span></div>
-<div class="block">Plumbing of <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="BedrockBlockState.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockState</a></span>&nbsp;<span class="element-name">stateOf</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>?&gt;&nbsp;values)</span></div>
+<div class="block">Finds a state of this type by its values, without a palette: the inverse of <a href="BedrockBlockState.html#values()"><code>BedrockBlockState.values()</code></a>,
+ so <code>type.stateOf(state.values())</code> is <code>state</code>. For a vanilla type these are the states of the newest
+ bundled release (loads the data); <a href="../Palette.html#blockState(java.lang.String,java.util.Map,dev.opencollab.paletter.Lookup)"><code>Palette.blockState(String, Map, dev.opencollab.paletter.Lookup)</code></a> finds those of a palette's version.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>values</code> - the state values by state name</dd>
+<dd><code>values</code> - the state values by state name: <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link"><code>Boolean</code></a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a> or <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a>, every state of
+               the block</dd>
 <dt>Returns:</dt>
-<dd>the state with exactly these values (see <a href="BedrockBlockState.html#values()"><code>BedrockBlockState.values()</code></a>), or null if the block has no
-         such state: a missing or extra name, a value of another type or one the block does not have</dd>
+<dd>the state with exactly these values, or null if the block has no such state: a missing or extra name, a
+         value of another type or one the block does not have</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the values are null</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -382,6 +322,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the block identifier, e.g. <code>minecraft:wooden_door</code></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -408,6 +350,8 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>true for the type of a <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>, and for a type made for an identifier the bundled data does
          not know</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -436,6 +380,8 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>false for a vanilla constant the newest bundled release does not have: palettes without the block resolve
          its states through their <a href="../Fallbacks.html" title="class in dev.opencollab.paletter"><code>Fallbacks</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -448,6 +394,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>this type, or for a type that is not <a href="#isAvailable()"><code>available</code></a> its fallback type</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -459,6 +407,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the state properties, sorted by name for vanilla blocks and in declaration order for custom blocks</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -472,6 +422,8 @@ loadScripts(document, 'script');</script>
 <dd><code>state</code> - a state property; matched by name</dd>
 <dt>Returns:</dt>
 <dd>true if the type has a property with the state's name</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -489,6 +441,8 @@ loadScripts(document, 'script');</script>
 <dd>the values of a state this block accepts, in its state order</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the block does not have the state</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -500,6 +454,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the default state: what the block is placed as without further information</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -511,6 +467,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a builder starting from the default state</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -522,6 +480,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>every state, in palette (canonical id) order</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -533,6 +493,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the number of states</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

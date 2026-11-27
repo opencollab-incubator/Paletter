@@ -131,11 +131,6 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <div class="col-last even-row-color">
 <div class="block">Builds <a href="SelectionBox.html" title="class in dev.opencollab.paletter.block.component"><code>SelectionBox</code></a>: defaults applied, required fields and ranges checked by <a href="SelectionBox.Builder.html#build()"><code>SelectionBox.Builder.build()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="SelectionBox.Vec3.html" class="type-name-link" title="class in dev.opencollab.paletter.block.component">SelectionBox.Vec3</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">An add-on JSON vector <code>[x, y, z]</code>.</div>
-</div>
 </div>
 </section>
 </li>
@@ -193,12 +188,12 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The boolean shorthand: sets <code>enabled</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="SelectionBox.Vec3.html" title="class in dev.opencollab.paletter.block.component">SelectionBox.Vec3</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../Vec3.html" title="class in dev.opencollab.paletter">Vec3</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#origin()" class="member-name-link">origin</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Minimal position of the bounds of the selection box.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="SelectionBox.Vec3.html" title="class in dev.opencollab.paletter.block.component">SelectionBox.Vec3</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../../Vec3.html" title="class in dev.opencollab.paletter">Vec3</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#size()" class="member-name-link">size</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Size of each side of the selection box.</div>
@@ -254,7 +249,7 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <li>
 <section class="detail" id="origin()">
 <h3>origin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="SelectionBox.Vec3.html" title="class in dev.opencollab.paletter.block.component">SelectionBox.Vec3</a></span>&nbsp;<span class="element-name">origin</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../../Vec3.html" title="class in dev.opencollab.paletter">Vec3</a></span>&nbsp;<span class="element-name">origin</span>()</div>
 <div class="block">Minimal position of the bounds of the selection box. "origin" is specified as [x, y, z] and must be in the
  range (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON <code>origin</code>. Default: <code>[-8,0,-8]</code>.</div>
 <dl class="notes">
@@ -266,7 +261,7 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <li>
 <section class="detail" id="size()">
 <h3>size</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="SelectionBox.Vec3.html" title="class in dev.opencollab.paletter.block.component">SelectionBox.Vec3</a></span>&nbsp;<span class="element-name">size</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../../Vec3.html" title="class in dev.opencollab.paletter">Vec3</a></span>&nbsp;<span class="element-name">size</span>()</div>
 <div class="block">Size of each side of the selection box. Size is specified as [x, y, z]. "origin" + "size" must be in the range
  (-8, 0, -8) to (8, 16, 8), inclusive. Add-on JSON <code>size</code>. Default: <code>[16,16,16]</code>.</div>
 <dl class="notes">

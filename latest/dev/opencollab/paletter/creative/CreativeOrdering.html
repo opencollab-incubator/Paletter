@@ -138,7 +138,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Exactly where Bedrock Dedicated Server (Windows build, verified on 1.26.63.1) puts add-on content, the default:
  
-     Block items first, in the iteration order of BDS's map of data driven blocks (see <a href="#blockOrder(java.util.List,java.util.Collection)"><code>blockOrder(java.util.List&lt;java.lang.String&gt;, java.util.Collection&lt;java.lang.String&gt;)</code></a>),
+     Block items first, in the iteration order of BDS's map of data driven blocks (see <code>blockOrder(java.util.List&lt;java.lang.String&gt;, java.util.Collection&lt;java.lang.String&gt;)</code>),
      then items in the order the layer defines them.</div>
 </div>
 </div>
@@ -149,26 +149,20 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#blockOrder(java.util.List,java.util.Collection)" class="member-name-link">blockOrder</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;customBlocks,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;vanillaDataDrivenBlocks)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The order in which this policy places custom block items.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative">CreativeOrdering</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative">CreativeOrdering</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative">CreativeOrdering</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative">CreativeOrdering</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </div>
@@ -198,7 +192,7 @@ the order they are declared.</div>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CreativeOrdering.html" title="enum class in dev.opencollab.paletter.creative">CreativeOrdering</a></span>&nbsp;<span class="element-name">BDS</span></div>
 <div class="block">Exactly where Bedrock Dedicated Server (Windows build, verified on 1.26.63.1) puts add-on content, the default:
  <ol>
-     <li>Block items first, in the iteration order of BDS's map of data driven blocks (see <a href="#blockOrder(java.util.List,java.util.Collection)"><code>blockOrder(java.util.List&lt;java.lang.String&gt;, java.util.Collection&lt;java.lang.String&gt;)</code></a>),
+     <li>Block items first, in the iteration order of BDS's map of data driven blocks (see <code>blockOrder(java.util.List&lt;java.lang.String&gt;, java.util.Collection&lt;java.lang.String&gt;)</code>),
      then items in the order the layer defines them. An item that replaces a block item counts as a block item.</li>
      <li>With a group: at the end of the group of that name <i>in the placement's category</i>; a <code>minecraft:</code>
      prefix of the group name is ignored (<code>minecraft:itemGroup.name.sword</code> is the vanilla sword group). If the
@@ -255,32 +249,6 @@ not permitted.)</div>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if this enum class has no constant with the specified name</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if the argument is null</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="blockOrder(java.util.List,java.util.Collection)">
-<h3>blockOrder</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">blockOrder</span><wbr><span class="parameters">(@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;customBlocks,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;vanillaDataDrivenBlocks)</span></div>
-<div class="block">The order in which this policy places custom block items.
- <p>
- For <a href="#BDS"><code>BDS</code></a>: BDS keeps data driven blocks in a <code>std::unordered_map</code> keyed by identifier (MSVC:
- FNV-1a 64 hash, power of two bucket count starting at 8, growing x8 below 512 buckets and x2 above, load factor 1)
- and adds creative entries for custom blocks while iterating it. Custom blocks are inserted first, by block id,
- then the vanilla data driven blocks in descending identifier order. This reproduces the map's iteration order.
- BDS numbers custom blocks in descending order of their <i>file names</i>; Paletter, which has no files, numbers
- them by identifier, descending, which is the same for the usual add-on layout of one file per block named after
- it (see <code>docs/wire-notes.md</code>).</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>customBlocks</code> - every custom block identifier of the palette, in block id order</dd>
-<dd><code>vanillaDataDrivenBlocks</code> - the identifiers of the version's vanilla data driven blocks</dd>
-<dt>Returns:</dt>
-<dd><code>customBlocks</code> in placement order</dd>
-<dt>Since:</dt>
-<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

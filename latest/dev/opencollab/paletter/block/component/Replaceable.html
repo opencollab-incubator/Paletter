@@ -95,7 +95,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="../../annotation/BedrockFormat.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockFormat</a>("1.21.70")
-<a href="../../annotation/BedrockExperiment.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockExperiment</a>("upcoming_creator_features")
 <a href="../../annotation/ServerOnly.html" title="annotation interface in dev.opencollab.paletter.annotation">@ServerOnly</a>(<a href="../../annotation/ServerOnly.html#until()">until</a>=2193)
 </span><span class="modifiers">public final class </span><span class="element-name type-name-label">Replaceable</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
@@ -107,7 +106,8 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
  Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (Bedrock 26.30,
  26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
- BDS takes it without any experiment in 26.50, 26.60, 26.70: the docs' gating does not hold there.</div>
+ BDS takes it without any experiment in 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ Not <code>@BedrockExperiment</code>: every bundled version takes it without the experiment.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>

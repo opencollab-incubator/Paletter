@@ -39,16 +39,16 @@ loadScripts(document, 'script');</script>
 <p>Summary:</p>
 <ul>
 <li><a href="#nested-class-summary">Nested</a></li>
-<li>Field</li>
-<li><a href="#constructor-summary">Constr</a></li>
+<li><a href="#field-summary">Field</a></li>
+<li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 </li>
 <li>
 <p>Detail:</p>
 <ul>
-<li>Field</li>
-<li><a href="#constructor-detail">Constr</a></li>
+<li><a href="#field-detail">Field</a></li>
+<li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </li>
@@ -59,14 +59,14 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -93,8 +93,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PaletteReport</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Everything noteworthy that happened while compiling a palette: content left out for a version, anchors that
- matched nothing, fallbacks that were used. Compilation never logs by itself; consumers decide what to show.
- A report never changes: a palette extended with a layer has a new report.</div>
+ matched nothing, fallbacks that were used. Each <a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter"><code>PaletteReport.Entry</code></a> has a <a href="PaletteReport.Entry.html#code()"><code>code</code></a> to filter by and names the
+ content it is about. The <code>reports</code> consumer of the <a href="Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a> gets every report; by
+ default it logs them. A report never changes: a palette extended with a layer has a new report.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -111,7 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="PaletteReport.Entry.html" class="type-name-link" title="class in dev.opencollab.paletter">PaletteReport.Entry</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">One thing that happened while compiling.</div>
@@ -124,20 +125,91 @@ loadScripts(document, 'script');</script>
 </div>
 </section>
 </li>
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<!-- =========== FIELD SUMMARY =========== -->
 <li>
-<section class="constructor-summary" id="constructor-summary">
-<h2>Constructor Summary</h2>
-<div class="caption"><span>Constructors</span></div>
-<div class="summary-table two-column-summary">
-<div class="table-header col-first">Constructor</div>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(dev.opencollab.paletter.data.DataVersion,java.util.List,java.util.Set,java.util.Set)" class="member-name-link">PaletteReport</a><wbr>(@NonNull <a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a>&gt;&nbsp;entries,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&gt;&nbsp;unknownBlocks,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;&nbsp;unknownItems)</code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#ANCHOR_UNMATCHED" class="member-name-link">ANCHOR_UNMATCHED</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Internal: made by the compiler; copies what it is given.</div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a creative placement's anchor matched nothing; the content is at the default position.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#BLOCK_MISSING" class="member-name-link">BLOCK_MISSING</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a block state of the data has no block in the version and no fallback; it is sent as air.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#BLOCKS_RESOLVED" class="member-name-link">BLOCKS_RESOLVED</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: how the block states of the data resolved for the version, as counts.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CANONICAL_MISSING" class="member-name-link">CANONICAL_MISSING</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: content of the newest data that the version lacks and that has no fallback of its own, see
+ <a href="#unknownBlocks()"><code>unknownBlocks()</code></a> and <a href="#unknownItems()"><code>unknownItems()</code></a>.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#COMPONENT_CHANGED" class="member-name-link">COMPONENT_CHANGED</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a component value is left out of the version, or sent in another form, because the version
+ cannot take it as given.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CREATIVE_BLOCK_STATE_DROPPED" class="member-name-link">CREATIVE_BLOCK_STATE_DROPPED</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the block state of a creative stack of the data was dropped.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#CREATIVE_LEFT_OUT" class="member-name-link">CREATIVE_LEFT_OUT</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a stack or group of the creative layout is left out of the version's creative content.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CULLING_SHAPE_MISSING" class="member-name-link">CULLING_SHAPE_MISSING</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a custom block names a culling shape no layer defines.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#EXPERIMENT" class="member-name-link">EXPERIMENT</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an experiment toggle that gates content in the version, enabled or left disabled.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#NEWER_PROTOCOL" class="member-name-link">NEWER_PROTOCOL</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the palette is served for a protocol newer than the newest data.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#OVERRIDE_BLOCK_MISSING" class="member-name-link">OVERRIDE_BLOCK_MISSING</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the block an item override names does not exist in the version.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#OVERRIDE_SKIPPED" class="member-name-link">OVERRIDE_SKIPPED</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an override of a vanilla item the version does not have was skipped.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#REPLACED_BLOCK_MISSING" class="member-name-link">REPLACED_BLOCK_MISSING</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an item has <code>replace_block_item</code>, but there is no custom block of its name.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#UNCAPTURED_PROTOCOL" class="member-name-link">UNCAPTURED_PROTOCOL</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the version is newer than every capture of the component encoding, which is extrapolated.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#VOXEL_SHAPE_UNVERIFIED" class="member-name-link">VOXEL_SHAPE_UNVERIFIED</a></code></div>
+<div class="col-last even-row-color">
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the voxel shape sent for a custom block follows a rule no capture of BDS confirms.</div>
 </div>
 </div>
 </section>
@@ -191,26 +263,265 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<!-- ============ FIELD DETAIL =========== -->
 <li>
-<section class="constructor-details" id="constructor-detail">
-<h2>Constructor Details</h2>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(dev.opencollab.paletter.data.DataVersion,java.util.List,java.util.Set,java.util.Set)">
-<h3>PaletteReport</h3>
-<div class="member-signature"><span class="annotations"><a href="annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="element-name">PaletteReport</span><wbr><span class="parameters">(@NonNull <a href="data/DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PaletteReport.Entry.html" title="class in dev.opencollab.paletter">PaletteReport.Entry</a>&gt;&nbsp;entries,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="vanilla/BedrockBlockType.html" title="class in dev.opencollab.paletter.vanilla">BedrockBlockType</a>&gt;&nbsp;unknownBlocks,
- @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;&nbsp;unknownItems)</span></div>
-<div class="block">Internal: made by the compiler; copies what it is given.</div>
+<section class="detail" id="BLOCK_MISSING">
+<h3>BLOCK_MISSING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BLOCK_MISSING</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a block state of the data has no block in the version and no fallback; it is sent as air.</div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>version</code> - the data version of the palette the report belongs to</dd>
-<dd><code>entries</code> - the entries, in the order they happened</dd>
-<dd><code>unknownBlocks</code> - see <a href="#unknownBlocks()"><code>unknownBlocks()</code></a></dd>
-<dd><code>unknownItems</code> - see <a href="#unknownItems()"><code>unknownItems()</code></a></dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.BLOCK_MISSING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="BLOCKS_RESOLVED">
+<h3>BLOCKS_RESOLVED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BLOCKS_RESOLVED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: how the block states of the data resolved for the version, as counts.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.BLOCKS_RESOLVED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CANONICAL_MISSING">
+<h3>CANONICAL_MISSING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CANONICAL_MISSING</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: content of the newest data that the version lacks and that has no fallback of its own, see
+ <a href="#unknownBlocks()"><code>unknownBlocks()</code></a> and <a href="#unknownItems()"><code>unknownItems()</code></a>.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.CANONICAL_MISSING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="EXPERIMENT">
+<h3>EXPERIMENT</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">EXPERIMENT</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an experiment toggle that gates content in the version, enabled or left disabled.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.EXPERIMENT">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="OVERRIDE_SKIPPED">
+<h3>OVERRIDE_SKIPPED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">OVERRIDE_SKIPPED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an override of a vanilla item the version does not have was skipped.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.OVERRIDE_SKIPPED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="OVERRIDE_BLOCK_MISSING">
+<h3>OVERRIDE_BLOCK_MISSING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">OVERRIDE_BLOCK_MISSING</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the block an item override names does not exist in the version.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.OVERRIDE_BLOCK_MISSING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHOR_UNMATCHED">
+<h3>ANCHOR_UNMATCHED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">ANCHOR_UNMATCHED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a creative placement's anchor matched nothing; the content is at the default position.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.ANCHOR_UNMATCHED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="REPLACED_BLOCK_MISSING">
+<h3>REPLACED_BLOCK_MISSING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">REPLACED_BLOCK_MISSING</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: an item has <code>replace_block_item</code>, but there is no custom block of its name.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.REPLACED_BLOCK_MISSING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREATIVE_LEFT_OUT">
+<h3>CREATIVE_LEFT_OUT</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CREATIVE_LEFT_OUT</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a stack or group of the creative layout is left out of the version's creative content.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.CREATIVE_LEFT_OUT">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREATIVE_BLOCK_STATE_DROPPED">
+<h3>CREATIVE_BLOCK_STATE_DROPPED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CREATIVE_BLOCK_STATE_DROPPED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the block state of a creative stack of the data was dropped.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.CREATIVE_BLOCK_STATE_DROPPED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="COMPONENT_CHANGED">
+<h3>COMPONENT_CHANGED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">COMPONENT_CHANGED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a component value is left out of the version, or sent in another form, because the version
+ cannot take it as given.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.COMPONENT_CHANGED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="UNCAPTURED_PROTOCOL">
+<h3>UNCAPTURED_PROTOCOL</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">UNCAPTURED_PROTOCOL</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the version is newer than every capture of the component encoding, which is extrapolated.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.UNCAPTURED_PROTOCOL">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="VOXEL_SHAPE_UNVERIFIED">
+<h3>VOXEL_SHAPE_UNVERIFIED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">VOXEL_SHAPE_UNVERIFIED</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the voxel shape sent for a custom block follows a rule no capture of BDS confirms.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.VOXEL_SHAPE_UNVERIFIED">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CULLING_SHAPE_MISSING">
+<h3>CULLING_SHAPE_MISSING</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CULLING_SHAPE_MISSING</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: a custom block names a culling shape no layer defines.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.CULLING_SHAPE_MISSING">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NEWER_PROTOCOL">
+<h3>NEWER_PROTOCOL</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NEWER_PROTOCOL</span></div>
+<div class="block"><a href="PaletteReport.Entry.html#code()"><code>PaletteReport.Entry.code()</code></a>: the palette is served for a protocol newer than the newest data.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../constant-values.html#dev.opencollab.paletter.PaletteReport.NEWER_PROTOCOL">Constant Field Values</a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -230,6 +541,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the data version</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -244,6 +557,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the blocks of the newest canonical set that are missing, in canonical order</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -253,11 +568,13 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="vanilla/BedrockItemVariant.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemVariant</a>&gt;</span>&nbsp;<span class="element-name">unknownItems</span>()</div>
 <div class="block">Lists the item variants this palette's version lacks and no specific fallback covers, so a missing aux variant is
  exact. A default fallback (<code>Fallbacks.Builder#defaultItem</code>) does not count as covering them. Items behind a
- disabled experiment and items removed with <code>Paletter.Builder#removeItems</code> are included. Notes handed to the
+ disabled experiment and items removed with <code>Paletter.Builder#removeItemTypes</code> are included. Notes handed to the
  <code>reports</code> consumer have none.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the item variants of the newest canonical set that are missing, in canonical order</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -269,6 +586,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>all entries, in the order they happened</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -280,6 +599,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the warnings, in the order they happened</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

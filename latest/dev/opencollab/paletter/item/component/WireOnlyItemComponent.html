@@ -92,16 +92,17 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="FrameCount.html" title="class in dev.opencollab.paletter.item.component">FrameCount</a></code>, <code><a href="MiningSpeed.html" title="class in dev.opencollab.paletter.item.component">MiningSpeed</a></code>, <code><a href="RenderOffsets.html" title="class in dev.opencollab.paletter.item.component">RenderOffsets</a></code>, <code><a href="UseOnHook.html" title="class in dev.opencollab.paletter.item.component">UseOnHook</a></code></dd>
+<dd><code><a href="FrameCount.html" title="class in dev.opencollab.paletter.item.component">FrameCount</a></code>, <code><a href="MiningSpeed.html" title="class in dev.opencollab.paletter.item.component">MiningSpeed</a></code>, <code><a href="RawItemComponent.html" title="class in dev.opencollab.paletter.item.component">RawItemComponent</a></code>, <code><a href="RenderOffsets.html" title="class in dev.opencollab.paletter.item.component">RenderOffsets</a></code>, <code><a href="UseOnHook.html" title="class in dev.opencollab.paletter.item.component">UseOnHook</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">WireOnlyItemComponent</span><span class="extends-implements">
 extends <a href="ItemComponent.html" title="interface in dev.opencollab.paletter.item.component">ItemComponent</a></span>
-<span class="permits">permits <a href="RenderOffsets.html" title="class in dev.opencollab.paletter.item.component">RenderOffsets</a>, <a href="MiningSpeed.html" title="class in dev.opencollab.paletter.item.component">MiningSpeed</a>, <a href="FrameCount.html" title="class in dev.opencollab.paletter.item.component">FrameCount</a>, <a href="UseOnHook.html" title="class in dev.opencollab.paletter.item.component">UseOnHook</a> <span class="permits-note">(not exhaustive)</span></span></div>
+<span class="permits">permits <a href="RawItemComponent.html" title="class in dev.opencollab.paletter.item.component">RawItemComponent</a>, <a href="RenderOffsets.html" title="class in dev.opencollab.paletter.item.component">RenderOffsets</a>, <a href="MiningSpeed.html" title="class in dev.opencollab.paletter.item.component">MiningSpeed</a>, <a href="FrameCount.html" title="class in dev.opencollab.paletter.item.component">FrameCount</a>, <a href="UseOnHook.html" title="class in dev.opencollab.paletter.item.component">UseOnHook</a> <span class="permits-note">(not exhaustive)</span></span></div>
 <div class="block">Hand-written item components for wire fields Bedrock clients read but add-on JSON does not model (or no longer can set): they
  have no source in the component model, so they are not generated. They go through the same <code>CustomItem</code> and
  compile path as the generated components, and are encoded per protocol window by Paletter.
  <ul>
+     <li><a href="RawItemComponent.html" title="class in dev.opencollab.paletter.item.component"><code>RawItemComponent</code></a>: any NBT, merged over what the other components wrote</li>
      <li><a href="RenderOffsets.html" title="class in dev.opencollab.paletter.item.component"><code>RenderOffsets</code></a>: <code>minecraft:render_offsets</code>, retired from the add-on format</li>
      <li><a href="MiningSpeed.html" title="class in dev.opencollab.paletter.item.component"><code>MiningSpeed</code></a>: <code>item_properties.mining_speed</code></li>
      <li><a href="FrameCount.html" title="class in dev.opencollab.paletter.item.component"><code>FrameCount</code></a>: <code>item_properties.frame_count</code></li>

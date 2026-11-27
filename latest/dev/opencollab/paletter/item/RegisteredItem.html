@@ -158,24 +158,24 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Tells whether a layer added the item.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#key()" class="member-name-link">key</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../Origin.html" title="class in dev.opencollab.paletter">Origin</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#origin()" class="member-name-link">origin</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the key of the item.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../Origin.html" title="class in dev.opencollab.paletter">Origin</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#origin()" class="member-name-link">origin</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Tells where the item comes from.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../property/Properties.html" title="class in dev.opencollab.paletter.property">Properties</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#properties()" class="member-name-link">properties</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../property/Properties.html" title="class in dev.opencollab.paletter.property">Properties</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#properties()" class="member-name-link">properties</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the properties of the item.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the type of the item: the key of its base variant.</div>
+</div>
 </div>
 </div>
 </div>
@@ -252,19 +252,24 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <dt>Returns:</dt>
 <dd>where this item comes from: vanilla, or the id of the layer that added it (an override keeps the origin
  of the item it changes)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="key()">
-<h3>key</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">key</span>()</div>
-<div class="block">Returns the key of the item.</div>
+<section class="detail" id="type()">
+<h3>type</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="../vanilla/BedrockItemType.html" title="class in dev.opencollab.paletter.vanilla">BedrockItemType</a></span>&nbsp;<span class="element-name">type</span>()</div>
+<div class="block">Returns the type of the item: the key of its base variant. A definition is the item, whatever variant a stack of
+ it has, so it has no variant of its own; <a href="../Palette.html#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a> gives the variant sent.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the key of this item: the vanilla constant, or for a custom item or block item the type the
+<dd>the type of this item: the vanilla constant, or for a custom item or block item the type the
          <a href="CustomItem.html" title="class in dev.opencollab.paletter.item"><code>CustomItem</code></a> or <a href="../block/CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a> owns (<a href="CustomItem.html#type()"><code>CustomItem.type()</code></a>,
          <a href="../block/CustomBlock.html#itemType()"><code>CustomBlock.itemType()</code></a>)</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -277,6 +282,8 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <dt>Returns:</dt>
 <dd>the components this item was given by a layer: those of a custom item, or the ones overrides set on top.
  Empty for vanilla items that nothing overrides</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -290,6 +297,8 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <dd>the properties of this item: its component data split the way the bundled property store names them
  (<code>component:</code>, <code>wire:</code>). For a vanilla item that is what the store holds for the palette's version;
  for a custom item or an overridden one it reflects the components the layers set</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -301,6 +310,8 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the custom item this was registered from, or null for vanilla items and items of custom blocks</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>
@@ -312,6 +323,8 @@ implements org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition</sp
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true if this item was added by a layer rather than being vanilla</dd>
+<dt>Since:</dt>
+<dd>1.0.0</dd>
 </dl>
 </section>
 </li>

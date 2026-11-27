@@ -86,68 +86,72 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button></div>
 <div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="BlockFallback.html" title="class in dev.opencollab.paletter.block">BlockFallback</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BlockFallback.html" title="class in dev.opencollab.paletter.block">BlockFallback</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A replacement for a block in a version.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BlockHashes.html" title="class in dev.opencollab.paletter.block">BlockHashes</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Block network ids.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="BlockProperty.html" title="class in dev.opencollab.paletter.block">BlockProperty</a>&lt;T&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BlockProperty.html" title="class in dev.opencollab.paletter.block">BlockProperty</a>&lt;T&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A state property of a custom block: an entry of the add-on JSON description <code>states</code>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab3"><a href="BlockProperty.Type.html" title="enum class in dev.opencollab.paletter.block">BlockProperty.Type</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab3">
 <div class="block">The value type of a <a href="BlockProperty.html" title="class in dev.opencollab.paletter.block"><code>BlockProperty</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BlockRegistry.html" title="class in dev.opencollab.paletter.block">BlockRegistry</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="CustomBlock.html" title="class in dev.opencollab.paletter.block">CustomBlock</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The compiled block palette of one <a href="../Palette.html" title="class in dev.opencollab.paletter"><code>Palette</code></a>: vanilla states plus custom blocks of all
- layers, with runtime ids assigned the way the client does.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="CustomBlock.html" title="class in dev.opencollab.paletter.block">CustomBlock</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A custom (data driven) block: an add-on JSON <code>minecraft:block</code> in Java.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab3"><a href="CustomBlock.BlockItem.html" title="enum class in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab3">
-<div class="block">How the item of a custom block is registered.</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="CustomBlock.BlockItem.html" title="interface in dev.opencollab.paletter.block">CustomBlock.BlockItem</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">How the item of a custom block is registered: <a href="CustomBlock.BlockItem.html#NONE"><code>CustomBlock.BlockItem.NONE</code></a>, <a href="CustomBlock.BlockItem.html#SIMPLE"><code>CustomBlock.BlockItem.SIMPLE</code></a> (the default) or
+ <a href="CustomBlock.BlockItem.html#custom(java.util.function.UnaryOperator)"><code>custom</code></a>, an item of its own that the block owns.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="CustomBlock.BlockItem.Custom.html" title="class in dev.opencollab.paletter.block">CustomBlock.BlockItem.Custom</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="CustomBlock.BlockItem.html#custom(java.util.function.UnaryOperator)"><code>CustomBlock.BlockItem.custom(java.util.function.UnaryOperator&lt;dev.opencollab.paletter.item.CustomItem.Builder&gt;)</code></a>: the item the block owns.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="CustomBlock.BlockItem.None.html" title="class in dev.opencollab.paletter.block">CustomBlock.BlockItem.None</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block"><a href="CustomBlock.BlockItem.html#NONE"><code>CustomBlock.BlockItem.NONE</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="CustomBlock.BlockItem.Simple.html" title="class in dev.opencollab.paletter.block">CustomBlock.BlockItem.Simple</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="CustomBlock.BlockItem.html#SIMPLE"><code>CustomBlock.BlockItem.SIMPLE</code></a>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="CustomBlock.Builder.html" title="class in dev.opencollab.paletter.block">CustomBlock.Builder</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Builder of a <a href="CustomBlock.html" title="class in dev.opencollab.paletter.block"><code>CustomBlock</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="CustomBlock.Permutation.html" title="class in dev.opencollab.paletter.block">CustomBlock.Permutation</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
-<div class="block">An entry of <code>permutations</code>.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RegisteredBlock.html" title="class in dev.opencollab.paletter.block">RegisteredBlock</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">A block (type level) inside one palette: its <a href="RegisteredBlock.html#stateProperties()">state properties</a>, <a href="RegisteredBlock.html#components()">components</a> and <a href="RegisteredBlock.html#origin()">origin</a>, and its <a href="RegisteredBlock.html#states()">states</a>, which carry the runtime ids.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="CustomBlock.Permutation.html" title="class in dev.opencollab.paletter.block">CustomBlock.Permutation</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">An entry of <code>permutations</code>: components applied when a Molang condition on the state holds.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RegisteredBlockState.html" title="class in dev.opencollab.paletter.block">RegisteredBlockState</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A block state definition in a compiled palette: the runtime id of a state.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ResolvedBlock.html" title="class in dev.opencollab.paletter.block">ResolvedBlock</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">A block state resolved against one palette: what it sends for it and what that does, see
  <a href="../Palette.html#resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)"><code>Palette.resolve(dev.opencollab.paletter.vanilla.BedrockBlockState)</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="VoxelShape.html" title="class in dev.opencollab.paletter.block">VoxelShape</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="VoxelShape.html" title="class in dev.opencollab.paletter.block">VoxelShape</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">A voxel shape as Bedrock keeps and sends it (<code>VoxelShapesPacket</code>): a grid with, per axis, the sorted coordinates
  of its planes in blocks (<code>0</code> to <code>1</code> is the block), and which of the cells between the planes are filled.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="VoxelShapes.html" title="class in dev.opencollab.paletter.block">VoxelShapes</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="VoxelShapes.html" title="class in dev.opencollab.paletter.block">VoxelShapes</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">The voxel shapes of a palette: the shapes Bedrock culls the faces of neighbouring blocks with, which a server sends
  every client before start game (<code>VoxelShapesPacket</code>, protocol 924 and later).</div>
 </div>

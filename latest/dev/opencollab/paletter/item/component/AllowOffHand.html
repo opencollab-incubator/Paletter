@@ -188,7 +188,7 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#value()" class="member-name-link">value</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Determines whether the item can be placed in the off hand slot.</div>
@@ -236,9 +236,9 @@ implements <a href="ItemComponent.html" title="interface in dev.opencollab.palet
 <li>
 <section class="detail" id="value()">
 <h3>value</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></span>&nbsp;<span class="element-name">value</span>()</div>
-<div class="block">Determines whether the item can be placed in the off hand slot. Add-on JSON <code>value</code>. Optional (null: not
- set).</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">value</span>()</div>
+<div class="block">Determines whether the item can be placed in the off hand slot. Add-on JSON <code>value</code>. Default:
+ <code>false</code>. The docs give no default; this is what BDS sends when the field is omitted.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>

@@ -205,7 +205,7 @@ implements <a href="BlockTrait.html" title="interface in dev.opencollab.paletter
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link">Float</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#yRotationOffset()" class="member-name-link">yRotationOffset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The y rotation offset to apply to the block.</div>
@@ -266,10 +266,11 @@ implements <a href="BlockTrait.html" title="interface in dev.opencollab.paletter
 <li>
 <section class="detail" id="yRotationOffset()">
 <h3>yRotationOffset</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link">Float</a></span>&nbsp;<span class="element-name">yRotationOffset</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">yRotationOffset</span>()</div>
 <div class="block">The y rotation offset to apply to the block. Must be [0.0, 90.0, 180.0, 270.0]. Default is 0, meaning if the
  player is facing north, the "minecraft:cardinal_direction" and/or minecraft:facing_direction state will be
- north. Add-on JSON <code>y_rotation_offset</code>. Optional (null: not set). Range [0, 360] (Bedrock 26.60).</div>
+ north. Add-on JSON <code>y_rotation_offset</code>. Default: <code>0.0</code>. The docs give no default; this is
+ what BDS sends when the field is omitted. Range [0, 360] (Bedrock 26.60).</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value</dd>

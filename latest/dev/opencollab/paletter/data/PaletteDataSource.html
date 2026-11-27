@@ -87,12 +87,12 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">PaletteDataSource</span></div>
+<div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">PaletteDataSource</span></div>
 <div class="block">Supplies vanilla data to a <a href="../Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a>. <a href="#bundled()"><code>bundled()</code></a> reads the data shipped inside
  the library jar, so no network access or external files are needed at runtime; <a href="#directory(java.nio.file.Path)"><code>directory(Path)</code></a> reads the same
  format from a directory, e.g. data refreshed for a newer Bedrock version than the library bundles.
  <p>
- This is a closed set of sources: the loading contract is internal.</div>
+ This is a closed set of sources (a sealed interface): the loading contract is internal.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>1.0.0</dd>
@@ -121,26 +121,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Returns a source reading a directory in the bundled format, e.g.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NonNull dev.opencollab.paletter.internal.data.VanillaData</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#load(dev.opencollab.paletter.data.DataVersion)" class="member-name-link">load</a><wbr>(@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Internal: loads the data of the given version.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull dev.opencollab.paletter.internal.data.PropertyStore</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#properties()" class="member-name-link">properties</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Internal: the versioned properties of items and blocks.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#releaseProperties()" class="member-name-link">releaseProperties</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Internal: drops what was read for <a href="#properties()"><code>properties()</code></a>, once the versions in use are loaded.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull dev.opencollab.paletter.internal.data.Renames</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#renames()" class="member-name-link">renames</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Internal: the identifiers Bedrock renamed.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="VerifiedBuild.html" title="class in dev.opencollab.paletter.data">VerifiedBuild</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#verifiedBuilds(dev.opencollab.paletter.data.DataVersion)" class="member-name-link">verifiedBuilds</a><wbr>(@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -152,11 +132,6 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#versions()" class="member-name-link">versions</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Lists the versions this source has data for.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default @NonNull dev.opencollab.paletter.internal.shape.VoxelShapeStore</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#voxelShapes()" class="member-name-link">voxelShapes</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Internal: the vanilla voxel shapes of the versions.</div>
 </div>
 </div>
 </div>
@@ -202,71 +177,6 @@ loadScripts(document, 'script');</script>
 <dd>the builds, oldest first; empty when none were recorded</dd>
 <dt>Since:</dt>
 <dd>1.0.0</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="load(dev.opencollab.paletter.data.DataVersion)">
-<h3>load</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="return-type">@NonNull dev.opencollab.paletter.internal.data.VanillaData</span>&nbsp;<span class="element-name">load</span><wbr><span class="parameters">(@NonNull <a href="DataVersion.html" title="class in dev.opencollab.paletter.data">DataVersion</a>&nbsp;version)</span>
-                                                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
-<div class="block">Internal: loads the data of the given version. Called at most once per version by
- <a href="../Paletter.html" title="class in dev.opencollab.paletter"><code>Paletter</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>version</code> - a version of this source</dd>
-<dt>Returns:</dt>
-<dd>the data of the version</dd>
-<dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if the data cannot be read</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="renames()">
-<h3>renames</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">default</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.data.Renames</span>&nbsp;<span class="element-name">renames</span>()</div>
-<div class="block">Internal: the identifiers Bedrock renamed.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>identifiers Bedrock renamed, which lets content of older versions map forward to the newest one</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="properties()">
-<h3>properties</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">default</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.data.PropertyStore</span>&nbsp;<span class="element-name">properties</span>()</div>
-<div class="block">Internal: the versioned properties of items and blocks.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the versioned properties of items and blocks; the bundled source reads <code>properties.nbt</code>, the
-         default has none</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="releaseProperties()">
-<h3>releaseProperties</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">releaseProperties</span>()</div>
-<div class="block">Internal: drops what was read for <a href="#properties()"><code>properties()</code></a>, once the versions in use are loaded. A later call reads
- it again.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="voxelShapes()">
-<h3>voxelShapes</h3>
-<div class="member-signature"><span class="annotations"><a href="../annotation/Internal.html" title="annotation interface in dev.opencollab.paletter.annotation">@Internal</a>
-</span><span class="modifiers">default</span>&nbsp;<span class="return-type">@NonNull dev.opencollab.paletter.internal.shape.VoxelShapeStore</span>&nbsp;<span class="element-name">voxelShapes</span>()</div>
-<div class="block">Internal: the vanilla voxel shapes of the versions.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the vanilla voxel shapes of the versions; the bundled source builds them from generated classes, the
-         default has none. A palette of a version without them cannot be built</dd>
 </dl>
 </section>
 </li>

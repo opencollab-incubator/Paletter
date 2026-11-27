@@ -95,7 +95,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="annotations"><a href="../../annotation/BedrockFormat.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockFormat</a>("1.19.50")
-<a href="../../annotation/BedrockExperiment.html" title="annotation interface in dev.opencollab.paletter.annotation">@BedrockExperiment</a>("upcoming_creator_features")
 </span><span class="modifiers">public final class </span><span class="element-name type-name-label">CollisionBox</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="BlockComponent.html" title="interface in dev.opencollab.paletter.block.component">BlockComponent</a></span></div>
@@ -106,6 +105,7 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
  Add-on JSON: <code>"minecraft:collision_box"</code>.
  The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions);
  BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
+ Not <code>@BedrockExperiment</code>: every bundled version takes it without the experiment.
  Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.</div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -138,11 +138,6 @@ implements <a href="BlockComponent.html" title="interface in dev.opencollab.pale
 <div class="col-second odd-row-color"><code><a href="CollisionBox.Entry.html" class="type-name-link" title="class in dev.opencollab.paletter.block.component">CollisionBox.Entry</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">An entry of <code>minecraft:collision_box</code>.</div>
-</div>
-<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="CollisionBox.Vec3.html" class="type-name-link" title="class in dev.opencollab.paletter.block.component">CollisionBox.Vec3</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">An add-on JSON vector <code>[x, y, z]</code>.</div>
 </div>
 </div>
 </section>
