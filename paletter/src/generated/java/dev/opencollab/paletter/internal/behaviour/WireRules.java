@@ -80,7 +80,7 @@ public final class WireRules {
         }
         if (key == BlockBehaviour.FRICTION) {
             // minecraft:friction (value form) -> minecraft:friction.value (identity): read back
-            // engine = 1.0 - component, measured by behaviour-probe (data/bds/1.26.70.24/behaviour-probe/capture.json friction.components)
+            // engine = 1.0 - component, measured by behaviour-probe (data/bds/1.26.70.26/behaviour-probe/capture.json friction.components)
             Float value = floatOf(properties.component("minecraft:friction"), "value");
             return value == null ? null : 1.0f - value;
         }

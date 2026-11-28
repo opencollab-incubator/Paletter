@@ -171,20 +171,20 @@ public final class ComponentIndex {
     public static final int V26_60 = 2225;
 
     /**
-     * The first protocol of data version 26.70, the window of its spec capture of BDS 1.26.70.24 ({@code data/bds/1.26.70.24/spec}): what
+     * The first protocol of data version 26.70, the window of its spec capture of BDS 1.26.70.26 ({@code data/bds/1.26.70.26/spec}): what
      * the hand transforms compare {@code WireContext.protocol()} with where that version changed the wire.
      */
     public static final int V26_70 = 2259;
 
     /**
      * The {@code vanilla_block_data.block_id} of the first custom block: BDS numbers custom blocks from here, in
-     * every spec capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24).
+     * every spec capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.26).
      */
     public static final int CUSTOM_BLOCK_ID_START = 10000;
 
     /**
      * The item of a custom block has the runtime id {@code BLOCK_ITEM_ID_PLUS_BLOCK_ID - block_id} in every spec
-     * capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24).
+     * capture (1.26.36.1, 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.26).
      */
     public static final int BLOCK_ITEM_ID_PLUS_BLOCK_ID = 255;
 

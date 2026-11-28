@@ -19,7 +19,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:collision_box"}.
  * The creator docs name the experiments Holiday Creator Features, Upcoming Creator Features for it (in some format versions);
- * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
+ * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24, 1.26.70.26.
  * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *

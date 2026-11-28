@@ -1,0 +1,13 @@
+{
+  "bdsVersion": "1.26.70.26",
+  "platform": "windows",
+  "protocol": 2259,
+  "codecProtocol": 2225,
+  "preview": true,
+  "formatVersion": "1.26.60",
+  "resolvedHashes": 2212,
+  "unresolvedHashes": 0,
+  "experiments": [
+    "data_driven_vanilla_blocks_and_items=true"
+  ]
+}

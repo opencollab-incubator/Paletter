@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:crafting_table"}.
  * The creator docs name the experiment Holiday Creator Features for it (in some format versions);
- * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 1.26.70.24, 26.70: the docs' gating does not hold there.
  * Unverified: the creator docs name experiment "Holiday Creator Features", which is in no capture.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_crafting_table?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:crafting_table</a>
