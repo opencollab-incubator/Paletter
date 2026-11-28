@@ -49,6 +49,12 @@ public final class BedrockExperiments {
     public static final String NETHER_SPAWNING_BALANCE = "nether_spawning_balance";
 
     /**
+     * {@code offhand_parity}: Off-hand Parity.
+     */
+    @SincePreview("26.70")
+    public static final String OFFHAND_PARITY = "offhand_parity";
+
+    /**
      * {@code poi}: Points of Interest (POI).
      */
     @BedrockSince("26.50")

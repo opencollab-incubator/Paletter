@@ -3313,7 +3313,6 @@
     "item:minecraft:wearable:slot": {
       "name": "slot",
       "wire": [
-        "item_properties.allow_off_hand",
         "item_properties.max_stack_size",
         "minecraft:wearable.slot"
       ],

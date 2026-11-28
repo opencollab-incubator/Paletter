@@ -1,0 +1,21 @@
+{
+  "bdsVersion": "1.26.70.26",
+  "platform": "windows",
+  "protocol": 2259,
+  "codecProtocol": 2225,
+  "preview": true,
+  "formatVersion": "1.26.60",
+  "resolvedHashes": 3406,
+  "unresolvedHashes": 0,
+  "experiments": [
+    "upcoming_creator_features=true",
+    "gametest=true",
+    "experimental_creator_cameras=true",
+    "deferred_technical_preview=true",
+    "villager_trades_rebalance=true",
+    "voxel_shapes=true",
+    "offhand_parity=true",
+    "nether_spawning_balance=true",
+    "data_driven_vanilla_blocks_and_items=true"
+  ]
+}

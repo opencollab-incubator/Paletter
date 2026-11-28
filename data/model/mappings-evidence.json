@@ -10257,7 +10257,55 @@
             1001,
             2168,
             2193,
-            2225,
+            2225
+          ],
+          "fields": {
+            "hides_player_location": {
+              "accepted": 2,
+              "rejected": 0
+            },
+            "protection": {
+              "accepted": 5,
+              "rejected": 2,
+              "rejectedValues": [
+                "integer:-1",
+                "integer:0.5"
+              ],
+              "bdsErrors": [
+                "protection: the input must be a number >= 0",
+                "[Item]  Error Parsing Item <id>:",
+                "protection: invalid numeric value"
+              ]
+            },
+            "slot": {
+              "accepted": 7,
+              "rejected": 2,
+              "rejectedValues": [
+                "omitted",
+                "string:paletter_invalid"
+              ],
+              "bdsErrors": [
+                "slot: missing required field",
+                "[Item]  Error Parsing Item <id>:",
+                "slot: This value is bound to EquipmentSlot and expects one of the following strings: slot.weapon.mainhand, slot.weapon.offhand, slot.armor.head, ... (4 others). Found: paletter_invalid"
+              ]
+            },
+            "dispensable": {
+              "accepted": 0,
+              "rejected": 2,
+              "rejectedValues": [
+                "boolean:true",
+                "boolean:false"
+              ],
+              "bdsErrors": [
+                "dispensable: this member was found in the input, but is not present in the Schema",
+                "[Item]  Error Parsing Item <id>:"
+              ]
+            }
+          }
+        },
+        {
+          "protocols": [
             2259
           ],
           "fields": {

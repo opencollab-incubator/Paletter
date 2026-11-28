@@ -5758,6 +5758,7 @@ public final class dev.opencollab.paletter.vanilla.BedrockExperiments {
     public static final java.lang.String EXPERIMENTAL_CREATOR_CAMERAS = "experimental_creator_cameras"
     public static final java.lang.String GAMETEST = "gametest"
     @SincePreview("26.70") public static final java.lang.String NETHER_SPAWNING_BALANCE = "nether_spawning_balance"
+    @SincePreview("26.70") public static final java.lang.String OFFHAND_PARITY = "offhand_parity"
     public static final java.lang.String POI = "poi"
     public static final java.lang.String UPCOMING_CREATOR_FEATURES = "upcoming_creator_features"
     public static final java.lang.String VILLAGER_TRADES_REBALANCE = "villager_trades_rebalance"

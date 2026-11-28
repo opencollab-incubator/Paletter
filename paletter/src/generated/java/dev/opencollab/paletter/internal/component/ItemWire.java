@@ -469,6 +469,15 @@ public final class ItemWire {
     }
 
     private static void wearable(Wearable c, WireContext ctx, WireNode out) {
+        int protocol = ctx.protocol();
+        if (protocol < 2259) {
+            wearableUntil2259(c, ctx, out);
+        } else {
+            wearableFrom2259(c, ctx, out);
+        }
+    }
+
+    private static void wearableUntil2259(Wearable c, WireContext ctx, WireNode out) {
         out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
         out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
         Wearable.Slot v0 = c.slot();
@@ -490,6 +499,23 @@ public final class ItemWire {
             case "slot.armor.legs" -> out.putUnowned("item_properties.max_stack_size", 1);
             case "slot.weapon.mainhand" -> out.putUnowned("item_properties.max_stack_size", 64);
             case "slot.weapon.offhand" -> out.putUnowned("item_properties.max_stack_size", 64);
+        }
+        out.put("minecraft:wearable.slot", v0.value());
+    }
+
+    private static void wearableFrom2259(Wearable c, WireContext ctx, WireNode out) {
+        out.put("minecraft:wearable.hides_player_location", Wire.bool(c.hidesPlayerLocation()));
+        out.put("minecraft:wearable.protection", Wire.toInt(c.protection()));
+        Wearable.Slot v0 = c.slot();
+        switch (v0.value()) {
+            case "slot.armor.body" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.chest" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.feet" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.head" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.armor.legs" -> out.putUnowned("item_properties.max_stack_size", 1);
+            case "slot.weapon.mainhand" -> out.putUnowned("item_properties.max_stack_size", 64);
+            case "slot.weapon.offhand" -> out.putUnowned("item_properties.max_stack_size", 64);
+            default -> ctx.changed(Wearable.NAME, "slot = " + v0.value() + " is sent as minecraft:wearable.slot, but item_properties.max_stack_size has no known wire value for it and keeps its default");
         }
         out.put("minecraft:wearable.slot", v0.value());
     }
@@ -538,21 +564,41 @@ public final class ItemWire {
      * the spec captures sends alike). The description and the components write over it.
      */
     public static void envelope(@NonNull WireContext ctx, @NonNull WireNode out) {
-        out.put("item_properties.allow_off_hand", (byte) 0);
-        out.put("item_properties.can_destroy_in_creative", (byte) 1);
-        out.put("item_properties.damage", 0);
-        out.put("item_properties.enchantable_slot", "none");
-        out.put("item_properties.enchantable_value", 0);
-        out.put("item_properties.foil", (byte) 0);
-        out.put("item_properties.frame_count", 1);
-        out.put("item_properties.hand_equipped", (byte) 0);
-        out.put("item_properties.liquid_clipped", (byte) 0);
-        out.put("item_properties.max_stack_size", 64);
-        out.put("item_properties.mining_speed", 1.0f);
-        out.put("item_properties.should_despawn", (byte) 1);
-        out.put("item_properties.stacked_by_data", (byte) 0);
-        out.put("item_properties.use_animation", 0);
-        out.put("item_properties.use_duration", 0);
-        out.put("item_tags", Wire.EMPTY_LIST);
+        int protocol = ctx.protocol();
+        if (protocol >= 2259) {
+            out.put("item_properties.allow_off_hand", (byte) 1);
+            out.put("item_properties.can_destroy_in_creative", (byte) 1);
+            out.put("item_properties.damage", 0);
+            out.put("item_properties.enchantable_slot", "none");
+            out.put("item_properties.enchantable_value", 0);
+            out.put("item_properties.foil", (byte) 0);
+            out.put("item_properties.frame_count", 1);
+            out.put("item_properties.hand_equipped", (byte) 0);
+            out.put("item_properties.liquid_clipped", (byte) 0);
+            out.put("item_properties.max_stack_size", 64);
+            out.put("item_properties.mining_speed", 1.0f);
+            out.put("item_properties.should_despawn", (byte) 1);
+            out.put("item_properties.stacked_by_data", (byte) 0);
+            out.put("item_properties.use_animation", 0);
+            out.put("item_properties.use_duration", 0);
+            out.put("item_tags", Wire.EMPTY_LIST);
+        } else {
+            out.put("item_properties.allow_off_hand", (byte) 0);
+            out.put("item_properties.can_destroy_in_creative", (byte) 1);
+            out.put("item_properties.damage", 0);
+            out.put("item_properties.enchantable_slot", "none");
+            out.put("item_properties.enchantable_value", 0);
+            out.put("item_properties.foil", (byte) 0);
+            out.put("item_properties.frame_count", 1);
+            out.put("item_properties.hand_equipped", (byte) 0);
+            out.put("item_properties.liquid_clipped", (byte) 0);
+            out.put("item_properties.max_stack_size", 64);
+            out.put("item_properties.mining_speed", 1.0f);
+            out.put("item_properties.should_despawn", (byte) 1);
+            out.put("item_properties.stacked_by_data", (byte) 0);
+            out.put("item_properties.use_animation", 0);
+            out.put("item_properties.use_duration", 0);
+            out.put("item_tags", Wire.EMPTY_LIST);
+        }
     }
 }

@@ -46,11 +46,14 @@
       "blockItemIdPlusBlockId": 255
     },
     {
-      "capture": "data/bds/1.26.70.24/spec",
-      "bdsVersion": "1.26.70.24",
+      "capture": "data/bds/1.26.70.26/spec",
+      "bdsVersion": "1.26.70.26",
       "protocol": 2259,
       "windowProtocol": 2259,
       "dataVersion": "26.70",
+      "differs": [
+        "1.26.70.24"
+      ],
       "preview": "26.70",
       "variants": 4086,
       "accepted": 3170,
@@ -294,7 +297,7 @@
                   14,
                   15
                 ],
-                "valuesFrom": "BDS 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)",
+                "valuesFrom": "BDS 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.26 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)",
                 "default": "verified (name and default): BDS 1.26.45.1 sent hash 510796997 for the default state of paletter:b_trait_placement_direction_9 (enabled_states [\"minecraft:sixteen_way_rotation\"])"
               }
             ]
@@ -366,11 +369,33 @@
           1001,
           2168,
           2193,
-          2225,
-          2259
+          2225
         ],
         "leaves": {
           "item_properties.allow_off_hand": "0 (byte)",
+          "item_properties.can_destroy_in_creative": "1 (byte)",
+          "item_properties.damage": "0 (int)",
+          "item_properties.enchantable_slot": "none (string)",
+          "item_properties.enchantable_value": "0 (int)",
+          "item_properties.foil": "0 (byte)",
+          "item_properties.frame_count": "1 (int)",
+          "item_properties.hand_equipped": "0 (byte)",
+          "item_properties.liquid_clipped": "0 (byte)",
+          "item_properties.max_stack_size": "64 (int)",
+          "item_properties.mining_speed": "1.0 (float)",
+          "item_properties.should_despawn": "1 (byte)",
+          "item_properties.stacked_by_data": "0 (byte)",
+          "item_properties.use_animation": "0 (int)",
+          "item_properties.use_duration": "0 (int)",
+          "item_tags": "[] (list<void>)"
+        }
+      },
+      {
+        "protocols": [
+          2259
+        ],
+        "leaves": {
+          "item_properties.allow_off_hand": "1 (byte)",
           "item_properties.can_destroy_in_creative": "1 (byte)",
           "item_properties.damage": "0 (int)",
           "item_properties.enchantable_slot": "none (string)",
@@ -3144,7 +3169,7 @@
           "transforms": {
             "[]": {
               "verified": {
-                "build": "1.26.70.24",
+                "build": "1.26.70.26",
                 "variants": 30
               }
             },
@@ -6456,7 +6481,7 @@
           "transforms": {
             "": {
               "verified": {
-                "build": "1.26.70.24",
+                "build": "1.26.70.26",
                 "variants": 140
               },
               "rejectedFields": [
@@ -13053,7 +13078,7 @@
           "transforms": {
             "": {
               "verified": {
-                "build": "1.26.70.24",
+                "build": "1.26.70.26",
                 "variants": 302
               }
             }
@@ -21475,8 +21500,7 @@
             1001,
             2168,
             2193,
-            2225,
-            2259
+            2225
           ],
           "variants": {
             "accepted": 20,
@@ -21542,6 +21566,87 @@
                   ],
                   "wire": "item_properties.allow_off_hand"
                 },
+                {
+                  "kind": "enum-table",
+                  "table": {
+                    "slot.armor.body": "1",
+                    "slot.armor.chest": "1",
+                    "slot.armor.feet": "1",
+                    "slot.armor.head": "1",
+                    "slot.armor.legs": "1",
+                    "slot.weapon.mainhand": "64",
+                    "slot.weapon.offhand": "64"
+                  },
+                  "nbt": "int",
+                  "tags": [
+                    "renamed",
+                    "item_properties",
+                    "type:string->int",
+                    "enum->int"
+                  ],
+                  "wire": "item_properties.max_stack_size"
+                },
+                {
+                  "kind": "identity",
+                  "nbt": "string",
+                  "tags": [],
+                  "wire": "minecraft:wearable.slot"
+                }
+              ]
+            },
+            "dispensable": {
+              "unknownToBds": true,
+              "status": "rejected"
+            }
+          }
+        },
+        {
+          "protocols": [
+            2259
+          ],
+          "variants": {
+            "accepted": 20,
+            "rejected": 6
+          },
+          "wire": [
+            "item_properties.max_stack_size",
+            "minecraft:wearable"
+          ],
+          "status": "sent",
+          "fields": {
+            "hides_player_location": {
+              "status": "inferred",
+              "rules": [
+                {
+                  "kind": "identity",
+                  "nbt": "byte",
+                  "tags": [
+                    "type:boolean->byte"
+                  ],
+                  "wire": "minecraft:wearable.hides_player_location"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:wearable.hides_player_location": "0 (byte)"
+              }
+            },
+            "protection": {
+              "status": "inferred",
+              "rules": [
+                {
+                  "kind": "identity",
+                  "nbt": "int",
+                  "tags": [],
+                  "wire": "minecraft:wearable.protection"
+                }
+              ],
+              "whenAbsent": {
+                "minecraft:wearable.protection": "0 (int)"
+              }
+            },
+            "slot": {
+              "status": "inferred",
+              "rules": [
                 {
                   "kind": "enum-table",
                   "table": {

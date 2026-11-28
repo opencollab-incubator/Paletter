@@ -19,7 +19,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Add-on JSON: {@code "minecraft:connection"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
- * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * BDS takes it without any experiment in 26.30, 26.40, 26.50, 26.60, 1.26.70.24, 26.70: the docs' gating does not hold there.
  * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/connection?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:connection</a>

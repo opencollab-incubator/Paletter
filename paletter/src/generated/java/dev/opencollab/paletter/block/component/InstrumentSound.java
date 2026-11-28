@@ -22,7 +22,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Server only: BDS accepts it in packs but sends nothing to clients (Bedrock 26.30, 26.40, 26.50, 26.60, 26.70),
  * so it has no client effect. Palettes leave it out without a warning.
  * The creator docs name the experiment experimental (toggle not named) for it (in some format versions);
- * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24.
+ * BDS rejects it even with the experiments on in 26.30, 26.40, 26.50, 26.60, 1.26.70.24, 1.26.70.26.
  * Unverified: the creator docs name experiment "experimental (toggle not named)", which is in no capture.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_instrument_sound?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:instrument_sound</a>
