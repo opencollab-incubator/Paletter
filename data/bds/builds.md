@@ -9,7 +9,8 @@ Every release build `builds check` recorded, with the bundled data version that 
 | 1.26.36.1 | 1001 | 26.30 | kept; 26.30 was imported from it |  | captures in data/bds |
 | 1.26.45.1 | 2169 | 26.40 | kept; 26.40 was imported from it |  | captures in data/bds |
 | 1.26.52.3 | 2193 | 26.50 | kept; 26.50 was imported from it |  | captures in data/bds |
-| 1.26.63.1 | 2225 | 26.60 | kept; 26.60 was imported from it |  | captures in data/bds |
+| 1.26.63.1 | 2225 | 26.60 | kept by update; not 26.60's import build 1.26.66.1 |  | captures in data/bds |
+| 1.26.66.1 | 2225 | 26.60 | kept; 26.60 was imported from it |  | captures in data/bds |
 
 ## Gaps
 

@@ -1,0 +1,4 @@
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json |  -> components -> minecraft:collision_box: expected an array
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_collision_box_1.json |  -> components -> minecraft:collision_box: invalid numeric value
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_instrument_sound_1.json |  -> components -> minecraft:instrument_sound: expected object with at least 1 elements
+ERROR [Blocks] block_definitions | behavior_packs/paletter_spec | blocks/b_precipitation_interactions_1.json |  -> components -> minecraft:precipitation_interactions -> precipitation_behavior: This value is bound to 'Precipitation Behavior' and expects one of the following strings: 'none', 'obstruct_rain', 'obstruct_rain_accumulate_snow', ... (1 others). Found: 'accumulate snow'

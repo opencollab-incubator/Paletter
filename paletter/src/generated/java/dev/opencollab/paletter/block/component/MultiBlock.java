@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Add-on JSON: {@code "minecraft:multi_block"}.
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
  * BDS-verified: in a world without experiments BDS rejects it in 1.26.36.1.
- * BDS takes it without any experiment in 26.40, 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * BDS takes it without any experiment in 26.40, 26.50, 1.26.63.1, 26.60, 26.70: the docs' gating does not hold there.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/traits/multi_block?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:multi_block</a>
  * @since 1.0.0

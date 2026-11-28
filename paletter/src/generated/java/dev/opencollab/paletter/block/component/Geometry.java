@@ -404,7 +404,7 @@ public final class Geometry implements BlockComponent {
         }
 
         /**
-         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
+         * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code x}. Optional
          * (null: not set).
          *
          * @return the value
@@ -414,7 +414,7 @@ public final class Geometry implements BlockComponent {
         }
 
         /**
-         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code y}. Optional
+         * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code y}. Optional
          * (null: not set).
          *
          * @return the value
@@ -424,7 +424,7 @@ public final class Geometry implements BlockComponent {
         }
 
         /**
-         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code z}. Optional
+         * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code z}. Optional
          * (null: not set).
          *
          * @return the value

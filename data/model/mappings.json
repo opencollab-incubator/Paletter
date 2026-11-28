@@ -35,11 +35,14 @@
       "blockItemIdPlusBlockId": 255
     },
     {
-      "capture": "data/bds/1.26.63.1/spec",
-      "bdsVersion": "1.26.63.1",
+      "capture": "data/bds/1.26.66.1/spec",
+      "bdsVersion": "1.26.66.1",
       "protocol": 2225,
       "windowProtocol": 2225,
       "dataVersion": "26.60",
+      "replaces": [
+        "1.26.63.1"
+      ],
       "variants": 4224,
       "accepted": 3245,
       "firstCustomBlockId": 10000,
@@ -294,7 +297,7 @@
                   14,
                   15
                 ],
-                "valuesFrom": "BDS 1.26.45.1, 1.26.52.3, 1.26.63.1, 1.26.70.24 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)",
+                "valuesFrom": "BDS 1.26.45.1, 1.26.52.3, 1.26.66.1, 1.26.70.24 (the Script API BlockStates.getAll() of each, in its order; the docs name no state for it)",
                 "default": "verified (name and default): BDS 1.26.45.1 sent hash 510796997 for the default state of paletter:b_trait_placement_direction_9 (enabled_states [\"minecraft:sixteen_way_rotation\"])"
               }
             ]
@@ -2349,7 +2352,7 @@
           "transforms": {
             "[]": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 25
               }
             },
@@ -5466,13 +5469,13 @@
           "transforms": {
             "geometry": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 159
               }
             },
             "material_instances": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 3
               }
             }
@@ -6294,7 +6297,7 @@
           "transforms": {
             "": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 147
               }
             }
@@ -8083,19 +8086,19 @@
           "transforms": {
             "geometry.bone_visibility": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 105
               }
             },
             "geometry.uv_lock": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 19
               }
             },
             "material_instances": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 1
               }
             }
@@ -11599,7 +11602,7 @@
           "transforms": {
             "": {
               "verified": {
-                "build": "1.26.63.1",
+                "build": "1.26.66.1",
                 "variants": 372
               }
             }
