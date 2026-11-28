@@ -63,8 +63,8 @@ public final class BlockEntity implements BlockComponent {
     }
 
     /**
-     * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code entity_storage}.
-     * Optional (null: not set).
+     * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. Add-on JSON {@code
+     * entity_storage}. Optional (null: not set).
      *
      * @return the value
      */

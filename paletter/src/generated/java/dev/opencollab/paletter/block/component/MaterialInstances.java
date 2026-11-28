@@ -425,7 +425,7 @@ public final class MaterialInstances implements BlockComponent {
         }
 
         /**
-         * (bds-schema 26.60) BDS accepts this key; the creator docs do not list it. BDS names the format version
+         * (bds-schema 1.26.63.1) BDS accepts this key; the creator docs do not list it. BDS names the format version
          * 1.21.120 for it. Add-on JSON {@code alpha_masked_tint}. Optional (null: not set).
          *
          * @return the value

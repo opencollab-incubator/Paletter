@@ -15,7 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Server only below protocol 2193: BDS accepts it in packs but sends nothing to clients there (Bedrock 26.30,
  * 26.40), so those palettes leave it out and add a report warning. Sent from protocol 2193 (Bedrock 26.50).
  * The creator docs name the experiment Upcoming Creator Features for it (in some format versions);
- * BDS takes it without any experiment in 26.50, 26.60, 26.70: the docs' gating does not hold there.
+ * BDS takes it without any experiment in 26.50, 1.26.63.1, 26.60, 26.70: the docs' gating does not hold there.
  * Not {@code @BedrockExperiment}: every bundled version takes it without the experiment.
  *
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_replaceable?view=minecraft-bedrock-stable">Microsoft Learn: minecraft:replaceable</a>
